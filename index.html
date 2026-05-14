@@ -480,11 +480,9 @@ th {
 
 </div>
 
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
 const firebaseConfig = {
   apiKey: "AIzaSyAUzriWAPOLNVwaGkT02FlIuxgjzIv3COw",
   authDomain: "controle-uber-9af6b.firebaseapp.com",
@@ -494,14 +492,12 @@ const firebaseConfig = {
   appId: "1:847499399736:web:f75460529adf76e4f74ccd"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const estadoRef = doc(db, "controleUber", "estadoPrincipal");
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const estadoRef = db.collection("controleUber").doc("estadoPrincipal");
 
 let tipo = "ganho";
 let dados = [];
-let carregandoFirebase = true;
-
 let config = {
   saldoInicial: 0,
   metaGasolina: 0,
@@ -513,35 +509,33 @@ let config = {
 
 const STORAGE_KEY = "controleUberFelipe";
 const CONFIG_KEY = "controleUberFelipeConfig";
+let firebaseCarregado = false;
+let salvandoFirebase = false;
 
-function el(id) {
-  return document.getElementById(id);
-}
-
-el("importarArquivo").addEventListener("change", importarJSON);
+document.getElementById("importarArquivo").addEventListener("change", importarJSON);
 
 function trocarAba(aba) {
-  el("telaInicio").classList.add("hidden");
-  el("telaHistorico").classList.add("hidden");
-  el("telaConfig").classList.add("hidden");
+  telaInicio.classList.add("hidden");
+  telaHistorico.classList.add("hidden");
+  telaConfig.classList.add("hidden");
 
-  el("abaInicio").classList.remove("ativo");
-  el("abaHistorico").classList.remove("ativo");
-  el("abaConfig").classList.remove("ativo");
+  abaInicio.classList.remove("ativo");
+  abaHistorico.classList.remove("ativo");
+  abaConfig.classList.remove("ativo");
 
   if (aba === "inicio") {
-    el("telaInicio").classList.remove("hidden");
-    el("abaInicio").classList.add("ativo");
+    telaInicio.classList.remove("hidden");
+    abaInicio.classList.add("ativo");
   }
 
   if (aba === "historico") {
-    el("telaHistorico").classList.remove("hidden");
-    el("abaHistorico").classList.add("ativo");
+    telaHistorico.classList.remove("hidden");
+    abaHistorico.classList.add("ativo");
   }
 
   if (aba === "config") {
-    el("telaConfig").classList.remove("hidden");
-    el("abaConfig").classList.add("ativo");
+    telaConfig.classList.remove("hidden");
+    abaConfig.classList.add("ativo");
   }
 }
 
@@ -549,44 +543,44 @@ function selecionar(novoTipo) {
   tipo = novoTipo;
 
   ["btnGanho", "btnGasolina", "btnDespesas", "btnKM"].forEach(id => {
-    el(id).classList.remove("ativo");
+    document.getElementById(id).classList.remove("ativo");
   });
 
-  el("campoDescricao").classList.add("hidden");
-  el("campoValor").classList.remove("hidden");
-  el("campoLitros").classList.add("hidden");
+  campoDescricao.classList.add("hidden");
+  campoValor.classList.remove("hidden");
+  campoLitros.classList.add("hidden");
 
   if (tipo === "ganho") {
-    el("btnGanho").classList.add("ativo");
-    el("labelValor").innerText = "Valor ganho";
-    el("valor").placeholder = "Ex: 150.00";
+    btnGanho.classList.add("ativo");
+    labelValor.innerText = "Valor ganho";
+    valor.placeholder = "Ex: 150.00";
   }
 
   if (tipo === "gasolina") {
-    el("btnGasolina").classList.add("ativo");
-    el("labelValor").innerText = "Valor da gasolina";
-    el("valor").placeholder = "Ex: 250.00";
-    el("campoLitros").classList.remove("hidden");
+    btnGasolina.classList.add("ativo");
+    labelValor.innerText = "Valor da gasolina";
+    valor.placeholder = "Ex: 250.00";
+    campoLitros.classList.remove("hidden");
   }
 
   if (tipo === "despesas") {
-    el("btnDespesas").classList.add("ativo");
-    el("labelValor").innerText = "Valor da despesa";
-    el("valor").placeholder = "Ex: 80.00";
-    el("campoDescricao").classList.remove("hidden");
+    btnDespesas.classList.add("ativo");
+    labelValor.innerText = "Valor da despesa";
+    valor.placeholder = "Ex: 80.00";
+    campoDescricao.classList.remove("hidden");
   }
 
   if (tipo === "km") {
-    el("btnKM").classList.add("ativo");
-    el("campoValor").classList.add("hidden");
+    btnKM.classList.add("ativo");
+    campoValor.classList.add("hidden");
   }
 }
 
 async function adicionar() {
-  const data = el("data").value;
-  const valorCampo = el("valor").value;
-  const litrosCampo = el("litros").value;
-  const kmCampo = el("km").value;
+  const data = document.getElementById("data").value;
+  const valorCampo = document.getElementById("valor").value;
+  const litrosCampo = document.getElementById("litros").value;
+  const kmCampo = document.getElementById("km").value;
 
   if (!data) return alert("Informe a data");
 
@@ -610,7 +604,7 @@ async function adicionar() {
 
   if (tipo === "despesas") {
     if (!valorCampo) return alert("Informe o valor da despesa");
-    descricao = el("descricao").value;
+    descricao = document.getElementById("descricao").value;
     valorLancamento = Math.abs(valorLancamento) * -1;
   }
 
@@ -622,7 +616,7 @@ async function adicionar() {
   }
 
   dados.push({
-    id: Date.now().toString(),
+    id: Date.now(),
     data,
     tipo,
     descricao,
@@ -637,14 +631,12 @@ async function adicionar() {
 }
 
 async function salvarConfiguracoes() {
-  config.saldoInicial = parseFloat(el("saldoInicial").value) || 0;
-
-  config.metaGasolina = parseMoeda(el("metaGasolina").value);
-  config.metaSeguro = parseMoeda(el("metaSeguro").value);
-  config.metaCustosGerais = parseMoeda(el("metaCustosGerais").value);
-  config.metaParcela = parseMoeda(el("metaParcela").value);
-
-  config.diasPlanejados = parseInt(el("diasPlanejados").value) || 0;
+  config.saldoInicial = parseFloat(saldoInicial.value) || 0;
+  config.metaGasolina = parseMoeda(metaGasolina.value);
+  config.metaSeguro = parseMoeda(metaSeguro.value);
+  config.metaCustosGerais = parseMoeda(metaCustosGerais.value);
+  config.metaParcela = parseMoeda(metaParcela.value);
+  config.diasPlanejados = parseInt(diasPlanejados.value) || 0;
 
   preencherCamposConfig();
   render();
@@ -652,13 +644,13 @@ async function salvarConfiguracoes() {
 }
 
 function limparFormulario() {
-  el("valor").value = "";
-  el("litros").value = "";
-  el("km").value = "";
+  valor.value = "";
+  litros.value = "";
+  km.value = "";
 }
 
 function render() {
-  el("tabela").innerHTML = "";
+  tabela.innerHTML = "";
 
   let entradas = 0;
   let saidas = 0;
@@ -673,28 +665,26 @@ function render() {
   const diasComGanhos = new Set();
 
   dados.forEach((d, index) => {
-    const valor = Number(d.valor) || 0;
-
-    if (valor > 0) {
-      entradas += valor;
+    if (d.valor > 0) {
+      entradas += d.valor;
       if (d.descricao === "Ganhos Uber") diasComGanhos.add(d.data);
     }
 
-    if (valor < 0) saidas += valor;
-    if (d.litros) litrosTotal += Number(d.litros) || 0;
-    if (d.km) kms.push(Number(d.km));
+    if (d.valor < 0) saidas += d.valor;
+    if (d.litros) litrosTotal += d.litros;
+    if (d.km) kms.push(d.km);
 
-    if (d.descricao === "Gasolina") gastoGasolina += Math.abs(valor);
-    if (d.descricao === "Seguro") gastoSeguro += Math.abs(valor);
-    if (d.descricao === "Parcela") gastoParcela += Math.abs(valor);
+    if (d.descricao === "Gasolina") gastoGasolina += Math.abs(d.valor);
+    if (d.descricao === "Seguro") gastoSeguro += Math.abs(d.valor);
+    if (d.descricao === "Parcela") gastoParcela += Math.abs(d.valor);
 
     if (
-      valor < 0 &&
+      d.valor < 0 &&
       d.descricao !== "Gasolina" &&
       d.descricao !== "Seguro" &&
       d.descricao !== "Parcela"
     ) {
-      gastoCustosGerais += Math.abs(valor);
+      gastoCustosGerais += Math.abs(d.valor);
     }
 
     const tr = document.createElement("tr");
@@ -702,15 +692,15 @@ function render() {
     tr.innerHTML = `
       <td>${formatarData(d.data)}</td>
       <td>${d.descricao}</td>
-      <td class="${valor > 0 ? "positivo" : valor < 0 ? "negativo" : ""}">
-        ${valor === 0 ? "-" : moeda(valor)}
+      <td class="${d.valor > 0 ? "positivo" : d.valor < 0 ? "negativo" : ""}">
+        ${d.valor === 0 ? "-" : moeda(d.valor)}
       </td>
-      <td>${d.litros ? numero(Number(d.litros)) : "-"}</td>
+      <td>${d.litros ? numero(d.litros) : "-"}</td>
       <td>${d.km || "-"}</td>
       <td><button class="btn-excluir" onclick="excluir(${index})">Excluir</button></td>
     `;
 
-    el("tabela").appendChild(tr);
+    tabela.appendChild(tr);
   });
 
   let kmRodado = 0;
@@ -734,35 +724,44 @@ function render() {
   const metaIdeal = config.diasPlanejados > 0 ? custosTotais / config.diasPlanejados : 0;
   const metaAjustadaValor = diasRestantes > 0 ? Math.max((custosSemParcela - entradas) / diasRestantes, 0) : 0;
 
-  el("saldoInicialResumo").innerText = moeda(config.saldoInicial);
-  el("diasPlanejadosResumo").innerText = config.diasPlanejados || 0;
-  el("entradas").innerText = moeda(entradas);
-  el("saidas").innerText = moeda(saidas);
-  el("resultado").innerText = moeda(resultadoMes);
+  saldoInicialResumo.innerText = moeda(config.saldoInicial);
+  if (document.getElementById("diasPlanejadosResumo")) diasPlanejadosResumo.innerText = config.diasPlanejados || 0;
+  entradasEl().innerText = moeda(entradas);
+  saidasEl().innerText = moeda(saidas);
+  resultado.innerText = moeda(resultadoMes);
 
-  el("kmRodado").innerText = kmRodado.toLocaleString("pt-BR");
-  el("litrosTotal").innerText = numero(litrosTotal);
-  el("gastoGasolina").innerText = moeda(gastoGasolina);
-  el("receitaPorKm").innerText = moeda(receitaPorKm);
-  el("custoPorKm").innerText = moeda(custoPorKm);
-  el("lucroPorKm").innerText = moeda(lucroPorKm);
+  kmRodadoEl().innerText = kmRodado.toLocaleString("pt-BR");
+  litrosTotalEl().innerText = numero(litrosTotal);
+  gastoGasolinaEl().innerText = moeda(gastoGasolina);
+  receitaPorKmEl().innerText = moeda(receitaPorKm);
+  custoPorKmEl().innerText = moeda(custoPorKm);
+  lucroPorKmEl().innerText = moeda(lucroPorKm);
 
-  el("metaGasolinaDefinida").innerText = moeda(config.metaGasolina);
-  el("metaSeguroDefinida").innerText = moeda(config.metaSeguro);
-  el("metaCustosGeraisDefinida").innerText = moeda(config.metaCustosGerais);
-  el("metaParcelaDefinida").innerText = moeda(config.metaParcela);
+  metaGasolinaDefinida.innerText = moeda(config.metaGasolina);
+  metaSeguroDefinida.innerText = moeda(config.metaSeguro);
+  metaCustosGeraisDefinida.innerText = moeda(config.metaCustosGerais);
+  metaParcelaDefinida.innerText = moeda(config.metaParcela);
 
-  el("saldoMetaGasolina").innerText = moeda(config.metaGasolina - gastoGasolina);
-  el("saldoMetaSeguro").innerText = moeda(config.metaSeguro - gastoSeguro);
-  el("saldoMetaCustosGerais").innerText = moeda(config.metaCustosGerais - gastoCustosGerais);
-  el("saldoMetaParcela").innerText = moeda(config.metaParcela - gastoParcela);
+  saldoMetaGasolina.innerText = moeda(config.metaGasolina - gastoGasolina);
+  saldoMetaSeguro.innerText = moeda(config.metaSeguro - gastoSeguro);
+  saldoMetaCustosGerais.innerText = moeda(config.metaCustosGerais - gastoCustosGerais);
+  saldoMetaParcela.innerText = moeda(config.metaParcela - gastoParcela);
 
-  el("diasTrabalhados").innerText = diasTrabalhadosValor;
-  el("mediaDia").innerText = moeda(mediaDiaValor);
-  el("metaDiariaMinima").innerText = moeda(metaMinima);
-  el("metaDiariaIdeal").innerText = moeda(metaIdeal);
-  el("metaAjustada").innerText = moeda(metaAjustadaValor);
+  diasTrabalhados.innerText = diasTrabalhadosValor;
+  mediaDia.innerText = moeda(mediaDiaValor);
+  metaDiariaMinima.innerText = moeda(metaMinima);
+  metaDiariaIdeal.innerText = moeda(metaIdeal);
+  metaAjustada.innerText = moeda(metaAjustadaValor);
 }
+
+function entradasEl() { return document.getElementById("entradas"); }
+function saidasEl() { return document.getElementById("saidas"); }
+function kmRodadoEl() { return document.getElementById("kmRodado"); }
+function litrosTotalEl() { return document.getElementById("litrosTotal"); }
+function gastoGasolinaEl() { return document.getElementById("gastoGasolina"); }
+function receitaPorKmEl() { return document.getElementById("receitaPorKm"); }
+function custoPorKmEl() { return document.getElementById("custoPorKm"); }
+function lucroPorKmEl() { return document.getElementById("lucroPorKm"); }
 
 async function excluir(index) {
   if (!confirm("Excluir este lançamento?")) return;
@@ -814,16 +813,16 @@ function definirDataHoje() {
   const ano = hoje.getFullYear();
   const mes = String(hoje.getMonth() + 1).padStart(2, "0");
   const dia = String(hoje.getDate()).padStart(2, "0");
-  el("data").value = `${ano}-${mes}-${dia}`;
+  data.value = `${ano}-${mes}-${dia}`;
 }
 
 function preencherCamposConfig() {
-  el("saldoInicial").value = config.saldoInicial || "";
-  el("metaGasolina").value = config.metaGasolina ? moeda(config.metaGasolina) : "";
-  el("metaSeguro").value = config.metaSeguro ? moeda(config.metaSeguro) : "";
-  el("metaCustosGerais").value = config.metaCustosGerais ? moeda(config.metaCustosGerais) : "";
-  el("metaParcela").value = config.metaParcela ? moeda(config.metaParcela) : "";
-  el("diasPlanejados").value = config.diasPlanejados || "";
+  saldoInicial.value = config.saldoInicial || "";
+  metaGasolina.value = config.metaGasolina ? moeda(config.metaGasolina) : "";
+  metaSeguro.value = config.metaSeguro ? moeda(config.metaSeguro) : "";
+  metaCustosGerais.value = config.metaCustosGerais ? moeda(config.metaCustosGerais) : "";
+  metaParcela.value = config.metaParcela ? moeda(config.metaParcela) : "";
+  diasPlanejados.value = config.diasPlanejados || "";
 }
 
 function salvarBackupLocal() {
@@ -834,54 +833,88 @@ function salvarBackupLocal() {
 function carregarBackupLocal() {
   const salvo = localStorage.getItem(STORAGE_KEY);
   const configSalva = localStorage.getItem(CONFIG_KEY);
+  let dadosLocais = [];
+  let configLocal = { ...config };
 
   if (salvo) {
-    try { dados = JSON.parse(salvo); } catch { dados = []; }
+    try { dadosLocais = JSON.parse(salvo) || []; } catch { dadosLocais = []; }
   }
 
   if (configSalva) {
-    try { config = { ...config, ...JSON.parse(configSalva) }; } catch {}
+    try { configLocal = { ...configLocal, ...JSON.parse(configSalva) }; } catch {}
   }
 
-  preencherCamposConfig();
+  return { dadosLocais, configLocal };
 }
 
 async function salvarEstado() {
   salvarBackupLocal();
 
-  await setDoc(estadoRef, {
-    dados,
-    config,
-    atualizadoEm: new Date().toISOString()
-  });
+  if (!firebaseCarregado) return;
+
+  salvandoFirebase = true;
+  try {
+    await estadoRef.set({
+      config,
+      dados,
+      atualizadoEm: new Date().toISOString()
+    });
+  } catch (erro) {
+    console.error("Erro ao salvar no Firebase:", erro);
+    alert("Não consegui salvar na nuvem. Os dados ficaram salvos neste navegador.");
+  } finally {
+    salvandoFirebase = false;
+  }
 }
 
 function iniciarSincronizacaoFirebase() {
-  onSnapshot(estadoRef, (snapshot) => {
-    if (!snapshot.exists()) {
-      carregandoFirebase = false;
+  const { dadosLocais, configLocal } = carregarBackupLocal();
+
+  estadoRef.onSnapshot(async (snapshot) => {
+    firebaseCarregado = true;
+
+    if (!snapshot.exists) {
+      dados = dadosLocais;
+      config = { ...config, ...configLocal };
+      preencherCamposConfig();
+      render();
+      if (dados.length > 0 || Object.values(config).some(v => Number(v) > 0)) {
+        await salvarEstado();
+      }
       return;
     }
 
-    const estado = snapshot.data();
+    const estado = snapshot.data() || {};
+    const dadosFirebase = Array.isArray(estado.dados) ? estado.dados : [];
+    const configFirebase = estado.config || {};
 
-    dados = Array.isArray(estado.dados) ? estado.dados : [];
-    config = { ...config, ...(estado.config || {}) };
+    if (dadosFirebase.length === 0 && dadosLocais.length > 0) {
+      dados = dadosLocais;
+      config = { ...config, ...configLocal };
+      preencherCamposConfig();
+      render();
+      await salvarEstado();
+      return;
+    }
+
+    dados = dadosFirebase;
+    config = { ...config, ...configFirebase };
 
     salvarBackupLocal();
     preencherCamposConfig();
     render();
-
-    carregandoFirebase = false;
   }, (erro) => {
-    console.error("Erro ao sincronizar Firebase:", erro);
-    alert("Erro ao sincronizar com Firebase. Verifique as regras do Firestore.");
+    console.error("Erro ao carregar Firebase:", erro);
+    const backup = carregarBackupLocal();
+    dados = backup.dadosLocais;
+    config = { ...config, ...backup.configLocal };
+    preencherCamposConfig();
+    render();
+    alert("Não consegui carregar a nuvem. Usei o backup deste navegador.");
   });
 }
 
-async function exportarJSON() {
-  await salvarConfiguracoes();
-
+function exportarJSON() {
   const pacote = {
     config,
     dados
@@ -923,7 +956,7 @@ function importarJSON(event) {
       render();
       await salvarEstado();
 
-      alert("Dados importados com sucesso e sincronizados no Firebase");
+      alert("Dados importados com sucesso");
     } catch {
       alert("Erro ao importar arquivo");
     }
@@ -933,7 +966,7 @@ function importarJSON(event) {
 }
 
 async function limparDados() {
-  if (!confirm("Isso vai apagar os dados salvos neste navegador e no Firebase. Continuar?")) return;
+  if (!confirm("Isso vai apagar os dados deste app na nuvem e neste navegador. Continuar?")) return;
 
   dados = [];
   config = {
@@ -953,21 +986,11 @@ async function limparDados() {
   await salvarEstado();
 }
 
-window.trocarAba = trocarAba;
-window.selecionar = selecionar;
-window.adicionar = adicionar;
-window.salvarConfiguracoes = salvarConfiguracoes;
-window.formatarCampoMoeda = formatarCampoMoeda;
-window.exportarJSON = exportarJSON;
-window.importarJSON = importarJSON;
-window.limparDados = limparDados;
-window.excluir = excluir;
-
 definirDataHoje();
-carregarBackupLocal();
 selecionar("ganho");
 render();
 iniciarSincronizacaoFirebase();
 </script>
+
 </body>
 </html>
