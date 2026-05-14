@@ -511,6 +511,7 @@ const STORAGE_KEY = "controleUberFelipe";
 const CONFIG_KEY = "controleUberFelipeConfig";
 let firebaseCarregado = false;
 let salvandoFirebase = false;
+let bloqueiaRestauracaoLocal = false;
 
 document.getElementById("importarArquivo").addEventListener("change", importarJSON);
 
@@ -903,7 +904,8 @@ function iniciarSincronizacaoFirebase() {
       config = { ...config, ...configLocal };
       preencherCamposConfig();
       render();
-      if (dados.length > 0 || Object.values(config).some(v => Number(v) > 0)) {
+
+      if (!bloqueiaRestauracaoLocal && (dados.length > 0 || Object.values(config).some(v => Number(v) > 0))) {
         await salvarEstado();
       }
       return;
@@ -912,8 +914,11 @@ function iniciarSincronizacaoFirebase() {
     const estado = snapshot.data() || {};
     const dadosFirebase = Array.isArray(estado.dados) ? estado.dados : [];
     const configFirebase = estado.config || {};
+    const foiResetado = !!estado.resetadoEm;
 
-    if (dadosFirebase.length === 0 && dadosLocais.length > 0) {
+    // Primeira migração: se a nuvem estiver vazia e existir backup local,
+    // restaura apenas quando o estado NÃO veio de uma limpeza intencional.
+    if (!bloqueiaRestauracaoLocal && !foiResetado && dadosFirebase.length === 0 && dadosLocais.length > 0) {
       dados = dadosLocais;
       normalizarDados();
       config = { ...config, ...configLocal };
@@ -986,6 +991,7 @@ function importarJSON(event) {
       render();
       await salvarEstado();
 
+      event.target.value = "";
       alert("Dados importados com sucesso");
     } catch {
       alert("Erro ao importar arquivo");
@@ -996,24 +1002,41 @@ function importarJSON(event) {
 }
 
 async function limparDados() {
-  if (!confirm("Vai apagar TUDO da nuvem. Continuar?")) return;
+  if (!confirm("Vai apagar TUDO da nuvem e deste navegador. Continuar?")) return;
 
-  // pega todos os lançamentos
-  const snapshot = await getDocs(collection(db, "lancamentos"));
+  bloqueiaRestauracaoLocal = true;
 
-  // apaga todos
-  const promises = snapshot.docs.map(d =>
-    deleteDoc(doc(db, "lancamentos", d.id))
-  );
-
-  await Promise.all(promises);
-
-  // limpa memória local
   dados = [];
+  config = {
+    saldoInicial: 0,
+    metaGasolina: 0,
+    metaSeguro: 0,
+    metaCustosGerais: 0,
+    metaParcela: 0,
+    diasPlanejados: 0
+  };
 
+  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(CONFIG_KEY);
+
+  preencherCamposConfig();
   render();
 
-  alert("Tudo apagado");
+  try {
+    await estadoRef.set({
+      config,
+      dados: [],
+      atualizadoEm: new Date().toISOString(),
+      resetadoEm: new Date().toISOString()
+    });
+
+    alert("Tudo apagado com sucesso.");
+  } catch (erro) {
+    console.error("Erro ao limpar Firebase:", erro);
+    alert("Não consegui apagar na nuvem. Tente novamente.");
+  } finally {
+    bloqueiaRestauracaoLocal = false;
+  }
 }
 
 definirDataHoje();
