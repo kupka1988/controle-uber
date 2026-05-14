@@ -474,7 +474,7 @@ th {
 
   <input type="file" id="importarArquivo" accept=".json" class="hidden">
 
-  <button class="perigo" onclick="limparDados()">Limpar dados locais</button>
+  <button class="perigo" onclick="limparDados()">Limpar tudo</button>
 </div>
 
 
@@ -616,7 +616,7 @@ async function adicionar() {
   }
 
   dados.push({
-    id: Date.now(),
+    id: gerarId(),
     data,
     tipo,
     descricao,
@@ -697,7 +697,7 @@ function render() {
       </td>
       <td>${d.litros ? numero(d.litros) : "-"}</td>
       <td>${d.km || "-"}</td>
-      <td><button class="btn-excluir" onclick="excluir(${index})">Excluir</button></td>
+      <td><button class="btn-excluir" onclick="excluirPorId('${String(d.id)}')">Excluir</button></td>
     `;
 
     tabela.appendChild(tr);
@@ -763,9 +763,33 @@ function receitaPorKmEl() { return document.getElementById("receitaPorKm"); }
 function custoPorKmEl() { return document.getElementById("custoPorKm"); }
 function lucroPorKmEl() { return document.getElementById("lucroPorKm"); }
 
-async function excluir(index) {
+function gerarId() {
+  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function normalizarDados() {
+  dados = (Array.isArray(dados) ? dados : []).map(item => ({
+    id: item.id ? String(item.id) : gerarId(),
+    data: item.data || "",
+    tipo: item.tipo || "",
+    descricao: item.descricao || "",
+    valor: Number(item.valor) || 0,
+    litros: item.litros !== undefined && item.litros !== null && item.litros !== "" ? Number(item.litros) : null,
+    km: item.km !== undefined && item.km !== null && item.km !== "" ? Number(item.km) : null
+  }));
+}
+
+async function excluirPorId(id) {
   if (!confirm("Excluir este lançamento?")) return;
-  dados.splice(index, 1);
+
+  const antes = dados.length;
+  dados = dados.filter(item => String(item.id) !== String(id));
+
+  if (dados.length === antes) {
+    alert("Não encontrei este lançamento para excluir. Atualize a página e tente novamente.");
+    return;
+  }
+
   render();
   await salvarEstado();
 }
@@ -875,6 +899,7 @@ function iniciarSincronizacaoFirebase() {
 
     if (!snapshot.exists) {
       dados = dadosLocais;
+      normalizarDados();
       config = { ...config, ...configLocal };
       preencherCamposConfig();
       render();
@@ -890,6 +915,7 @@ function iniciarSincronizacaoFirebase() {
 
     if (dadosFirebase.length === 0 && dadosLocais.length > 0) {
       dados = dadosLocais;
+      normalizarDados();
       config = { ...config, ...configLocal };
       preencherCamposConfig();
       render();
@@ -898,6 +924,7 @@ function iniciarSincronizacaoFirebase() {
     }
 
     dados = dadosFirebase;
+    normalizarDados();
     config = { ...config, ...configFirebase };
 
     salvarBackupLocal();
@@ -907,6 +934,7 @@ function iniciarSincronizacaoFirebase() {
     console.error("Erro ao carregar Firebase:", erro);
     const backup = carregarBackupLocal();
     dados = backup.dadosLocais;
+    normalizarDados();
     config = { ...config, ...backup.configLocal };
     preencherCamposConfig();
     render();
@@ -944,8 +972,10 @@ function importarJSON(event) {
 
       if (Array.isArray(importado)) {
         dados = importado;
+        normalizarDados();
       } else if (importado.dados && Array.isArray(importado.dados)) {
         dados = importado.dados;
+        normalizarDados();
         if (importado.config) config = { ...config, ...importado.config };
         if (importado.saldoInicial !== undefined) config.saldoInicial = parseFloat(importado.saldoInicial) || 0;
       } else {
