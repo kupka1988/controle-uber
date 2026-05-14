@@ -911,5 +911,33 @@ selecionar("ganho");
 render();
 </script>
 
+... teu código todo ...
+
+<script>
+  // teu JS atual
+</script>
+
+<!-- 🔥 COLOCA AQUI -->
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAUzriWAPOLNVwaGkT02FlIuxgjzIv3COw",
+  authDomain: "controle-uber-9af6b.firebaseapp.com",
+  projectId: "controle-uber-9af6b",
+  storageBucket: "controle-uber-9af6b.firebasestorage.app",
+  messagingSenderId: "847499399736",
+  appId: "1:847499399736:web:f75460529adf76e4f74ccd"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.db = db;
+
+</script>
+
 </body>
 </html>
