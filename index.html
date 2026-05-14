@@ -327,6 +327,18 @@ tr:last-child td { border-bottom: none; }
 .tela { display: block; }
 .tela.hidden { display: none; }
 
+
+input[type="date"] {
+  min-width: 0;
+  max-width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.historico-table td[data-label="Valor"] {
+  white-space: nowrap;
+}
+
 @media (max-width: 800px) {
   body { padding: 12px; }
   .app-header { flex-direction: column; align-items: stretch; }
@@ -336,6 +348,64 @@ tr:last-child td { border-bottom: none; }
   table { font-size: 12px; }
   th, td { padding: 10px 6px; }
   .resumo-item strong { font-size: 19px; }
+}
+
+
+@media (max-width: 640px) {
+  .historico-table,
+  .historico-table thead,
+  .historico-table tbody,
+  .historico-table tr,
+  .historico-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .historico-table thead {
+    display: none;
+  }
+
+  .historico-table tr {
+    background: var(--surface-soft);
+    border: 1px solid #eef2f7;
+    border-radius: 16px;
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  .historico-table td {
+    border-bottom: none;
+    padding: 7px 0;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+    text-align: right;
+  }
+
+  .historico-table td::before {
+    content: attr(data-label);
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    text-align: left;
+  }
+
+  .historico-table td[data-label="Ação"] {
+    display: block;
+    padding-top: 10px;
+  }
+
+  .historico-table td[data-label="Ação"]::before {
+    content: "";
+  }
+
+  .historico-table .btn-excluir {
+    width: 100%;
+    padding: 10px 12px;
+  }
 }
 
 @media (max-width: 430px) {
@@ -394,16 +464,16 @@ tr:last-child td { border-bottom: none; }
 
   <div id="campoValor">
     <label id="labelValor">Valor ganho</label>
-    <input type="number" id="valor" placeholder="Ex: 150.00" step="0.01">
+    <input type="text" id="valor" inputmode="decimal" placeholder="R$ 0,00" onblur="formatarCampoMoeda(this)">
   </div>
 
   <div id="campoLitros" class="hidden">
     <label>Litros abastecidos</label>
-    <input type="number" id="litros" placeholder="Ex: 42.5" step="0.01">
+    <input type="text" id="litros" inputmode="decimal" placeholder="Ex: 42,5">
   </div>
 
   <label>KM atual</label>
-  <input type="number" id="km" placeholder="Opcional, exceto no lançamento de KM">
+  <input type="text" id="km" inputmode="numeric" placeholder="Opcional, exceto no lançamento de KM">
 
   <button onclick="adicionar()">Adicionar lançamento</button>
 </div>
@@ -542,7 +612,7 @@ tr:last-child td { border-bottom: none; }
 <div class="card">
   <h3>Lançamentos</h3>
 
-  <table>
+  <table class="historico-table">
     <thead>
       <tr>
         <th>Data</th>
@@ -565,10 +635,10 @@ tr:last-child td { border-bottom: none; }
   <h3>Configurações do Mês</h3>
 
   <label>Saldo inicial do mês</label>
-  <input type="number" id="saldoInicial" placeholder="Ex: 0.00" step="0.01">
+  <input type="text" id="saldoInicial" inputmode="decimal" placeholder="R$ 0,00" onblur="formatarCampoMoeda(this)">
 
   <label>Dias planejados</label>
-  <input type="number" id="diasPlanejados" placeholder="Ex: 21">
+  <input type="text" id="diasPlanejados" inputmode="numeric" placeholder="Ex: 21">
 
   <button onclick="salvarConfiguracoes()">Salvar configurações</button>
 </div>
@@ -579,22 +649,22 @@ tr:last-child td { border-bottom: none; }
   <div class="grid-metas-config">
     <div>
       <label>Gasolina</label>
-      <input type="text" id="metaGasolina" placeholder="R$ 0,00" onblur="formatarCampoMoeda(this)">
+      <input type="text" id="metaGasolina" inputmode="decimal" placeholder="R$ 0,00" onblur="formatarCampoMoeda(this)">
     </div>
 
     <div>
       <label>Seguro</label>
-      <input type="text" id="metaSeguro" placeholder="R$ 0,00" onblur="formatarCampoMoeda(this)">
+      <input type="text" id="metaSeguro" inputmode="decimal" placeholder="R$ 0,00" onblur="formatarCampoMoeda(this)">
     </div>
 
     <div>
       <label>Custos gerais</label>
-      <input type="text" id="metaCustosGerais" placeholder="R$ 0,00" onblur="formatarCampoMoeda(this)">
+      <input type="text" id="metaCustosGerais" inputmode="decimal" placeholder="R$ 0,00" onblur="formatarCampoMoeda(this)">
     </div>
 
     <div>
       <label>Parcela</label>
-      <input type="text" id="metaParcela" placeholder="R$ 0,00" onblur="formatarCampoMoeda(this)">
+      <input type="text" id="metaParcela" inputmode="decimal" placeholder="R$ 0,00" onblur="formatarCampoMoeda(this)">
     </div>
   </div>
 
@@ -723,9 +793,9 @@ async function adicionar() {
   if (!data) return alert("Informe a data");
 
   let descricao = "";
-  let valorLancamento = parseFloat(valorCampo) || 0;
-  let litros = parseFloat(litrosCampo) || null;
-  let km = parseFloat(kmCampo) || null;
+  let valorLancamento = parseMoeda(valorCampo);
+  let litros = parseDecimalBR(litrosCampo) || null;
+  let km = parseDecimalBR(kmCampo) || null;
 
   if (tipo === "ganho") {
     if (!valorCampo) return alert("Informe o valor ganho");
@@ -769,7 +839,7 @@ async function adicionar() {
 }
 
 async function salvarConfiguracoes() {
-  config.saldoInicial = parseFloat(saldoInicial.value) || 0;
+  config.saldoInicial = parseMoeda(saldoInicial.value);
   config.metaGasolina = parseMoeda(metaGasolina.value);
   config.metaSeguro = parseMoeda(metaSeguro.value);
   config.metaCustosGerais = parseMoeda(metaCustosGerais.value);
@@ -828,14 +898,14 @@ function render() {
     const tr = document.createElement("tr");
 
     tr.innerHTML = `
-      <td>${formatarData(d.data)}</td>
-      <td>${d.descricao}</td>
-      <td class="${d.valor > 0 ? "positivo" : d.valor < 0 ? "negativo" : ""}">
+      <td data-label="Data">${formatarData(d.data)}</td>
+      <td data-label="Descrição">${d.descricao}</td>
+      <td data-label="Valor" class="${d.valor > 0 ? "positivo" : d.valor < 0 ? "negativo" : ""}">
         ${d.valor === 0 ? "-" : moeda(d.valor)}
       </td>
-      <td>${d.litros ? numero(d.litros) : "-"}</td>
-      <td>${d.km || "-"}</td>
-      <td><button class="btn-excluir" onclick="excluirPorId('${String(d.id)}')">Excluir</button></td>
+      <td data-label="Litros">${d.litros ? numero(d.litros) : "-"}</td>
+      <td data-label="KM">${d.km || "-"}</td>
+      <td data-label="Ação"><button class="btn-excluir" onclick="excluirPorId('${String(d.id)}')">Excluir</button></td>
     `;
 
     tabela.appendChild(tr);
@@ -959,6 +1029,18 @@ function parseMoeda(valor) {
   return parseFloat(limpo) || 0;
 }
 
+function parseDecimalBR(valor) {
+  if (!valor) return 0;
+
+  const texto = valor
+    .toString()
+    .replace(/\./g, "")
+    .replace(",", ".")
+    .trim();
+
+  return parseFloat(texto) || 0;
+}
+
 function formatarCampoMoeda(campo) {
   const valor = parseMoeda(campo.value);
   campo.value = valor ? moeda(valor) : "";
@@ -979,7 +1061,7 @@ function definirDataHoje() {
 }
 
 function preencherCamposConfig() {
-  saldoInicial.value = config.saldoInicial || "";
+  saldoInicial.value = config.saldoInicial ? moeda(config.saldoInicial) : "";
   metaGasolina.value = config.metaGasolina ? moeda(config.metaGasolina) : "";
   metaSeguro.value = config.metaSeguro ? moeda(config.metaSeguro) : "";
   metaCustosGerais.value = config.metaCustosGerais ? moeda(config.metaCustosGerais) : "";
