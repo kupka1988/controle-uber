@@ -6,23 +6,136 @@
 <title>Controle Uber</title>
 
 <style>
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-  background: #f4f6f8;
-  margin: 0;
-  padding: 16px;
-  color: #222;
+
+:root {
+  --bg: #f6f7fb;
+  --surface: #ffffff;
+  --surface-soft: #f9fafb;
+  --text: #111827;
+  --muted: #6b7280;
+  --line: #e5e7eb;
+  --primary: #111827;
+  --green: #15803d;
+  --green-soft: #ecfdf3;
+  --orange: #ea580c;
+  --orange-soft: #fff7ed;
+  --blue: #2563eb;
+  --blue-soft: #eff6ff;
+  --red: #dc2626;
+  --red-soft: #fef2f2;
+  --shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
+  --radius: 18px;
 }
 
-h1 { font-size: 24px; margin: 0 0 16px; }
-h3 { margin: 0 0 12px; }
+* { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  background: radial-gradient(circle at top left, #eef2ff 0, #f6f7fb 32%, #f7f8fa 100%);
+  margin: 0;
+  padding: 18px;
+  color: var(--text);
+}
+
+.app-shell {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.app-title h1 {
+  font-size: 26px;
+  letter-spacing: -0.04em;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.app-title p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.app-status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--surface);
+  color: #166534;
+  border: 1px solid #bbf7d0;
+  border-radius: 999px;
+  padding: 7px 11px;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+  white-space: nowrap;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  background: #22c55e;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+h3 {
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  color: #111827;
+  margin: 0 0 14px;
+}
 
 .card {
-  background: white;
-  border-radius: 14px;
-  padding: 16px;
+  background: rgba(255,255,255,0.92);
+  border: 1px solid rgba(229, 231, 235, 0.9);
+  border-radius: var(--radius);
+  padding: 18px;
   margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(8px);
+}
+
+.abas {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  background: #eef0f4;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 5px;
+  margin-bottom: 16px;
+}
+
+.aba-btn {
+  background: transparent;
+  color: var(--muted);
+  font-weight: 700;
+  margin-top: 0;
+  border-radius: 12px;
+  padding: 11px 10px;
+  font-size: 14px;
+  box-shadow: none;
+}
+
+.aba-btn.ativo {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
 }
 
 .botoes, .acoes {
@@ -32,37 +145,51 @@ h3 { margin: 0 0 12px; }
 }
 
 .botao {
-  padding: 16px;
-  border-radius: 12px;
+  padding: 16px 14px;
+  border-radius: 16px;
   color: white;
-  font-weight: 700;
-  text-align: center;
+  font-weight: 800;
+  text-align: left;
   cursor: pointer;
-  border: 3px solid transparent;
+  border: 2px solid transparent;
+  letter-spacing: -0.01em;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
 }
 
-.botao.ativo { border-color: #111; }
+.botao.ativo {
+  border-color: rgba(17,24,39,0.75);
+  transform: translateY(-1px);
+}
 
-.ganho { background: #16a34a; }
-.gasolina { background: #f97316; }
-.despesas { background: #374151; }
-.kmBtn { background: #2563eb; }
+.ganho { background: linear-gradient(135deg, #16a34a, #15803d); }
+.gasolina { background: linear-gradient(135deg, #f97316, #ea580c); }
+.despesas { background: linear-gradient(135deg, #4b5563, #1f2937); }
+.kmBtn { background: linear-gradient(135deg, #3b82f6, #2563eb); }
 
 label {
   display: block;
-  margin-top: 12px;
-  font-size: 14px;
-  color: #555;
+  margin-top: 13px;
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--muted);
 }
 
 input, select {
   width: 100%;
-  padding: 13px;
-  margin-top: 6px;
-  border-radius: 10px;
-  border: 1px solid #ddd;
+  padding: 13px 14px;
+  margin-top: 7px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
   font-size: 16px;
-  box-sizing: border-box;
+  background: #fff;
+  color: var(--text);
+  outline: none;
+  transition: border 0.15s ease, box-shadow 0.15s ease;
+}
+
+input:focus, select:focus {
+  border-color: #93c5fd;
+  box-shadow: 0 0 0 4px rgba(147, 197, 253, 0.25);
 }
 
 button {
@@ -70,15 +197,18 @@ button {
   padding: 13px;
   margin-top: 10px;
   border: none;
-  border-radius: 10px;
-  background: #111;
+  border-radius: 14px;
+  background: var(--primary);
   color: white;
-  font-size: 16px;
+  font-size: 15px;
+  font-weight: 750;
   cursor: pointer;
+  transition: transform 0.12s ease, opacity 0.12s ease;
 }
 
-button.secundario { background: #4b5563; }
-button.perigo { background: #dc2626; }
+button:active { transform: scale(0.99); }
+button.secundario { background: #475569; }
+button.perigo { background: var(--red); }
 
 .painel {
   display: grid;
@@ -93,25 +223,30 @@ button.perigo { background: #dc2626; }
 }
 
 .resumo-item {
-  background: #f8fafc;
-  border-radius: 12px;
-  padding: 12px;
+  background: var(--surface-soft);
+  border: 1px solid #eef2f7;
+  border-radius: 16px;
+  padding: 14px;
 }
 
 .resumo-item span {
   display: block;
-  font-size: 13px;
-  color: #666;
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .resumo-item strong {
   display: block;
-  margin-top: 4px;
-  font-size: 17px;
+  margin-top: 7px;
+  font-size: 20px;
+  letter-spacing: -0.03em;
 }
 
 .destaque {
-  background: #eef6ff;
+  background: var(--blue-soft);
   border: 1px solid #bfdbfe;
 }
 
@@ -136,10 +271,30 @@ button.perigo { background: #dc2626; }
   gap: 10px;
 }
 
-.tabela-metas th,
-.tabela-metas td {
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 14px;
+  overflow: hidden;
+}
+
+th, td {
+  padding: 12px 9px;
+  border-bottom: 1px solid #eef2f7;
   text-align: left;
 }
+
+th {
+  color: var(--muted);
+  font-weight: 800;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: #fafafa;
+}
+
+tr:last-child td { border-bottom: none; }
 
 .tabela-metas td:nth-child(2),
 .tabela-metas td:nth-child(3),
@@ -149,80 +304,62 @@ button.perigo { background: #dc2626; }
 }
 
 .tabela-metas td.valor-metrica {
-  font-weight: 700;
+  font-weight: 800;
   font-size: 17px;
+  letter-spacing: -0.02em;
 }
 
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-}
-
-th, td {
-  padding: 9px 6px;
-  border-bottom: 1px solid #eee;
-  text-align: left;
-}
-
-th {
-  color: #555;
-  font-weight: 600;
-}
-
-.positivo { color: #16a34a; font-weight: 700; }
-.negativo { color: #dc2626; font-weight: 700; }
-
+.positivo { color: var(--green); font-weight: 800; }
+.negativo { color: var(--red); font-weight: 800; }
 .hidden { display: none; }
 
 .btn-excluir {
   width: auto;
-  padding: 6px 9px;
+  padding: 7px 10px;
   margin: 0;
   font-size: 12px;
-  background: #dc2626;
+  background: var(--red-soft);
+  color: var(--red);
+  border: 1px solid #fecaca;
+  border-radius: 10px;
 }
 
-.abas {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.aba-btn {
-  background: #e5e7eb;
-  color: #111;
-  font-weight: 700;
-  margin-top: 0;
-}
-
-.aba-btn.ativo {
-  background: #111;
-  color: white;
-}
-
-.tela {
-  display: block;
-}
-
-.tela.hidden {
-  display: none;
-}
+.tela { display: block; }
+.tela.hidden { display: none; }
 
 @media (max-width: 800px) {
   body { padding: 12px; }
+  .app-header { flex-direction: column; align-items: stretch; }
+  .app-status { align-items: flex-start; }
   .painel, .grid-metas-config { grid-template-columns: 1fr; }
+  .botoes { grid-template-columns: 1fr 1fr; }
   table { font-size: 12px; }
-  th, td { padding: 7px 4px; }
+  th, td { padding: 10px 6px; }
+  .resumo-item strong { font-size: 19px; }
 }
+
+@media (max-width: 430px) {
+  body { padding: 10px; }
+  .card { padding: 14px; border-radius: 16px; }
+  .botao { padding: 14px 12px; font-size: 14px; }
+  .aba-btn { font-size: 13px; padding: 10px 6px; }
+}
+
 </style>
 </head>
 
 <body>
 
-<h1>Módulo Uber</h1>
+<div class="app-shell">
+<header class="app-header">
+  <div class="app-title">
+    <h1>Controle Uber</h1>
+    <p id="mesAtualTexto">Operação mensal</p>
+  </div>
+  <div class="app-status">
+    <div class="status-pill"><span class="status-dot"></span><span id="statusSync">Conectado à nuvem</span></div>
+  </div>
+</header>
 
 <div class="abas">
   <button id="abaInicio" class="aba-btn ativo" onclick="trocarAba('inicio')">Início</button>
@@ -874,6 +1011,7 @@ function carregarBackupLocal() {
 
 async function salvarEstado() {
   salvarBackupLocal();
+  setStatusSync("Salvando...", "salvando");
 
   if (!firebaseCarregado) return;
 
@@ -884,8 +1022,10 @@ async function salvarEstado() {
       dados,
       atualizadoEm: new Date().toISOString()
     });
+    setStatusSync("Sincronizado", "ok");
   } catch (erro) {
     console.error("Erro ao salvar no Firebase:", erro);
+    setStatusSync("Falha ao sincronizar", "erro");
     alert("Não consegui salvar na nuvem. Os dados ficaram salvos neste navegador.");
   } finally {
     salvandoFirebase = false;
@@ -935,6 +1075,7 @@ function iniciarSincronizacaoFirebase() {
     salvarBackupLocal();
     preencherCamposConfig();
     render();
+    setStatusSync("Sincronizado", "ok");
   }, (erro) => {
     console.error("Erro ao carregar Firebase:", erro);
     const backup = carregarBackupLocal();
@@ -943,6 +1084,7 @@ function iniciarSincronizacaoFirebase() {
     config = { ...config, ...backup.configLocal };
     preencherCamposConfig();
     render();
+    setStatusSync("Usando backup local", "erro");
     alert("Não consegui carregar a nuvem. Usei o backup deste navegador.");
   });
 }
@@ -1039,11 +1181,43 @@ async function limparDados() {
   }
 }
 
+
+function atualizarCabecalho() {
+  const meses = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+  const agora = new Date();
+  const texto = `${meses[agora.getMonth()]} de ${agora.getFullYear()}`;
+  const el = document.getElementById("mesAtualTexto");
+  if (el) el.innerText = texto.charAt(0).toUpperCase() + texto.slice(1);
+}
+
+function setStatusSync(texto, modo = "ok") {
+  const el = document.getElementById("statusSync");
+  const dot = document.querySelector(".status-dot");
+  const pill = document.querySelector(".status-pill");
+  if (!el || !dot || !pill) return;
+  el.innerText = texto;
+  if (modo === "erro") {
+    dot.style.background = "#ef4444";
+    pill.style.color = "#991b1b";
+    pill.style.borderColor = "#fecaca";
+  } else if (modo === "salvando") {
+    dot.style.background = "#f59e0b";
+    pill.style.color = "#92400e";
+    pill.style.borderColor = "#fed7aa";
+  } else {
+    dot.style.background = "#22c55e";
+    pill.style.color = "#166534";
+    pill.style.borderColor = "#bbf7d0";
+  }
+}
+
+atualizarCabecalho();
 definirDataHoje();
 selecionar("ganho");
 render();
 iniciarSincronizacaoFirebase();
 </script>
 
+</div>
 </body>
 </html>
