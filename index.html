@@ -996,24 +996,24 @@ function importarJSON(event) {
 }
 
 async function limparDados() {
-  if (!confirm("Isso vai apagar os dados deste app na nuvem e neste navegador. Continuar?")) return;
+  if (!confirm("Vai apagar TUDO da nuvem. Continuar?")) return;
 
+  // pega todos os lançamentos
+  const snapshot = await getDocs(collection(db, "lancamentos"));
+
+  // apaga todos
+  const promises = snapshot.docs.map(d =>
+    deleteDoc(doc(db, "lancamentos", d.id))
+  );
+
+  await Promise.all(promises);
+
+  // limpa memória local
   dados = [];
-  config = {
-    saldoInicial: 0,
-    metaGasolina: 0,
-    metaSeguro: 0,
-    metaCustosGerais: 0,
-    metaParcela: 0,
-    diasPlanejados: 0
-  };
 
-  localStorage.removeItem(STORAGE_KEY);
-  localStorage.removeItem(CONFIG_KEY);
-
-  preencherCamposConfig();
   render();
-  await salvarEstado();
+
+  alert("Tudo apagado");
 }
 
 definirDataHoje();
