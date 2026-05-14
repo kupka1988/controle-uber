@@ -473,7 +473,7 @@ input[type="date"] {
   </div>
 
   <label>KM atual</label>
-  <input type="text" id="km" inputmode="numeric" placeholder="Opcional, exceto no lançamento de KM">
+  <input type="text" id="km" inputmode="numeric" placeholder="Ex: 72250">
 
   <button onclick="adicionar()">Adicionar lançamento</button>
 </div>
@@ -761,20 +761,20 @@ function selecionar(novoTipo) {
   if (tipo === "ganho") {
     btnGanho.classList.add("ativo");
     labelValor.innerText = "Valor ganho";
-    valor.placeholder = "Ex: 150.00";
+    valor.placeholder = "Ex: R$ 150,00";
   }
 
   if (tipo === "gasolina") {
     btnGasolina.classList.add("ativo");
     labelValor.innerText = "Valor da gasolina";
-    valor.placeholder = "Ex: 250.00";
+    valor.placeholder = "Ex: R$ 250,00";
     campoLitros.classList.remove("hidden");
   }
 
   if (tipo === "despesas") {
     btnDespesas.classList.add("ativo");
     labelValor.innerText = "Valor da despesa";
-    valor.placeholder = "Ex: 80.00";
+    valor.placeholder = "Ex: R$ 80,00";
     campoDescricao.classList.remove("hidden");
   }
 
