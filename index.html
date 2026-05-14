@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Controle Uber</title>
+
+<style>
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  background: #f4f6f8;
+  margin: 0;
+  padding: 16px;
+  color: #222;
+}
+
+h1 { font-size: 24px; margin: 0 0 16px; }
+h3 { margin: 0 0 12px; }
+
+.card {
+  background: white;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.botoes, .acoes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.botao {
+  padding: 16px;
+  border-radius: 12px;
+  color: white;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  border: 3px solid transparent;
+}
+
+.botao.ativo { border-color: #111; }
+
+.ganho { background: #16a34a; }
+.gasolina { background: #f97316; }
+.despesas { background: #374151; }
+.kmBtn { background: #2563eb; }
+
+label {
+  display: block;
+  margin-top: 12px;
+  font-size: 14px;
+  color: #555;
+}
+
+input, select {
+  width: 100%;
+  padding: 13px;
+  margin-top: 6px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+button {
+  width: 100%;
+  padding: 13px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 10px;
+  background: #111;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button.secundario { background: #4b5563; }
+button.perigo { background: #dc2626; }
+
+.painel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.resumo-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.resumo-item {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.resumo-item span {
+  display: block;
+  font-size: 13px;
+  color: #666;
+}
+
+.resumo-item strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 17px;
+}
+
+.destaque {
+  background: #eef6ff;
+  border: 1px solid #bfdbfe;
+}
+
+.linha-input {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.linha-input input { margin-top: 0; }
+
+.linha-input button {
+  width: auto;
+  margin-top: 0;
+  white-space: nowrap;
+  padding: 13px 16px;
+}
+
+.grid-metas-config {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.tabela-metas th,
+.tabela-metas td {
+  text-align: left;
+}
+
+.tabela-metas td:nth-child(2),
+.tabela-metas td:nth-child(3),
+.tabela-metas th:nth-child(2),
+.tabela-metas th:nth-child(3) {
+  text-align: right;
+}
+
+.tabela-metas td.valor-metrica {
+  font-weight: 700;
+  font-size: 17px;
+}
+
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+th, td {
+  padding: 9px 6px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+th {
+  color: #555;
+  font-weight: 600;
+}
+
+.positivo { color: #16a34a; font-weight: 700; }
+.negativo { color: #dc2626; font-weight: 700; }
+
+.hidden { display: none; }
+
+.btn-excluir {
+  width: auto;
+  padding: 6px 9px;
+  margin: 0;
+  font-size: 12px;
+  background: #dc2626;
+}
+
+.abas {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.aba-btn {
+  background: #e5e7eb;
+  color: #111;
+  font-weight: 700;
+  margin-top: 0;
+}
+
+.aba-btn.ativo {
+  background: #111;
+  color: white;
+}
+
+.tela {
+  display: block;
+}
+
+.tela.hidden {
+  display: none;
+}
+
+@media (max-width: 800px) {
+  body { padding: 12px; }
+  .painel, .grid-metas-config { grid-template-columns: 1fr; }
+  table { font-size: 12px; }
+  th, td { padding: 7px 4px; }
+}
+</style>
+</head>
+
+<body>
+
+<h1>Módulo Uber</h1>
+
+<div class="abas">
+  <button id="abaInicio" class="aba-btn ativo" onclick="trocarAba('inicio')">Início</button>
+  <button id="abaHistorico" class="aba-btn" onclick="trocarAba('historico')">Histórico</button>
+  <button id="abaConfig" class="aba-btn" onclick="trocarAba('config')">Configurações</button>
+</div>
+
+<div id="telaInicio" class="tela">
+
+<div class="card">
+  <div class="botoes">
+    <div id="btnGanho" class="botao ganho ativo" onclick="selecionar('ganho')">+ Ganho</div>
+    <div id="btnGasolina" class="botao gasolina" onclick="selecionar('gasolina')">+ Gasolina</div>
+    <div id="btnDespesas" class="botao despesas" onclick="selecionar('despesas')">+ Outras despesas</div>
+    <div id="btnKM" class="botao kmBtn" onclick="selecionar('km')">+ KM</div>
+  </div>
+
+  <label>Data</label>
+  <input type="date" id="data">
+
+  <div id="campoDescricao" class="hidden">
+    <label>Descrição</label>
+    <select id="descricao">
+      <option>Manutenção</option>
+      <option>Lavagem</option>
+      <option>Seguro</option>
+      <option>Parcela</option>
+      <option>Custos Gerais</option>
+      <option>Outros</option>
+    </select>
+  </div>
+
+  <div id="campoValor">
+    <label id="labelValor">Valor ganho</label>
+    <input type="number" id="valor" placeholder="Ex: 150.00" step="0.01">
+  </div>
+
+  <div id="campoLitros" class="hidden">
+    <label>Litros abastecidos</label>
+    <input type="number" id="litros" placeholder="Ex: 42.5" step="0.01">
+  </div>
+
+  <label>KM atual</label>
+  <input type="number" id="km" placeholder="Opcional, exceto no lançamento de KM">
+
+  <button onclick="adicionar()">Adicionar lançamento</button>
+</div>
+
+<div class="painel">
+  <div class="card">
+    <h3>Resumo Financeiro</h3>
+
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <span>Saldo inicial</span>
+        <strong id="saldoInicialResumo">R$ 0,00</strong>
+      </div>
+      <div class="resumo-item">
+        <span>Entradas</span>
+        <strong id="entradas">R$ 0,00</strong>
+      </div>
+      <div class="resumo-item">
+        <span>Saídas</span>
+        <strong id="saidas">R$ 0,00</strong>
+      </div>
+      <div class="resumo-item">
+        <span>Resultado do mês</span>
+        <strong id="resultado">R$ 0,00</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Operação do Carro</h3>
+
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <span>KM rodados</span>
+        <strong id="kmRodado">0</strong>
+      </div>
+      <div class="resumo-item">
+        <span>Litros abastecidos</span>
+        <strong id="litrosTotal">0,00</strong>
+      </div>
+      <div class="resumo-item">
+        <span>Gasto com gasolina</span>
+        <strong id="gastoGasolina">R$ 0,00</strong>
+      </div>
+      <div class="resumo-item">
+        <span>Receita por KM</span>
+        <strong id="receitaPorKm">R$ 0,00</strong>
+      </div>
+      <div class="resumo-item">
+        <span>Custo por KM</span>
+        <strong id="custoPorKm">R$ 0,00</strong>
+      </div>
+      <div class="resumo-item">
+        <span>Lucro por KM</span>
+        <strong id="lucroPorKm">R$ 0,00</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h3>Metas de Custo</h3>
+
+  <table class="tabela-metas">
+    <thead>
+      <tr>
+        <th>Meta</th>
+        <th>Definido</th>
+        <th>Saldo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Gasolina</td>
+        <td class="valor-metrica" id="metaGasolinaDefinida">R$ 0,00</td>
+        <td class="valor-metrica" id="saldoMetaGasolina">R$ 0,00</td>
+      </tr>
+      <tr>
+        <td>Seguro</td>
+        <td class="valor-metrica" id="metaSeguroDefinida">R$ 0,00</td>
+        <td class="valor-metrica" id="saldoMetaSeguro">R$ 0,00</td>
+      </tr>
+      <tr>
+        <td>Custos gerais</td>
+        <td class="valor-metrica" id="metaCustosGeraisDefinida">R$ 0,00</td>
+        <td class="valor-metrica" id="saldoMetaCustosGerais">R$ 0,00</td>
+      </tr>
+      <tr>
+        <td>Parcela</td>
+        <td class="valor-metrica" id="metaParcelaDefinida">R$ 0,00</td>
+        <td class="valor-metrica" id="saldoMetaParcela">R$ 0,00</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <h3>Metas do Mês</h3>
+
+  <div class="resumo-grid">
+    <div class="resumo-item">
+      <span>Dias planejados</span>
+      <strong id="diasPlanejadosResumo">0</strong>
+    </div>
+    <div class="resumo-item">
+      <span>Dias trabalhados</span>
+      <strong id="diasTrabalhados">0</strong>
+    </div>
+
+    <div class="resumo-item">
+      <span>Média do dia</span>
+      <strong id="mediaDia">R$ 0,00</strong>
+    </div>
+
+    <div class="resumo-item">
+      <span>Meta diária mínima</span>
+      <strong id="metaDiariaMinima">R$ 0,00</strong>
+    </div>
+
+    <div class="resumo-item">
+      <span>Meta diária ideal</span>
+      <strong id="metaDiariaIdeal">R$ 0,00</strong>
+    </div>
+
+    <div class="resumo-item destaque">
+      <span>Meta ajustada</span>
+      <strong id="metaAjustada">R$ 0,00</strong>
+    </div>
+  </div>
+</div>
+
+
+</div>
+
+<div id="telaHistorico" class="tela hidden">
+<div class="card">
+  <h3>Lançamentos</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Data</th>
+        <th>Descrição</th>
+        <th>Valor</th>
+        <th>Litros</th>
+        <th>KM</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="tabela"></tbody>
+  </table>
+</div>
+
+
+</div>
+
+<div id="telaConfig" class="tela hidden">
+<div class="card">
+  <h3>Configurações do Mês</h3>
+
+  <label>Saldo inicial do mês</label>
+  <input type="number" id="saldoInicial" placeholder="Ex: 0.00" step="0.01">
+
+  <label>Dias planejados</label>
+  <input type="number" id="diasPlanejados" placeholder="Ex: 21">
+
+  <button onclick="salvarConfiguracoes()">Salvar configurações</button>
+</div>
+
+<div class="card">
+  <h3>Configurar Metas</h3>
+
+  <div class="grid-metas-config">
+    <div>
+      <label>Gasolina</label>
+      <input type="text" id="metaGasolina" placeholder="R$ 0,00" onblur="formatarCampoMoeda(this)">
+    </div>
+
+    <div>
+      <label>Seguro</label>
+      <input type="text" id="metaSeguro" placeholder="R$ 0,00" onblur="formatarCampoMoeda(this)">
+    </div>
+
+    <div>
+      <label>Custos gerais</label>
+      <input type="text" id="metaCustosGerais" placeholder="R$ 0,00" onblur="formatarCampoMoeda(this)">
+    </div>
+
+    <div>
+      <label>Parcela</label>
+      <input type="text" id="metaParcela" placeholder="R$ 0,00" onblur="formatarCampoMoeda(this)">
+    </div>
+  </div>
+
+  <button onclick="salvarConfiguracoes()">Salvar metas</button>
+</div>
+
+<div class="card">
+  <h3>Dados</h3>
+
+  <div class="acoes">
+    <button class="secundario" onclick="exportarJSON()">Exportar JSON</button>
+    <button class="secundario" onclick="document.getElementById('importarArquivo').click()">Importar JSON</button>
+  </div>
+
+  <input type="file" id="importarArquivo" accept=".json" class="hidden">
+
+  <button class="perigo" onclick="limparDados()">Limpar dados locais</button>
+</div>
+
+
+</div>
+
+<script>
+let tipo = "ganho";
+let dados = [];
+
+let config = {
+  saldoInicial: 0,
+  metaGasolina: 0,
+  metaSeguro: 0,
+  metaCustosGerais: 0,
+  metaParcela: 0,
+  diasPlanejados: 0
+};
+
+const STORAGE_KEY = "controleUberFelipe";
+const CONFIG_KEY = "controleUberFelipeConfig";
+
+document.getElementById("importarArquivo").addEventListener("change", importarJSON);
+
+function trocarAba(aba) {
+  telaInicio.classList.add("hidden");
+  telaHistorico.classList.add("hidden");
+  telaConfig.classList.add("hidden");
+
+  abaInicio.classList.remove("ativo");
+  abaHistorico.classList.remove("ativo");
+  abaConfig.classList.remove("ativo");
+
+  if (aba === "inicio") {
+    telaInicio.classList.remove("hidden");
+    abaInicio.classList.add("ativo");
+  }
+
+  if (aba === "historico") {
+    telaHistorico.classList.remove("hidden");
+    abaHistorico.classList.add("ativo");
+  }
+
+  if (aba === "config") {
+    telaConfig.classList.remove("hidden");
+    abaConfig.classList.add("ativo");
+  }
+}
+
+function selecionar(novoTipo) {
+  tipo = novoTipo;
+
+  ["btnGanho", "btnGasolina", "btnDespesas", "btnKM"].forEach(id => {
+    document.getElementById(id).classList.remove("ativo");
+  });
+
+  campoDescricao.classList.add("hidden");
+  campoValor.classList.remove("hidden");
+  campoLitros.classList.add("hidden");
+
+  if (tipo === "ganho") {
+    btnGanho.classList.add("ativo");
+    labelValor.innerText = "Valor ganho";
+    valor.placeholder = "Ex: 150.00";
+  }
+
+  if (tipo === "gasolina") {
+    btnGasolina.classList.add("ativo");
+    labelValor.innerText = "Valor da gasolina";
+    valor.placeholder = "Ex: 250.00";
+    campoLitros.classList.remove("hidden");
+  }
+
+  if (tipo === "despesas") {
+    btnDespesas.classList.add("ativo");
+    labelValor.innerText = "Valor da despesa";
+    valor.placeholder = "Ex: 80.00";
+    campoDescricao.classList.remove("hidden");
+  }
+
+  if (tipo === "km") {
+    btnKM.classList.add("ativo");
+    campoValor.classList.add("hidden");
+  }
+}
+
+function adicionar() {
+  const data = document.getElementById("data").value;
+  const valorCampo = document.getElementById("valor").value;
+  const litrosCampo = document.getElementById("litros").value;
+  const kmCampo = document.getElementById("km").value;
+
+  if (!data) return alert("Informe a data");
+
+  let descricao = "";
+  let valorLancamento = parseFloat(valorCampo) || 0;
+  let litros = parseFloat(litrosCampo) || null;
+  let km = parseFloat(kmCampo) || null;
+
+  if (tipo === "ganho") {
+    if (!valorCampo) return alert("Informe o valor ganho");
+    descricao = "Ganhos Uber";
+    valorLancamento = Math.abs(valorLancamento);
+  }
+
+  if (tipo === "gasolina") {
+    if (!valorCampo) return alert("Informe o valor da gasolina");
+    if (!litrosCampo) return alert("Informe os litros abastecidos");
+    descricao = "Gasolina";
+    valorLancamento = Math.abs(valorLancamento) * -1;
+  }
+
+  if (tipo === "despesas") {
+    if (!valorCampo) return alert("Informe o valor da despesa");
+    descricao = document.getElementById("descricao").value;
+    valorLancamento = Math.abs(valorLancamento) * -1;
+  }
+
+  if (tipo === "km") {
+    if (!kmCampo) return alert("Informe o KM atual");
+    descricao = "Atualização de KM";
+    valorLancamento = 0;
+    litros = null;
+  }
+
+  dados.push({
+    id: Date.now(),
+    data,
+    tipo,
+    descricao,
+    valor: valorLancamento,
+    litros,
+    km
+  });
+
+  salvarLocal();
+  limparFormulario();
+  render();
+}
+
+function salvarConfiguracoes() {
+  config.saldoInicial = parseFloat(saldoInicial.value) || 0;
+
+  config.metaGasolina = parseMoeda(metaGasolina.value);
+  config.metaSeguro = parseMoeda(metaSeguro.value);
+  config.metaCustosGerais = parseMoeda(metaCustosGerais.value);
+  config.metaParcela = parseMoeda(metaParcela.value);
+
+  config.diasPlanejados = parseInt(diasPlanejados.value) || 0;
+
+  localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
+  preencherCamposConfig();
+  render();
+}
+
+function limparFormulario() {
+  valor.value = "";
+  litros.value = "";
+  km.value = "";
+}
+
+function render() {
+  tabela.innerHTML = "";
+
+  let entradas = 0;
+  let saidas = 0;
+  let litrosTotal = 0;
+  let kms = [];
+
+  let gastoGasolina = 0;
+  let gastoSeguro = 0;
+  let gastoCustosGerais = 0;
+  let gastoParcela = 0;
+
+  const diasComGanhos = new Set();
+
+  dados.forEach((d, index) => {
+    if (d.valor > 0) {
+      entradas += d.valor;
+      if (d.descricao === "Ganhos Uber") diasComGanhos.add(d.data);
+    }
+
+    if (d.valor < 0) saidas += d.valor;
+    if (d.litros) litrosTotal += d.litros;
+    if (d.km) kms.push(d.km);
+
+    if (d.descricao === "Gasolina") gastoGasolina += Math.abs(d.valor);
+    if (d.descricao === "Seguro") gastoSeguro += Math.abs(d.valor);
+    if (d.descricao === "Parcela") gastoParcela += Math.abs(d.valor);
+
+    if (
+      d.valor < 0 &&
+      d.descricao !== "Gasolina" &&
+      d.descricao !== "Seguro" &&
+      d.descricao !== "Parcela"
+    ) {
+      gastoCustosGerais += Math.abs(d.valor);
+    }
+
+    const tr = document.createElement("tr");
+
+    tr.innerHTML = `
+      <td>${formatarData(d.data)}</td>
+      <td>${d.descricao}</td>
+      <td class="${d.valor > 0 ? "positivo" : d.valor < 0 ? "negativo" : ""}">
+        ${d.valor === 0 ? "-" : moeda(d.valor)}
+      </td>
+      <td>${d.litros ? numero(d.litros) : "-"}</td>
+      <td>${d.km || "-"}</td>
+      <td><button class="btn-excluir" onclick="excluir(${index})">Excluir</button></td>
+    `;
+
+    tabela.appendChild(tr);
+  });
+
+  let kmRodado = 0;
+  if (kms.length > 1) kmRodado = Math.max(...kms) - Math.min(...kms);
+
+  const resultadoMes = config.saldoInicial + entradas + saidas;
+  const lucroOperacional = entradas + saidas;
+
+  const receitaPorKm = kmRodado > 0 ? entradas / kmRodado : 0;
+  const custoPorKm = kmRodado > 0 ? gastoGasolina / kmRodado : 0;
+  const lucroPorKm = kmRodado > 0 ? lucroOperacional / kmRodado : 0;
+
+  const custosSemParcela = config.metaGasolina + config.metaSeguro + config.metaCustosGerais;
+  const custosTotais = custosSemParcela + config.metaParcela;
+
+  const diasTrabalhadosValor = diasComGanhos.size;
+  const diasRestantes = Math.max(config.diasPlanejados - diasTrabalhadosValor, 0);
+
+  const mediaDiaValor = diasTrabalhadosValor > 0 ? entradas / diasTrabalhadosValor : 0;
+  const metaMinima = config.diasPlanejados > 0 ? custosSemParcela / config.diasPlanejados : 0;
+  const metaIdeal = config.diasPlanejados > 0 ? custosTotais / config.diasPlanejados : 0;
+  const metaAjustadaValor = diasRestantes > 0 ? Math.max((custosSemParcela - entradas) / diasRestantes, 0) : 0;
+
+  saldoInicialResumo.innerText = moeda(config.saldoInicial);
+  if (document.getElementById("diasPlanejadosResumo")) diasPlanejadosResumo.innerText = config.diasPlanejados || 0;
+  entradasEl().innerText = moeda(entradas);
+  saidasEl().innerText = moeda(saidas);
+  resultado.innerText = moeda(resultadoMes);
+
+  kmRodadoEl().innerText = kmRodado.toLocaleString("pt-BR");
+  litrosTotalEl().innerText = numero(litrosTotal);
+  gastoGasolinaEl().innerText = moeda(gastoGasolina);
+  receitaPorKmEl().innerText = moeda(receitaPorKm);
+  custoPorKmEl().innerText = moeda(custoPorKm);
+  lucroPorKmEl().innerText = moeda(lucroPorKm);
+
+  metaGasolinaDefinida.innerText = moeda(config.metaGasolina);
+  metaSeguroDefinida.innerText = moeda(config.metaSeguro);
+  metaCustosGeraisDefinida.innerText = moeda(config.metaCustosGerais);
+  metaParcelaDefinida.innerText = moeda(config.metaParcela);
+
+  saldoMetaGasolina.innerText = moeda(config.metaGasolina - gastoGasolina);
+  saldoMetaSeguro.innerText = moeda(config.metaSeguro - gastoSeguro);
+  saldoMetaCustosGerais.innerText = moeda(config.metaCustosGerais - gastoCustosGerais);
+  saldoMetaParcela.innerText = moeda(config.metaParcela - gastoParcela);
+
+  diasTrabalhados.innerText = diasTrabalhadosValor;
+  mediaDia.innerText = moeda(mediaDiaValor);
+  metaDiariaMinima.innerText = moeda(metaMinima);
+  metaDiariaIdeal.innerText = moeda(metaIdeal);
+  metaAjustada.innerText = moeda(metaAjustadaValor);
+}
+
+function entradasEl() { return document.getElementById("entradas"); }
+function saidasEl() { return document.getElementById("saidas"); }
+function kmRodadoEl() { return document.getElementById("kmRodado"); }
+function litrosTotalEl() { return document.getElementById("litrosTotal"); }
+function gastoGasolinaEl() { return document.getElementById("gastoGasolina"); }
+function receitaPorKmEl() { return document.getElementById("receitaPorKm"); }
+function custoPorKmEl() { return document.getElementById("custoPorKm"); }
+function lucroPorKmEl() { return document.getElementById("lucroPorKm"); }
+
+function excluir(index) {
+  if (!confirm("Excluir este lançamento?")) return;
+  dados.splice(index, 1);
+  salvarLocal();
+  render();
+}
+
+function moeda(valor) {
+  return valor.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL"
+  });
+}
+
+function numero(valor) {
+  return valor.toLocaleString("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
+
+function parseMoeda(valor) {
+  if (!valor) return 0;
+
+  let limpo = valor
+    .toString()
+    .replace("R$", "")
+    .replace(/\./g, "")
+    .replace(",", ".")
+    .trim();
+
+  return parseFloat(limpo) || 0;
+}
+
+function formatarCampoMoeda(campo) {
+  const valor = parseMoeda(campo.value);
+  campo.value = valor ? moeda(valor) : "";
+}
+
+function formatarData(dataISO) {
+  if (!dataISO) return "-";
+  const partes = dataISO.split("-");
+  return `${partes[2]}/${partes[1]}/${partes[0]}`;
+}
+
+function definirDataHoje() {
+  const hoje = new Date();
+  const ano = hoje.getFullYear();
+  const mes = String(hoje.getMonth() + 1).padStart(2, "0");
+  const dia = String(hoje.getDate()).padStart(2, "0");
+  data.value = `${ano}-${mes}-${dia}`;
+}
+
+function salvarLocal() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(dados));
+}
+
+function carregarLocal() {
+  const salvo = localStorage.getItem(STORAGE_KEY);
+  const configSalva = localStorage.getItem(CONFIG_KEY);
+
+  if (salvo) {
+    try { dados = JSON.parse(salvo); } catch { dados = []; }
+  }
+
+  if (configSalva) {
+    try { config = { ...config, ...JSON.parse(configSalva) }; } catch {}
+  }
+
+  preencherCamposConfig();
+}
+
+function preencherCamposConfig() {
+  saldoInicial.value = config.saldoInicial || "";
+  metaGasolina.value = config.metaGasolina ? moeda(config.metaGasolina) : "";
+  metaSeguro.value = config.metaSeguro ? moeda(config.metaSeguro) : "";
+  metaCustosGerais.value = config.metaCustosGerais ? moeda(config.metaCustosGerais) : "";
+  metaParcela.value = config.metaParcela ? moeda(config.metaParcela) : "";
+  diasPlanejados.value = config.diasPlanejados || "";
+}
+
+function exportarJSON() {
+  salvarConfiguracoes();
+
+  const pacote = {
+    config,
+    dados
+  };
+
+  const conteudo = JSON.stringify(pacote, null, 2);
+  const blob = new Blob([conteudo], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "controle-uber.json";
+  link.click();
+
+  URL.revokeObjectURL(url);
+}
+
+function importarJSON(event) {
+  const arquivo = event.target.files[0];
+  if (!arquivo) return;
+
+  const leitor = new FileReader();
+
+  leitor.onload = function(e) {
+    try {
+      const importado = JSON.parse(e.target.result);
+
+      if (Array.isArray(importado)) {
+        dados = importado;
+      } else if (importado.dados && Array.isArray(importado.dados)) {
+        dados = importado.dados;
+        if (importado.config) config = { ...config, ...importado.config };
+        if (importado.saldoInicial !== undefined) config.saldoInicial = parseFloat(importado.saldoInicial) || 0;
+      } else {
+        return alert("Arquivo inválido");
+      }
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(dados));
+      localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
+
+      carregarLocal();
+      render();
+
+      alert("Dados importados com sucesso");
+    } catch {
+      alert("Erro ao importar arquivo");
+    }
+  };
+
+  leitor.readAsText(arquivo);
+}
+
+function limparDados() {
+  if (!confirm("Isso vai apagar os dados salvos neste navegador. Continuar?")) return;
+
+  dados = [];
+  config = {
+    saldoInicial: 0,
+    metaGasolina: 0,
+    metaSeguro: 0,
+    metaCustosGerais: 0,
+    metaParcela: 0,
+    diasPlanejados: 0
+  };
+
+  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(CONFIG_KEY);
+
+  preencherCamposConfig();
+  render();
+}
+
+definirDataHoje();
+carregarLocal();
+selecionar("ganho");
+render();
+</script>
+
+</body>
+</html>
