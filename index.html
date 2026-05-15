@@ -9,22 +9,22 @@
 <style>
 
 :root {
-  --bg: #f6f7fb;
+  --bg: #f5f4ef;
   --surface: #ffffff;
-  --surface-soft: #f9fafb;
-  --text: #111827;
-  --muted: #6b7280;
-  --line: #e5e7eb;
-  --primary: #111827;
-  --green: #15803d;
-  --green-soft: #ecfdf3;
-  --orange: #ea580c;
-  --orange-soft: #fff7ed;
-  --blue: #2563eb;
-  --blue-soft: #eff6ff;
-  --red: #dc2626;
-  --red-soft: #fef2f2;
-  --shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
+  --surface-soft: #f8f7f3;
+  --text: #121417;
+  --muted: #6f746f;
+  --line: #e6e2d8;
+  --primary: #15171c;
+  --green: #1f6f43;
+  --green-soft: #edf7ef;
+  --orange: #b86b2b;
+  --orange-soft: #fbf1e6;
+  --blue: #315f8f;
+  --blue-soft: #eef4f8;
+  --red: #b43b38;
+  --red-soft: #fbefee;
+  --shadow: 0 12px 30px rgba(25, 27, 31, 0.07);
   --radius: 18px;
 }
 
@@ -32,7 +32,7 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-  background: radial-gradient(circle at top left, #eef2ff 0, #f6f7fb 32%, #f7f8fa 100%);
+  background: radial-gradient(circle at top left, #e9edf0 0, #f5f4ef 34%, #f8f6f1 100%);
   margin: 0;
   padding: 18px;
   color: var(--text);
@@ -41,6 +41,21 @@ body {
 .app-shell {
   max-width: 1120px;
   margin: 0 auto;
+}
+
+.brand-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.app-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  object-fit: cover;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.18);
+  border: 1px solid rgba(255,255,255,0.65);
 }
 
 .app-header {
@@ -62,167 +77,6 @@ body {
   margin: 6px 0 0;
   color: var(--muted);
   font-size: 14px;
-}
-
-
-.brand-lockup {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.brand-icon {
-  width: 46px;
-  height: 46px;
-  border-radius: 15px;
-  object-fit: cover;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.18);
-  border: 1px solid rgba(255,255,255,0.7);
-  flex: 0 0 auto;
-}
-
-.icon {
-  width: 18px;
-  height: 18px;
-  stroke: currentColor;
-  stroke-width: 2.2;
-  fill: none;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  flex: 0 0 auto;
-}
-
-.tab-label {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-}
-
-.aba-btn .icon {
-  width: 17px;
-  height: 17px;
-}
-
-.botao {
-  position: relative;
-  overflow: hidden;
-}
-
-.botao::after {
-  content: "";
-  position: absolute;
-  right: -22px;
-  top: -28px;
-  width: 86px;
-  height: 86px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.13);
-}
-
-.botao .botao-content {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.botao .action-icon {
-  width: 34px;
-  height: 34px;
-  border-radius: 12px;
-  background: rgba(255,255,255,0.18);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 auto;
-}
-
-.botao .action-icon .icon {
-  width: 19px;
-  height: 19px;
-}
-
-.botao .botao-kicker {
-  display: block;
-  font-size: 11px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  opacity: 0.72;
-  line-height: 1.1;
-}
-
-.botao .botao-main {
-  display: block;
-  margin-top: 3px;
-  font-size: 16px;
-  line-height: 1.1;
-}
-
-.heading-with-icon {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.heading-with-icon .heading-icon {
-  width: 26px;
-  height: 26px;
-  border-radius: 10px;
-  background: #f3f4f6;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: #334155;
-}
-
-.heading-with-icon .icon {
-  width: 15px;
-  height: 15px;
-}
-
-.launch-row {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  min-width: 0;
-}
-
-.launch-icon {
-  width: 30px;
-  height: 30px;
-  border-radius: 11px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 auto;
-}
-
-.launch-icon .icon {
-  width: 16px;
-  height: 16px;
-}
-
-.launch-icon.ganho-icon {
-  background: var(--green-soft);
-  color: var(--green);
-}
-
-.launch-icon.gasolina-icon {
-  background: var(--orange-soft);
-  color: var(--orange);
-}
-
-.launch-icon.km-icon {
-  background: var(--blue-soft);
-  color: var(--blue);
-}
-
-.launch-icon.despesa-icon {
-  background: #f1f5f9;
-  color: #475569;
 }
 
 .app-status {
@@ -504,7 +358,7 @@ input[type="date"] {
 
 /* Dashboard */
 .dashboard-hero {
-  background: linear-gradient(135deg, #111827 0%, #1e293b 58%, #2563eb 100%);
+  background: linear-gradient(135deg, #111316 0%, #20242b 58%, #315f8f 100%);
   color: white;
   border: none;
   overflow: hidden;
@@ -545,9 +399,33 @@ input[type="date"] {
   opacity: 0.82;
 }
 
+.dashboard-atual-box {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 10px 13px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.11);
+  border: 1px solid rgba(255,255,255,0.16);
+}
+
+.dashboard-atual-box span {
+  font-size: 12px;
+  font-weight: 850;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.72;
+}
+
+.dashboard-atual-box strong {
+  font-size: 18px;
+  letter-spacing: -0.03em;
+}
+
 .dashboard-status {
   display: inline-flex;
-  margin-top: 14px;
+  margin-top: 12px;
   padding: 8px 12px;
   border-radius: 999px;
   background: rgba(255,255,255,0.13);
@@ -584,11 +462,42 @@ input[type="date"] {
   letter-spacing: 0.06em;
 }
 
-.meta-card .meta-valor {
-  font-size: 22px;
-  font-weight: 900;
-  letter-spacing: -0.04em;
+.meta-card .meta-percent {
+  font-size: 34px;
+  font-weight: 950;
+  letter-spacing: -0.06em;
   margin-top: 8px;
+  line-height: 1;
+}
+
+.meta-progress-bar {
+  margin-top: 12px;
+  height: 9px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.09);
+  overflow: hidden;
+}
+
+.meta-progress-fill {
+  width: 0%;
+  height: 100%;
+  border-radius: 999px;
+  background: currentColor;
+  transition: width 0.25s ease;
+}
+
+.meta-progress-text {
+  margin-top: 9px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.meta-card .meta-action {
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 850;
+  color: var(--muted);
 }
 
 .meta-card .meta-status {
@@ -600,24 +509,30 @@ input[type="date"] {
 
 .meta-card.ok {
   background: var(--green-soft);
-  border-color: #bbf7d0;
+  border-color: #bddfc6;
+  color: var(--green);
 }
 
-.meta-card.ok .meta-status { color: var(--green); }
+.meta-card.ok .meta-action { color: var(--green); }
 
 .meta-card.alerta {
   background: var(--orange-soft);
-  border-color: #fed7aa;
+  border-color: #e8c7a3;
+  color: var(--orange);
 }
 
-.meta-card.alerta .meta-status { color: var(--orange); }
+.meta-card.alerta .meta-action { color: var(--orange); }
 
 .meta-card.longe {
   background: var(--red-soft);
-  border-color: #fecaca;
+  border-color: #e9bebc;
+  color: var(--red);
 }
 
-.meta-card.longe .meta-status { color: var(--red); }
+.meta-card.longe .meta-action { color: var(--red); }
+
+.meta-card .meta-nome,
+.meta-card .meta-progress-text { color: var(--muted); }
 
 .faixa-performance {
   margin-top: 18px;
@@ -723,7 +638,7 @@ input[type="date"] {
 
 .semana-linha {
   display: grid;
-  grid-template-columns: 72px 1fr 92px;
+  grid-template-columns: 96px 1fr 92px;
   gap: 10px;
   align-items: center;
   font-size: 13px;
@@ -819,36 +734,13 @@ input[type="date"] {
   }
 }
 
-
-@media (max-width: 640px) {
-  .brand-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 14px;
-  }
-
-  .tab-label {
-    flex-direction: column;
-    gap: 3px;
-  }
-
-  .aba-btn .icon {
-    width: 16px;
-    height: 16px;
-  }
-
-  .botao .botao-main {
-    font-size: 15px;
-  }
-}
-
 @media (max-width: 430px) {
   body { padding: 10px; }
   .card { padding: 14px; border-radius: 16px; }
   .botao { padding: 14px 12px; font-size: 14px; }
   .aba-btn { font-size: 12px; padding: 10px 4px; }
   .abas { gap: 5px; padding: 4px; }
-  .semana-linha { grid-template-columns: 56px 1fr 78px; gap: 8px; }
+  .semana-linha { grid-template-columns: 96px 1fr 78px; gap: 8px; }
 }
 
 </style>
@@ -858,13 +750,11 @@ input[type="date"] {
 
 <div class="app-shell">
 <header class="app-header">
-  <div class="app-title">
-    <div class="brand-lockup">
-      <img class="brand-icon" src="apple-touch-icon.png" alt="Controle Uber">
-      <div>
-        <h1>Controle Uber</h1>
-        <p id="mesAtualTexto">Operação mensal</p>
-      </div>
+  <div class="brand-wrap">
+    <img src="apple-touch-icon.png" alt="Controle Uber" class="app-logo">
+    <div class="app-title">
+      <h1>Controle Uber</h1>
+      <p id="mesAtualTexto">Operação mensal</p>
     </div>
   </div>
   <div class="app-status">
@@ -873,20 +763,20 @@ input[type="date"] {
 </header>
 
 <div class="abas">
-  <button id="abaInicio" class="aba-btn ativo" onclick="trocarAba('inicio')"><span class="tab-label"><svg class="icon" viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10.5V20h14v-9.5"/><path d="M9 20v-6h6v6"/></svg><span>Início</span></span></button>
-  <button id="abaDashboard" class="aba-btn" onclick="trocarAba('dashboard')"><span class="tab-label"><svg class="icon" viewBox="0 0 24 24"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 16V9"/><path d="M12 16V7"/><path d="M16 16v-4"/></svg><span>Dashboard</span></span></button>
-  <button id="abaHistorico" class="aba-btn" onclick="trocarAba('historico')"><span class="tab-label"><svg class="icon" viewBox="0 0 24 24"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></svg><span>Lançamentos</span></span></button>
-  <button id="abaConfig" class="aba-btn" onclick="trocarAba('config')"><span class="tab-label"><svg class="icon" viewBox="0 0 24 24"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 15a1.8 1.8 0 0 0 .36 2l.05.05a2.1 2.1 0 1 1-2.97 2.97l-.05-.05a1.8 1.8 0 0 0-2-.36 1.8 1.8 0 0 0-1.1 1.65V21a2.1 2.1 0 1 1-4.2 0v-.07a1.8 1.8 0 0 0-1.1-1.65 1.8 1.8 0 0 0-2 .36l-.05.05a2.1 2.1 0 1 1-2.97-2.97l.05-.05a1.8 1.8 0 0 0 .36-2 1.8 1.8 0 0 0-1.65-1.1H2a2.1 2.1 0 1 1 0-4.2h.07a1.8 1.8 0 0 0 1.65-1.1 1.8 1.8 0 0 0-.36-2l-.05-.05a2.1 2.1 0 1 1 2.97-2.97l.05.05a1.8 1.8 0 0 0 2 .36h.01A1.8 1.8 0 0 0 9.43 2V2a2.1 2.1 0 1 1 4.2 0v.07a1.8 1.8 0 0 0 1.1 1.65 1.8 1.8 0 0 0 2-.36l.05-.05a2.1 2.1 0 1 1 2.97 2.97l-.05.05a1.8 1.8 0 0 0-.36 2v.01A1.8 1.8 0 0 0 22 9.43H22a2.1 2.1 0 1 1 0 4.2h-.07A1.8 1.8 0 0 0 20.28 15Z"/></svg><span>Config</span></span></button>
+  <button id="abaInicio" class="aba-btn ativo" onclick="trocarAba('inicio')">Início</button>
+  <button id="abaDashboard" class="aba-btn" onclick="trocarAba('dashboard')">Dashboard</button>
+  <button id="abaHistorico" class="aba-btn" onclick="trocarAba('historico')">Lançamentos</button>
+  <button id="abaConfig" class="aba-btn" onclick="trocarAba('config')">Configuração</button>
 </div>
 
 <div id="telaInicio" class="tela">
 
 <div class="card">
   <div class="botoes">
-    <div id="btnGanho" class="botao ganho ativo" onclick="selecionar('ganho')"><span class="botao-content"><span class="action-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg></span><span><span class="botao-kicker">Registrar</span><span class="botao-main">Ganho</span></span></span></div>
-    <div id="btnGasolina" class="botao gasolina" onclick="selecionar('gasolina')"><span class="botao-content"><span class="action-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M4 20V6a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v14"/><path d="M4 10h11"/><path d="M15 7h2l3 3v7a2 2 0 0 1-2 2h-1"/><path d="M18 10v3"/></svg></span><span><span class="botao-kicker">Registrar</span><span class="botao-main">Gasolina</span></span></span></div>
-    <div id="btnDespesas" class="botao despesas" onclick="selecionar('despesas')"><span class="botao-content"><span class="action-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M5 7l1.2 13h11.6L19 7"/><path d="M9 7V4h6v3"/><path d="M10 12v4"/><path d="M14 12v4"/></svg></span><span><span class="botao-kicker">Registrar</span><span class="botao-main">Despesa</span></span></span></div>
-    <div id="btnKM" class="botao kmBtn" onclick="selecionar('km')"><span class="botao-content"><span class="action-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M5 16h14"/><path d="M7 16l1.2-5.2A3 3 0 0 1 11.1 8h1.8a3 3 0 0 1 2.9 2.8L17 16"/><path d="M7 16v2"/><path d="M17 16v2"/><path d="M9 13h6"/></svg></span><span><span class="botao-kicker">Atualizar</span><span class="botao-main">KM</span></span></span></div>
+    <div id="btnGanho" class="botao ganho ativo" onclick="selecionar('ganho')">+ Ganho</div>
+    <div id="btnGasolina" class="botao gasolina" onclick="selecionar('gasolina')">+ Gasolina</div>
+    <div id="btnDespesas" class="botao despesas" onclick="selecionar('despesas')">+ Outras despesas</div>
+    <div id="btnKM" class="botao kmBtn" onclick="selecionar('km')">+ KM</div>
   </div>
 
   <label>Data</label>
@@ -921,7 +811,7 @@ input[type="date"] {
 
 <div class="painel">
   <div class="card">
-    <h3 class="heading-with-icon"><span class="heading-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6"/></svg></span>Resumo Financeiro</h3>
+    <h3>Resumo Financeiro</h3>
 
     <div class="resumo-grid">
       <div class="resumo-item">
@@ -944,7 +834,7 @@ input[type="date"] {
   </div>
 
   <div class="card">
-    <h3 class="heading-with-icon"><span class="heading-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M5 16h14"/><path d="M7 16l1.2-5.2A3 3 0 0 1 11.1 8h1.8a3 3 0 0 1 2.9 2.8L17 16"/><path d="M7 16v2"/><path d="M17 16v2"/></svg></span>Operação do Carro</h3>
+    <h3>Operação do Carro</h3>
 
     <div class="resumo-grid">
       <div class="resumo-item">
@@ -976,7 +866,7 @@ input[type="date"] {
 </div>
 
 <div class="card">
-  <h3 class="heading-with-icon"><span class="heading-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6"/></svg></span>Metas de Custo</h3>
+  <h3>Metas de Custo</h3>
 
   <table class="tabela-metas">
     <thead>
@@ -1024,11 +914,15 @@ input[type="date"] {
   <div class="dashboard-label">Projeção do mês</div>
   <div class="dashboard-valor-principal" id="dashboardProjecao">R$ 0,00</div>
   <div class="dashboard-sub" id="dashboardProjecaoSub">Baseada na média atual de ganhos</div>
+  <div class="dashboard-atual-box">
+    <span>Atual do mês</span>
+    <strong id="dashboardAtualMes">R$ 0,00</strong>
+  </div>
   <div class="dashboard-status" id="dashboardStatus">Aguardando lançamentos</div>
 </div>
 
 <div class="card">
-  <h3 class="heading-with-icon"><span class="heading-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M3 12h18"/><path d="M6 12a6 6 0 0 1 12 0"/><path d="m12 12 4-4"/></svg></span>Faixa de performance</h3>
+  <h3>Faixa de performance</h3>
 
   <div class="faixa-topo">
     <strong id="faixaTexto">Você ainda está construindo ritmo</strong>
@@ -1050,26 +944,32 @@ input[type="date"] {
 <div class="dashboard-grid-3">
   <div class="meta-card" id="cardMetaMinima">
     <div class="meta-nome">Meta mínima</div>
-    <div class="meta-valor" id="dashMetaMinima">R$ 0,00</div>
-    <div class="meta-status" id="dashStatusMinima">Configure as metas</div>
+    <div class="meta-percent" id="dashPctMinima">0%</div>
+    <div class="meta-progress-bar"><div class="meta-progress-fill" id="dashBarMinima"></div></div>
+    <div class="meta-progress-text" id="dashProgressoMinima">R$ 0,00 / R$ 0,00</div>
+    <div class="meta-action" id="dashAcaoMinima">Configure as metas</div>
   </div>
 
   <div class="meta-card" id="cardMetaConsistente">
     <div class="meta-nome">Meta consistente</div>
-    <div class="meta-valor" id="dashMetaConsistente">R$ 0,00</div>
-    <div class="meta-status" id="dashStatusConsistente">Configure em ajustes</div>
+    <div class="meta-percent" id="dashPctConsistente">0%</div>
+    <div class="meta-progress-bar"><div class="meta-progress-fill" id="dashBarConsistente"></div></div>
+    <div class="meta-progress-text" id="dashProgressoConsistente">R$ 0,00 / R$ 0,00</div>
+    <div class="meta-action" id="dashAcaoConsistente">Configure em ajustes</div>
   </div>
 
   <div class="meta-card" id="cardMetaIdeal">
     <div class="meta-nome">Meta ideal</div>
-    <div class="meta-valor" id="dashMetaIdeal">R$ 0,00</div>
-    <div class="meta-status" id="dashStatusIdeal">Configure as metas</div>
+    <div class="meta-percent" id="dashPctIdeal">0%</div>
+    <div class="meta-progress-bar"><div class="meta-progress-fill" id="dashBarIdeal"></div></div>
+    <div class="meta-progress-text" id="dashProgressoIdeal">R$ 0,00 / R$ 0,00</div>
+    <div class="meta-action" id="dashAcaoIdeal">Configure as metas</div>
   </div>
 </div>
 
 <div class="dashboard-grid-2">
   <div class="card">
-    <h3 class="heading-with-icon"><span class="heading-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M4 19V5"/><path d="M4 19h16"/><path d="m7 15 4-4 3 3 5-7"/></svg></span>Ritmo</h3>
+    <h3>Ritmo</h3>
     <div class="dashboard-grid-2">
       <div class="kpi-card">
         <span>Média atual</span>
@@ -1085,7 +985,7 @@ input[type="date"] {
   </div>
 
   <div class="card">
-    <h3 class="heading-with-icon"><span class="heading-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><path d="M3 10h18"/><rect x="3" y="4" width="18" height="18" rx="2"/></svg></span>Semana atual</h3>
+    <h3>Semana atual</h3>
     <div class="dashboard-grid-2">
       <div class="kpi-card">
         <span>Ganho na semana</span>
@@ -1102,7 +1002,7 @@ input[type="date"] {
 </div>
 
 <div class="card">
-  <h3 class="heading-with-icon"><span class="heading-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M4 19V5"/><path d="M8 17V9"/><path d="M12 17V7"/><path d="M16 17v-5"/><path d="M20 19H4"/></svg></span>Semanas do mês</h3>
+  <h3>Semanas do mês</h3>
   <div class="semana-lista" id="dashSemanasLista"></div>
 </div>
 
@@ -1111,7 +1011,7 @@ input[type="date"] {
 
 <div id="telaHistorico" class="tela hidden">
 <div class="card">
-  <h3 class="heading-with-icon"><span class="heading-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></svg></span>Lançamentos</h3>
+  <h3>Lançamentos</h3>
 
   <table class="historico-table">
     <thead>
@@ -1133,7 +1033,7 @@ input[type="date"] {
 
 <div id="telaConfig" class="tela hidden">
 <div class="card">
-  <h3 class="heading-with-icon"><span class="heading-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/></svg></span>Configurações do Mês</h3>
+  <h3>Configurações do Mês</h3>
 
   <label>Saldo inicial do mês</label>
   <input type="text" id="saldoInicial" inputmode="decimal" placeholder="R$ 0,00" onblur="formatarCampoMoeda(this)">
@@ -1148,7 +1048,7 @@ input[type="date"] {
 </div>
 
 <div class="card">
-  <h3 class="heading-with-icon"><span class="heading-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6"/></svg></span>Configurar Metas</h3>
+  <h3>Configurar Metas</h3>
 
   <div class="grid-metas-config">
     <div>
@@ -1176,7 +1076,7 @@ input[type="date"] {
 </div>
 
 <div class="card">
-  <h3 class="heading-with-icon"><span class="heading-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg></span>Dados</h3>
+  <h3>Dados</h3>
 
   <div class="acoes">
     <button class="secundario" onclick="exportarJSON()">Exportar JSON</button>
@@ -1386,14 +1286,7 @@ function render() {
 
   const diasComGanhos = new Set();
 
-  const dadosOrdenados = [...dados].sort((a, b) => {
-    const dataA = a.data || "";
-    const dataB = b.data || "";
-    if (dataA !== dataB) return dataB.localeCompare(dataA);
-    return String(b.id || "").localeCompare(String(a.id || ""));
-  });
-
-  dadosOrdenados.forEach((d) => {
+  dados.forEach((d, index) => {
     if (d.valor > 0) {
       entradas += d.valor;
       if (d.descricao === "Ganhos Uber") diasComGanhos.add(d.data);
@@ -1420,7 +1313,7 @@ function render() {
 
     tr.innerHTML = `
       <td data-label="Data">${formatarData(d.data)}</td>
-      <td data-label="Descrição"><span class="launch-row"><span class="launch-icon ${classeIconeLancamento(d)}">${svgIconeLancamento(d)}</span><span>${d.descricao}</span></span></td>
+      <td data-label="Descrição">${d.descricao}</td>
       <td data-label="Valor" class="${d.valor > 0 ? "positivo" : d.valor < 0 ? "negativo" : ""}">
         ${d.valor === 0 ? "-" : moeda(d.valor)}
       </td>
@@ -1519,6 +1412,7 @@ function atualizarDashboard(ctx) {
   const metaSemanal = metaConsistenteValor > 0 ? metaConsistenteValor / 4 : 1000;
 
   dashboardProjecao.innerText = moeda(projecaoMes);
+  if (document.getElementById("dashboardAtualMes")) dashboardAtualMes.innerText = moeda(entradas);
   dashboardProjecaoSub.innerText = diasTrabalhadosValor > 0
     ? `Baseada em ${diasTrabalhadosValor} dia(s) trabalhado(s), média de ${moeda(mediaDiaValor)}`
     : "Comece registrando seus ganhos para gerar projeção";
@@ -1544,9 +1438,9 @@ function atualizarDashboard(ctx) {
   faixaConsistente.innerText = `Consistente ${moeda(metaConsistenteValor)}`;
   faixaIdeal.innerText = `Ideal ${moeda(custosTotais)}`;
 
-  atualizarMetaCard("Minima", cardMetaMinima, dashMetaMinima, dashStatusMinima, custosSemParcela, entradas);
-  atualizarMetaCard("Consistente", cardMetaConsistente, dashMetaConsistente, dashStatusConsistente, metaConsistenteValor, entradas);
-  atualizarMetaCard("Ideal", cardMetaIdeal, dashMetaIdeal, dashStatusIdeal, custosTotais, entradas);
+  atualizarMetaCard("Minima", custosSemParcela, entradas, diasRestantes);
+  atualizarMetaCard("Consistente", metaConsistenteValor, entradas, diasRestantes);
+  atualizarMetaCard("Ideal", custosTotais, entradas, diasRestantes);
 
   dashMediaDia.innerText = moeda(mediaDiaValor);
   dashMediaSub.innerText = diasTrabalhadosValor > 0 ? `${diasTrabalhadosValor} dia(s) trabalhado(s)` : "sem ganhos registrados";
@@ -1556,8 +1450,8 @@ function atualizarDashboard(ctx) {
     : "sem dias restantes planejados";
 
   const semanas = calcularSemanasDoMes();
-  const semanaAtualNumero = semanaDoMes(new Date());
-  const ganhoSemanaAtual = semanas[semanaAtualNumero] || 0;
+  const semanaAtual = semanas.find(s => s.isAtual) || semanas[0] || { valor: 0 };
+  const ganhoSemanaAtual = semanaAtual.valor || 0;
   const percSemana = metaSemanal > 0 ? Math.min((ganhoSemanaAtual / metaSemanal) * 100, 999) : 0;
 
   dashSemanaAtual.innerText = moeda(ganhoSemanaAtual);
@@ -1582,41 +1476,105 @@ function definirFaixa(atual, minima, consistente, ideal) {
   return { texto: "Você ainda está abaixo da mínima" };
 }
 
-function atualizarMetaCard(nome, card, valorEl, statusEl, meta, atual) {
+function atualizarMetaCard(nome, meta, atual, diasRestantes) {
+  const card = document.getElementById(`cardMeta${nome}`);
+  const pctEl = document.getElementById(`dashPct${nome}`);
+  const barEl = document.getElementById(`dashBar${nome}`);
+  const progressoEl = document.getElementById(`dashProgresso${nome}`);
+  const acaoEl = document.getElementById(`dashAcao${nome}`);
+
+  if (!card || !pctEl || !barEl || !progressoEl || !acaoEl) return;
+
   card.classList.remove("ok", "alerta", "longe");
-  valorEl.innerText = moeda(meta);
 
   if (!meta || meta <= 0) {
-    statusEl.innerText = "Não configurada";
+    pctEl.innerText = "—";
+    barEl.style.width = "0%";
+    progressoEl.innerText = `${moeda(atual)} / ${moeda(0)}`;
+    acaoEl.innerText = "Configure esta meta";
     card.classList.add("alerta");
     return;
   }
 
+  const percentualReal = (atual / meta) * 100;
+  const percentualVisual = Math.min(percentualReal, 100);
   const falta = Math.max(meta - atual, 0);
-  const perc = Math.min((atual / meta) * 100, 100);
+  const porDia = diasRestantes > 0 ? falta / diasRestantes : 0;
+
+  pctEl.innerText = `${Math.round(percentualReal)}%`;
+  barEl.style.width = `${percentualVisual}%`;
+  progressoEl.innerText = `${moeda(atual)} / ${moeda(meta)}`;
 
   if (falta <= 0) {
-    statusEl.innerText = "Atingida";
+    acaoEl.innerText = "Meta atingida";
     card.classList.add("ok");
-  } else if (perc >= 70) {
-    statusEl.innerText = `Faltam ${moeda(falta)}`;
-    card.classList.add("alerta");
   } else {
-    statusEl.innerText = `Faltam ${moeda(falta)}`;
-    card.classList.add("longe");
+    acaoEl.innerText = diasRestantes > 0
+      ? `Faltam ${moeda(falta)} · aprox. ${moeda(porDia)}/dia`
+      : `Faltam ${moeda(falta)}`;
+    card.classList.add(percentualReal >= 70 ? "alerta" : "longe");
   }
 }
 
-function semanaDoMes(dataObj) {
-  const dia = dataObj.getDate();
-  return Math.min(Math.ceil(dia / 7), 5);
+function inicioDaSemanaSegunda(dataObj) {
+  const d = new Date(dataObj.getFullYear(), dataObj.getMonth(), dataObj.getDate());
+  const diaSemana = d.getDay(); // 0 domingo, 1 segunda...
+  const diff = diaSemana === 0 ? -6 : 1 - diaSemana;
+  d.setDate(d.getDate() + diff);
+  return d;
+}
+
+function fimDaSemanaDomingo(dataObj) {
+  const inicio = inicioDaSemanaSegunda(dataObj);
+  const fim = new Date(inicio);
+  fim.setDate(fim.getDate() + 6);
+  return fim;
+}
+
+function formatarPeriodoSemana(inicio, fim) {
+  const meses = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+  const mesmoMes = inicio.getMonth() === fim.getMonth();
+  if (mesmoMes) return `${inicio.getDate()}–${fim.getDate()} ${meses[fim.getMonth()]}`;
+  return `${inicio.getDate()} ${meses[inicio.getMonth()]}–${fim.getDate()} ${meses[fim.getMonth()]}`;
+}
+
+function chaveSemana(dataObj) {
+  const inicio = inicioDaSemanaSegunda(dataObj);
+  return inicio.toISOString().slice(0, 10);
 }
 
 function calcularSemanasDoMes() {
   const hoje = new Date();
   const ano = hoje.getFullYear();
   const mes = hoje.getMonth();
-  const semanas = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+  const primeiroDiaMes = new Date(ano, mes, 1);
+  const ultimoDiaMes = new Date(ano, mes + 1, 0);
+  const primeiraSegundaDoCiclo = inicioDaSemanaSegunda(primeiroDiaMes);
+  const semanas = [];
+
+  let cursor = new Date(primeiraSegundaDoCiclo);
+  let numeroSemana = 1;
+
+  while (cursor <= ultimoDiaMes) {
+    const inicioCalendario = new Date(cursor);
+    const fimCalendario = fimDaSemanaDomingo(inicioCalendario);
+
+    // Recorte visual dentro do mês atual: nunca mostra dias do mês anterior/posterior.
+    const inicioRecortado = inicioCalendario < primeiroDiaMes ? new Date(primeiroDiaMes) : new Date(inicioCalendario);
+    const fimRecortado = fimCalendario > ultimoDiaMes ? new Date(ultimoDiaMes) : new Date(fimCalendario);
+
+    semanas.push({
+      key: chaveSemana(inicioCalendario),
+      inicio: inicioRecortado,
+      fim: fimRecortado,
+      label: `S${numeroSemana}: ${formatarPeriodoSemana(inicioRecortado, fimRecortado)}`,
+      valor: 0,
+      isAtual: chaveSemana(inicioCalendario) === chaveSemana(hoje)
+    });
+
+    cursor.setDate(cursor.getDate() + 7);
+    numeroSemana++;
+  }
 
   dados.forEach(d => {
     if (d.descricao !== "Ganhos Uber" || !d.data) return;
@@ -1624,8 +1582,9 @@ function calcularSemanasDoMes() {
     if (partes.length !== 3) return;
     const dataObj = new Date(Number(partes[0]), Number(partes[1]) - 1, Number(partes[2]));
     if (dataObj.getFullYear() !== ano || dataObj.getMonth() !== mes) return;
-    const semana = semanaDoMes(dataObj);
-    semanas[semana] += Number(d.valor) || 0;
+    const key = chaveSemana(dataObj);
+    const semana = semanas.find(s => s.key === key);
+    if (semana) semana.valor += Number(d.valor) || 0;
   });
 
   return semanas;
@@ -1635,42 +1594,20 @@ function renderizarSemanas(semanas, metaSemanal) {
   if (!dashSemanasLista) return;
 
   dashSemanasLista.innerHTML = "";
-  for (let i = 1; i <= 5; i++) {
-    const valor = semanas[i] || 0;
+  semanas.forEach((semana, idx) => {
+    const valor = semana.valor || 0;
     const pct = metaSemanal > 0 ? Math.min((valor / metaSemanal) * 100, 100) : 0;
     const linha = document.createElement("div");
     linha.className = "semana-linha";
     linha.innerHTML = `
-      <span>S${i}</span>
+      <span>${semana.label}</span>
       <div class="semana-barra"><div style="width:${pct}%"></div></div>
       <span class="semana-valor">${valor > 0 ? moeda(valor) : "—"}</span>
     `;
     dashSemanasLista.appendChild(linha);
-  }
+  });
 }
 
-
-
-
-function classeIconeLancamento(item) {
-  if (item.tipo === "ganho" || item.descricao === "Ganhos Uber") return "ganho-icon";
-  if (item.tipo === "gasolina" || item.descricao === "Gasolina") return "gasolina-icon";
-  if (item.tipo === "km" || item.descricao === "Atualização de KM") return "km-icon";
-  return "despesa-icon";
-}
-
-function svgIconeLancamento(item) {
-  if (item.tipo === "ganho" || item.descricao === "Ganhos Uber") {
-    return '<svg class="icon" viewBox="0 0 24 24"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>';
-  }
-  if (item.tipo === "gasolina" || item.descricao === "Gasolina") {
-    return '<svg class="icon" viewBox="0 0 24 24"><path d="M4 20V6a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v14"/><path d="M4 10h11"/><path d="M15 7h2l3 3v7a2 2 0 0 1-2 2h-1"/></svg>';
-  }
-  if (item.tipo === "km" || item.descricao === "Atualização de KM") {
-    return '<svg class="icon" viewBox="0 0 24 24"><path d="M5 16h14"/><path d="M7 16l1.2-5.2A3 3 0 0 1 11.1 8h1.8a3 3 0 0 1 2.9 2.8L17 16"/><path d="M7 16v2"/><path d="M17 16v2"/></svg>';
-  }
-  return '<svg class="icon" viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M5 7l1.2 13h11.6L19 7"/><path d="M9 7V4h6v3"/></svg>';
-}
 
 function gerarId() {
   return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
