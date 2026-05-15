@@ -1863,28 +1863,32 @@ function render() {
     if (dataA !== dataB) return dataB.localeCompare(dataA);
     return String(b.id || "").localeCompare(String(a.id || ""));
   });
+  const mesAtualKey = mesKeyDeData(new Date());
 
   dadosOrdenados.forEach((d, index) => {
-    if (d.valor > 0) {
-      entradas += d.valor;
-      if (d.descricao === "Ganhos Uber") diasComGanhos.add(d.data);
-    }
+    // A lista pode exibir mês atual + anterior, mas os KPIs e o Dashboard são sempre do mês atual.
+    if (obterMesKey(d.data) === mesAtualKey) {
+      if (d.valor > 0) {
+        entradas += d.valor;
+        if (d.descricao === "Ganhos Uber") diasComGanhos.add(d.data);
+      }
 
-    if (d.valor < 0) saidas += d.valor;
-    if (d.litros) litrosTotal += d.litros;
-    if (d.km) kms.push(d.km);
+      if (d.valor < 0) saidas += d.valor;
+      if (d.litros) litrosTotal += d.litros;
+      if (d.km) kms.push(d.km);
 
-    if (d.descricao === "Gasolina") gastoGasolina += Math.abs(d.valor);
-    if (d.descricao === "Seguro") gastoSeguro += Math.abs(d.valor);
-    if (d.descricao === "Parcela") gastoParcela += Math.abs(d.valor);
+      if (d.descricao === "Gasolina") gastoGasolina += Math.abs(d.valor);
+      if (d.descricao === "Seguro") gastoSeguro += Math.abs(d.valor);
+      if (d.descricao === "Parcela") gastoParcela += Math.abs(d.valor);
 
-    if (
-      d.valor < 0 &&
-      d.descricao !== "Gasolina" &&
-      d.descricao !== "Seguro" &&
-      d.descricao !== "Parcela"
-    ) {
-      gastoCustosGerais += Math.abs(d.valor);
+      if (
+        d.valor < 0 &&
+        d.descricao !== "Gasolina" &&
+        d.descricao !== "Seguro" &&
+        d.descricao !== "Parcela"
+      ) {
+        gastoCustosGerais += Math.abs(d.valor);
+      }
     }
 
     const tr = document.createElement("tr");
@@ -2238,7 +2242,6 @@ function atualizarDashboard(ctx) {
 
   const metaConsistenteValor = Number(config.metaConsistente) || 0;
   const projecaoMes = mediaDiaValor * (Number(config.diasPlanejados) || 0);
-  const metaSemanal = metaConsistenteValor > 0 ? metaConsistenteValor / 4 : 1000;
 
   dashboardProjecao.innerText = moeda(projecaoMes);
   if (document.getElementById("dashboardAtualMes")) dashboardAtualMes.innerText = moeda(entradas);
@@ -2279,6 +2282,7 @@ function atualizarDashboard(ctx) {
     : "sem dias restantes planejados";
 
   const semanas = calcularSemanasDoMes();
+  const metaSemanal = metaConsistenteValor > 0 ? metaConsistenteValor / Math.max(semanas.length, 1) : 0;
   const semanaAtual = semanas.find(s => s.isAtual) || semanas[0] || { valor: 0 };
   const ganhoSemanaAtual = semanaAtual.valor || 0;
   const percSemana = metaSemanal > 0 ? Math.min((ganhoSemanaAtual / metaSemanal) * 100, 999) : 0;
@@ -2591,7 +2595,10 @@ async function salvarEstado() {
   salvarBackupLocal();
   setStatusSync("Salvando...", "salvando");
 
-  if (!firebaseCarregado) return;
+  if (!firebaseCarregado) {
+    setStatusSync("Backup local salvo", "salvando");
+    return;
+  }
 
   salvandoFirebase = true;
   try {
@@ -2722,6 +2729,7 @@ function importarJSON(event) {
         return alert("Arquivo inválido");
       }
 
+      executarManutencaoMensal(false);
       preencherCamposConfig();
       render();
       await salvarEstado();
