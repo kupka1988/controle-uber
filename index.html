@@ -128,7 +128,7 @@ h3 {
 
 .abas {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: repeat(5, 1fr);
   gap: 8px;
   background: #eef0f4;
   border: 1px solid #e5e7eb;
@@ -665,11 +665,350 @@ input[type="date"] {
 }
 
 
+/* Histórico premium */
+.history-shell {
+  display: grid;
+  gap: 16px;
+}
+
+.history-hero {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #14161a 0%, #26303a 58%, #34536f 100%);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.history-hero::after {
+  content: "";
+  position: absolute;
+  right: -58px;
+  top: -80px;
+  width: 190px;
+  height: 190px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.10);
+}
+
+.history-hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+.history-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 850;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.78;
+  margin-bottom: 10px;
+}
+
+.history-title {
+  font-size: clamp(28px, 6vw, 48px);
+  font-weight: 950;
+  line-height: 0.98;
+  letter-spacing: -0.065em;
+  margin: 0;
+}
+
+.history-subtitle {
+  margin: 10px 0 0;
+  font-size: 14px;
+  font-weight: 650;
+  opacity: 0.78;
+  max-width: 620px;
+}
+
+.history-quick-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 18px;
+  position: relative;
+  z-index: 1;
+}
+
+.history-quick-card {
+  background: rgba(255,255,255,0.11);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 16px;
+  padding: 13px;
+  backdrop-filter: blur(8px);
+}
+
+.history-quick-card span {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 850;
+  opacity: 0.68;
+}
+
+.history-quick-card strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+
+.history-timeline {
+  display: grid;
+  gap: 14px;
+}
+
+.month-card-premium {
+  position: relative;
+  background: rgba(255,255,255,0.94);
+  border: 1px solid rgba(230, 226, 216, 0.95);
+  border-radius: 22px;
+  padding: 18px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.month-card-premium::before {
+  content: "";
+  position: absolute;
+  top: 18px;
+  bottom: 18px;
+  left: 0;
+  width: 5px;
+  border-radius: 999px;
+  background: var(--line);
+}
+
+.month-card-premium.andamento::before { background: linear-gradient(180deg, var(--blue), #6f8fa8); }
+.month-card-premium.meta-minima::before { background: linear-gradient(180deg, var(--orange), #d6a36d); }
+.month-card-premium.meta-consistente::before { background: linear-gradient(180deg, var(--green), #7ea584); }
+.month-card-premium.meta-ideal::before { background: linear-gradient(180deg, #1f4f76, var(--blue)); }
+
+.month-card-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.month-title-wrap {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.month-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-soft);
+  border: 1px solid #ece8dd;
+  color: var(--primary);
+  flex: 0 0 auto;
+}
+
+.month-icon svg {
+  width: 21px;
+  height: 21px;
+  stroke-width: 2.25;
+}
+
+.month-title {
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+}
+
+.month-sub {
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.month-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.month-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 850;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.month-badge.andamento {
+  background: var(--blue-soft);
+  color: var(--blue);
+  border-color: #c6d5df;
+}
+
+.month-badge.fechado {
+  background: #f1efe7;
+  color: #615c52;
+  border-color: #e1dccd;
+}
+
+.month-badge.meta-ideal {
+  background: var(--blue-soft);
+  color: var(--blue);
+  border-color: #c6d5df;
+}
+
+.month-badge.meta-consistente {
+  background: var(--green-soft);
+  color: var(--green);
+  border-color: #bddfc6;
+}
+
+.month-badge.meta-minima {
+  background: var(--orange-soft);
+  color: var(--orange);
+  border-color: #e8c7a3;
+}
+
+.month-badge.meta-baixa {
+  background: var(--red-soft);
+  color: var(--red);
+  border-color: #e9bebc;
+}
+
+.month-body {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.95fr) minmax(280px, 1.35fr);
+  gap: 18px;
+  margin-top: 18px;
+  align-items: stretch;
+}
+
+.month-result-panel {
+  background: linear-gradient(180deg, #fbfaf7, #f5f2eb);
+  border: 1px solid #e9e3d6;
+  border-radius: 18px;
+  padding: 16px;
+}
+
+.month-result-label {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 850;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.month-result-value {
+  margin-top: 8px;
+  font-size: clamp(29px, 6vw, 42px);
+  line-height: 0.96;
+  font-weight: 950;
+  letter-spacing: -0.065em;
+}
+
+.month-result-note {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.month-progress-block {
+  margin-top: 15px;
+}
+
+.month-progress-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 850;
+  margin-bottom: 7px;
+}
+
+.month-progress-track {
+  height: 9px;
+  border-radius: 999px;
+  background: rgba(18, 20, 23, 0.09);
+  overflow: hidden;
+}
+
+.month-progress-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--orange), var(--green));
+}
+
+.month-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.month-kpi {
+  background: var(--surface-soft);
+  border: 1px solid #ece8dd;
+  border-radius: 16px;
+  padding: 13px;
+  min-height: 82px;
+}
+
+.month-kpi span {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.month-kpi strong {
+  display: block;
+  margin-top: 7px;
+  font-size: 19px;
+  line-height: 1.05;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+
+.month-kpi small {
+  display: block;
+  margin-top: 5px;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.history-empty {
+  padding: 18px;
+  border-radius: 18px;
+  background: var(--surface-soft);
+  border: 1px dashed #d9d3c5;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+
 @media (max-width: 800px) {
   body { padding: 12px; }
   .app-header { flex-direction: column; align-items: stretch; }
   .app-status { align-items: flex-start; }
-  .painel, .grid-metas-config, .dashboard-grid-3, .dashboard-grid-2 { grid-template-columns: 1fr; }
+  .painel, .grid-metas-config, .dashboard-grid-3, .dashboard-grid-2, .history-quick-grid, .month-body { grid-template-columns: 1fr; }
   .botoes { grid-template-columns: 1fr 1fr; }
   table { font-size: 12px; }
   th, td { padding: 10px 6px; }
@@ -678,6 +1017,12 @@ input[type="date"] {
 
 
 @media (max-width: 640px) {
+  .month-card-head { flex-direction: column; }
+  .month-badges { justify-content: flex-start; }
+  .month-kpi-grid { grid-template-columns: 1fr; }
+  .history-title { font-size: 31px; }
+  .history-quick-grid { grid-template-columns: 1fr; }
+
   .historico-table,
   .historico-table thead,
   .historico-table tbody,
@@ -743,6 +1088,190 @@ input[type="date"] {
   .semana-linha { grid-template-columns: 96px 1fr 78px; gap: 8px; }
 }
 
+
+/* Identidade visual com ícones */
+.brand-lockup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 15px;
+  object-fit: cover;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.18);
+  border: 1px solid rgba(255,255,255,0.7);
+  flex: 0 0 auto;
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex: 0 0 auto;
+}
+
+.tab-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+.aba-btn .icon {
+  width: 17px;
+  height: 17px;
+}
+
+.botao {
+  position: relative;
+  overflow: hidden;
+}
+
+.botao::after {
+  content: "";
+  position: absolute;
+  right: -22px;
+  top: -28px;
+  width: 86px;
+  height: 86px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.13);
+}
+
+.botao .botao-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.botao .action-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.18);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.botao .action-icon .icon {
+  width: 19px;
+  height: 19px;
+}
+
+.botao .botao-kicker {
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.72;
+  line-height: 1.1;
+}
+
+.botao .botao-main {
+  display: block;
+  margin-top: 3px;
+  font-size: 16px;
+  line-height: 1.1;
+}
+
+.heading-with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.heading-with-icon .heading-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 10px;
+  background: #f3f4f6;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #334155;
+}
+
+.heading-with-icon .icon {
+  width: 15px;
+  height: 15px;
+}
+
+.launch-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+
+.launch-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.launch-icon .icon {
+  width: 16px;
+  height: 16px;
+}
+
+.launch-icon.ganho-icon {
+  background: var(--green-soft);
+  color: var(--green);
+}
+
+.launch-icon.gasolina-icon {
+  background: var(--orange-soft);
+  color: var(--orange);
+}
+
+.launch-icon.km-icon {
+  background: var(--blue-soft);
+  color: var(--blue);
+}
+
+.launch-icon.despesa-icon {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+@media (max-width: 640px) {
+  .brand-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+  }
+
+  .tab-label {
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .aba-btn .icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .botao .botao-main {
+    font-size: 15px;
+  }
+}
+
 </style>
 </head>
 
@@ -750,11 +1279,13 @@ input[type="date"] {
 
 <div class="app-shell">
 <header class="app-header">
-  <div class="brand-wrap">
-    <img src="apple-touch-icon.png" alt="Controle Uber" class="app-logo">
-    <div class="app-title">
-      <h1>Controle Uber</h1>
-      <p id="mesAtualTexto">Operação mensal</p>
+  <div class="app-title">
+    <div class="brand-lockup">
+      <img class="brand-icon" src="apple-touch-icon.png" alt="Controle Uber">
+      <div>
+        <h1>Controle Uber</h1>
+        <p id="mesAtualTexto">Operação mensal</p>
+      </div>
     </div>
   </div>
   <div class="app-status">
@@ -763,20 +1294,21 @@ input[type="date"] {
 </header>
 
 <div class="abas">
-  <button id="abaInicio" class="aba-btn ativo" onclick="trocarAba('inicio')">Início</button>
-  <button id="abaDashboard" class="aba-btn" onclick="trocarAba('dashboard')">Dashboard</button>
-  <button id="abaHistorico" class="aba-btn" onclick="trocarAba('historico')">Lançamentos</button>
-  <button id="abaConfig" class="aba-btn" onclick="trocarAba('config')">Configuração</button>
+  <button id="abaInicio" class="aba-btn ativo" onclick="trocarAba('inicio')"><span class="tab-label"><svg class="icon" viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10.5V20h14v-9.5"/><path d="M9 20v-6h6v6"/></svg><span>Início</span></span></button>
+  <button id="abaDashboard" class="aba-btn" onclick="trocarAba('dashboard')"><span class="tab-label"><svg class="icon" viewBox="0 0 24 24"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 16V9"/><path d="M12 16V7"/><path d="M16 16v-4"/></svg><span>Dashboard</span></span></button>
+  <button id="abaHistorico" class="aba-btn" onclick="trocarAba('historico')"><span class="tab-label"><svg class="icon" viewBox="0 0 24 24"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></svg><span>Lançamentos</span></span></button>
+  <button id="abaFechamentos" class="aba-btn" onclick="trocarAba('fechamentos')"><span class="tab-label"><svg class="icon" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/></svg><span>Histórico</span></span></button>
+  <button id="abaConfig" class="aba-btn" onclick="trocarAba('config')"><span class="tab-label"><svg class="icon" viewBox="0 0 24 24"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 15a1.8 1.8 0 0 0 .36 2l.05.05a2.1 2.1 0 1 1-2.97 2.97l-.05-.05a1.8 1.8 0 0 0-2-.36 1.8 1.8 0 0 0-1.1 1.65V21a2.1 2.1 0 1 1-4.2 0v-.07a1.8 1.8 0 0 0-1.1-1.65 1.8 1.8 0 0 0-2 .36l-.05.05a2.1 2.1 0 1 1-2.97-2.97l.05-.05a1.8 1.8 0 0 0 .36-2 1.8 1.8 0 0 0-1.65-1.1H2a2.1 2.1 0 1 1 0-4.2h.07a1.8 1.8 0 0 0 1.65-1.1 1.8 1.8 0 0 0-.36-2l-.05-.05a2.1 2.1 0 1 1 2.97-2.97l.05.05a1.8 1.8 0 0 0 2 .36h.01A1.8 1.8 0 0 0 9.43 2V2a2.1 2.1 0 1 1 4.2 0v.07a1.8 1.8 0 0 0 1.1 1.65 1.8 1.8 0 0 0 2-.36l.05-.05a2.1 2.1 0 1 1 2.97 2.97l-.05.05a1.8 1.8 0 0 0-.36 2v.01A1.8 1.8 0 0 0 22 9.43H22a2.1 2.1 0 1 1 0 4.2h-.07A1.8 1.8 0 0 0 20.28 15Z"/></svg><span>Configuração</span></span></button>
 </div>
 
 <div id="telaInicio" class="tela">
 
 <div class="card">
   <div class="botoes">
-    <div id="btnGanho" class="botao ganho ativo" onclick="selecionar('ganho')">+ Ganho</div>
-    <div id="btnGasolina" class="botao gasolina" onclick="selecionar('gasolina')">+ Gasolina</div>
-    <div id="btnDespesas" class="botao despesas" onclick="selecionar('despesas')">+ Outras despesas</div>
-    <div id="btnKM" class="botao kmBtn" onclick="selecionar('km')">+ KM</div>
+    <div id="btnGanho" class="botao ganho ativo" onclick="selecionar('ganho')"><span class="botao-content"><span class="action-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg></span><span><span class="botao-kicker">Registrar</span><span class="botao-main">Ganho</span></span></span></div>
+    <div id="btnGasolina" class="botao gasolina" onclick="selecionar('gasolina')"><span class="botao-content"><span class="action-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M4 20V6a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v14"/><path d="M4 10h11"/><path d="M15 7h2l3 3v7a2 2 0 0 1-2 2h-1"/><path d="M18 10v3"/></svg></span><span><span class="botao-kicker">Registrar</span><span class="botao-main">Gasolina</span></span></span></div>
+    <div id="btnDespesas" class="botao despesas" onclick="selecionar('despesas')"><span class="botao-content"><span class="action-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M5 7l1.2 13h11.6L19 7"/><path d="M9 7V4h6v3"/><path d="M10 12v4"/><path d="M14 12v4"/></svg></span><span><span class="botao-kicker">Registrar</span><span class="botao-main">Despesa</span></span></span></div>
+    <div id="btnKM" class="botao kmBtn" onclick="selecionar('km')"><span class="botao-content"><span class="action-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M5 16h14"/><path d="M7 16l1.2-5.2A3 3 0 0 1 11.1 8h1.8a3 3 0 0 1 2.9 2.8L17 16"/><path d="M7 16v2"/><path d="M17 16v2"/><path d="M9 13h6"/></svg></span><span><span class="botao-kicker">Atualizar</span><span class="botao-main">KM</span></span></span></div>
   </div>
 
   <label>Data</label>
@@ -811,7 +1343,7 @@ input[type="date"] {
 
 <div class="painel">
   <div class="card">
-    <h3>Resumo Financeiro</h3>
+    <h3 class="heading-with-icon"><span class="heading-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6"/></svg></span>Resumo Financeiro</h3>
 
     <div class="resumo-grid">
       <div class="resumo-item">
@@ -834,7 +1366,7 @@ input[type="date"] {
   </div>
 
   <div class="card">
-    <h3>Operação do Carro</h3>
+    <h3 class="heading-with-icon"><span class="heading-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M5 16h14"/><path d="M7 16l1.2-5.2A3 3 0 0 1 11.1 8h1.8a3 3 0 0 1 2.9 2.8L17 16"/><path d="M7 16v2"/><path d="M17 16v2"/></svg></span>Operação do Carro</h3>
 
     <div class="resumo-grid">
       <div class="resumo-item">
@@ -866,7 +1398,7 @@ input[type="date"] {
 </div>
 
 <div class="card">
-  <h3>Metas de Custo</h3>
+  <h3 class="heading-with-icon"><span class="heading-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6"/></svg></span>Metas de Custo</h3>
 
   <table class="tabela-metas">
     <thead>
@@ -922,7 +1454,7 @@ input[type="date"] {
 </div>
 
 <div class="card">
-  <h3>Faixa de performance</h3>
+  <h3 class="heading-with-icon"><span class="heading-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M3 12h18"/><path d="M6 12a6 6 0 0 1 12 0"/><path d="m12 12 4-4"/></svg></span>Faixa de performance</h3>
 
   <div class="faixa-topo">
     <strong id="faixaTexto">Você ainda está construindo ritmo</strong>
@@ -969,7 +1501,7 @@ input[type="date"] {
 
 <div class="dashboard-grid-2">
   <div class="card">
-    <h3>Ritmo</h3>
+    <h3 class="heading-with-icon"><span class="heading-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M4 19V5"/><path d="M4 19h16"/><path d="m7 15 4-4 3 3 5-7"/></svg></span>Ritmo</h3>
     <div class="dashboard-grid-2">
       <div class="kpi-card">
         <span>Média atual</span>
@@ -985,7 +1517,7 @@ input[type="date"] {
   </div>
 
   <div class="card">
-    <h3>Semana atual</h3>
+    <h3 class="heading-with-icon"><span class="heading-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><path d="M3 10h18"/><rect x="3" y="4" width="18" height="18" rx="2"/></svg></span>Semana atual</h3>
     <div class="dashboard-grid-2">
       <div class="kpi-card">
         <span>Ganho na semana</span>
@@ -1002,7 +1534,7 @@ input[type="date"] {
 </div>
 
 <div class="card">
-  <h3>Semanas do mês</h3>
+  <h3 class="heading-with-icon"><span class="heading-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M4 19V5"/><path d="M8 17V9"/><path d="M12 17V7"/><path d="M16 17v-5"/><path d="M20 19H4"/></svg></span>Semanas do mês</h3>
   <div class="semana-lista" id="dashSemanasLista"></div>
 </div>
 
@@ -1011,7 +1543,7 @@ input[type="date"] {
 
 <div id="telaHistorico" class="tela hidden">
 <div class="card">
-  <h3>Lançamentos</h3>
+  <h3 class="heading-with-icon"><span class="heading-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></svg></span>Lançamentos</h3>
 
   <table class="historico-table">
     <thead>
@@ -1031,9 +1563,38 @@ input[type="date"] {
 
 </div>
 
+<div id="telaFechamentos" class="tela hidden">
+  <div class="history-shell">
+    <div class="card history-hero">
+      <div class="history-hero-content">
+        <div class="history-eyebrow">Histórico mensal</div>
+        <h2 class="history-title">Evolução da operação</h2>
+        <p class="history-subtitle">Consolidados mensais com leitura de resultado, metas, uso do carro e eficiência. O mês atual aparece em andamento; os anteriores ficam preservados como fechamento.</p>
+        <div class="history-quick-grid">
+          <div class="history-quick-card">
+            <span>Melhor mês</span>
+            <strong id="historicoMelhorMes">—</strong>
+          </div>
+          <div class="history-quick-card">
+            <span>Acumulado</span>
+            <strong id="historicoAcumulado">R$ 0,00</strong>
+          </div>
+          <div class="history-quick-card">
+            <span>Meses</span>
+            <strong id="historicoTotalMeses">0</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="history-timeline" id="historicoMesesLista"></div>
+  </div>
+</div>
+
+
 <div id="telaConfig" class="tela hidden">
 <div class="card">
-  <h3>Configurações do Mês</h3>
+  <h3 class="heading-with-icon"><span class="heading-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/></svg></span>Configurações do Mês</h3>
 
   <label>Saldo inicial do mês</label>
   <input type="text" id="saldoInicial" inputmode="decimal" placeholder="R$ 0,00" onblur="formatarCampoMoeda(this)">
@@ -1048,7 +1609,7 @@ input[type="date"] {
 </div>
 
 <div class="card">
-  <h3>Configurar Metas</h3>
+  <h3 class="heading-with-icon"><span class="heading-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6"/></svg></span>Configurar Metas</h3>
 
   <div class="grid-metas-config">
     <div>
@@ -1076,7 +1637,7 @@ input[type="date"] {
 </div>
 
 <div class="card">
-  <h3>Dados</h3>
+  <h3 class="heading-with-icon"><span class="heading-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg></span>Dados</h3>
 
   <div class="acoes">
     <button class="secundario" onclick="exportarJSON()">Exportar JSON</button>
@@ -1109,6 +1670,7 @@ const estadoRef = db.collection("controleUber").doc("estadoPrincipal");
 
 let tipo = "ganho";
 let dados = [];
+let fechamentos = {};
 let config = {
   saldoInicial: 0,
   metaGasolina: 0,
@@ -1121,6 +1683,7 @@ let config = {
 
 const STORAGE_KEY = "controleUberFelipe";
 const CONFIG_KEY = "controleUberFelipeConfig";
+const HISTORICO_KEY = "controleUberFelipeFechamentos";
 let firebaseCarregado = false;
 let salvandoFirebase = false;
 let bloqueiaRestauracaoLocal = false;
@@ -1131,11 +1694,13 @@ function trocarAba(aba) {
   telaInicio.classList.add("hidden");
   telaDashboard.classList.add("hidden");
   telaHistorico.classList.add("hidden");
+  telaFechamentos.classList.add("hidden");
   telaConfig.classList.add("hidden");
 
   abaInicio.classList.remove("ativo");
   abaDashboard.classList.remove("ativo");
   abaHistorico.classList.remove("ativo");
+  abaFechamentos.classList.remove("ativo");
   abaConfig.classList.remove("ativo");
 
   if (aba === "inicio") {
@@ -1152,6 +1717,11 @@ function trocarAba(aba) {
   if (aba === "historico") {
     telaHistorico.classList.remove("hidden");
     abaHistorico.classList.add("ativo");
+  }
+
+  if (aba === "fechamentos") {
+    telaFechamentos.classList.remove("hidden");
+    abaFechamentos.classList.add("ativo");
   }
 
   if (aba === "config") {
@@ -1247,6 +1817,7 @@ async function adicionar() {
   });
 
   limparFormulario();
+  executarManutencaoMensal(false);
   render();
   await salvarEstado();
 }
@@ -1286,7 +1857,14 @@ function render() {
 
   const diasComGanhos = new Set();
 
-  dados.forEach((d, index) => {
+  const dadosOrdenados = [...dados].sort((a, b) => {
+    const dataA = a.data || "";
+    const dataB = b.data || "";
+    if (dataA !== dataB) return dataB.localeCompare(dataA);
+    return String(b.id || "").localeCompare(String(a.id || ""));
+  });
+
+  dadosOrdenados.forEach((d, index) => {
     if (d.valor > 0) {
       entradas += d.valor;
       if (d.descricao === "Ganhos Uber") diasComGanhos.add(d.data);
@@ -1313,7 +1891,7 @@ function render() {
 
     tr.innerHTML = `
       <td data-label="Data">${formatarData(d.data)}</td>
-      <td data-label="Descrição">${d.descricao}</td>
+      <td data-label="Descrição"><span class="launch-row"><span class="launch-icon ${classeIconeLancamento(d)}">${svgIconeLancamento(d)}</span><span>${d.descricao}</span></span></td>
       <td data-label="Valor" class="${d.valor > 0 ? "positivo" : d.valor < 0 ? "negativo" : ""}">
         ${d.valor === 0 ? "-" : moeda(d.valor)}
       </td>
@@ -1384,6 +1962,8 @@ function render() {
     mediaDiaValor,
     metaAjustadaValor
   });
+
+  renderizarHistoricoMensal({ entradas, saidas, kmRodado, litrosTotal, gastoGasolina, lucroOperacional, custosSemParcela, custosTotais });
 }
 
 function entradasEl() { return document.getElementById("entradas"); }
@@ -1395,6 +1975,255 @@ function receitaPorKmEl() { return document.getElementById("receitaPorKm"); }
 function custoPorKmEl() { return document.getElementById("custoPorKm"); }
 function lucroPorKmEl() { return document.getElementById("lucroPorKm"); }
 
+
+
+function obterMesKey(dataISO) {
+  if (!dataISO || typeof dataISO !== "string" || dataISO.length < 7) return "";
+  return dataISO.slice(0, 7);
+}
+
+function mesKeyDeData(dataObj) {
+  const ano = dataObj.getFullYear();
+  const mes = String(dataObj.getMonth() + 1).padStart(2, "0");
+  return `${ano}-${mes}`;
+}
+
+function deslocarMesKey(mesKey, delta) {
+  const [ano, mes] = mesKey.split("-").map(Number);
+  const data = new Date(ano, mes - 1 + delta, 1);
+  return mesKeyDeData(data);
+}
+
+function compararMesKey(a, b) {
+  if (!a && !b) return 0;
+  if (!a) return -1;
+  if (!b) return 1;
+  return a.localeCompare(b);
+}
+
+function nomeMesAno(mesKey) {
+  if (!mesKey) return "Mês";
+  const [ano, mes] = mesKey.split("-").map(Number);
+  const meses = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+  return `${meses[(mes || 1) - 1]} ${ano}`;
+}
+
+function nomeMesAnoLongo(mesKey) {
+  if (!mesKey) return "Mês";
+  const [ano, mes] = mesKey.split("-").map(Number);
+  const meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+  return `${meses[(mes || 1) - 1]} de ${ano}`;
+}
+
+function calcularResumoDoMes(mesKey, listaDados, configBase = config, status = "Fechado") {
+  const dadosMes = (Array.isArray(listaDados) ? listaDados : []).filter(d => obterMesKey(d.data) === mesKey);
+  let entradas = 0;
+  let saidas = 0;
+  let litrosTotal = 0;
+  let kms = [];
+  let gastoGasolina = 0;
+  let diasComGanhos = new Set();
+
+  dadosMes.forEach(d => {
+    const valor = Number(d.valor) || 0;
+    if (valor > 0) {
+      entradas += valor;
+      if (d.descricao === "Ganhos Uber") diasComGanhos.add(d.data);
+    }
+    if (valor < 0) saidas += valor;
+    if (d.litros) litrosTotal += Number(d.litros) || 0;
+    if (d.km) kms.push(Number(d.km) || 0);
+    if (d.descricao === "Gasolina") gastoGasolina += Math.abs(valor);
+  });
+
+  const kmRodado = kms.length > 1 ? Math.max(...kms) - Math.min(...kms) : 0;
+  const lucroOperacional = entradas + saidas;
+  const resultado = (Number(configBase.saldoInicial) || 0) + lucroOperacional;
+  const lucroPorKm = kmRodado > 0 ? lucroOperacional / kmRodado : 0;
+
+  const metaMinima = (Number(configBase.metaGasolina) || 0) + (Number(configBase.metaSeguro) || 0) + (Number(configBase.metaCustosGerais) || 0);
+  const metaConsistenteValor = Number(configBase.metaConsistente) || 0;
+  const metaIdeal = metaMinima + (Number(configBase.metaParcela) || 0);
+
+  let faixaMeta = "Abaixo da mínima";
+  if (metaIdeal > 0 && entradas >= metaIdeal) faixaMeta = "Ideal";
+  else if (metaConsistenteValor > 0 && entradas >= metaConsistenteValor) faixaMeta = "Consistente";
+  else if (metaMinima > 0 && entradas >= metaMinima) faixaMeta = "Mínima";
+
+  return {
+    mesKey,
+    mesLabel: nomeMesAnoLongo(mesKey),
+    status,
+    entradas,
+    saidas,
+    resultado,
+    kmRodado,
+    litrosTotal,
+    gastoGasolina,
+    lucroPorKm,
+    diasTrabalhados: diasComGanhos.size,
+    metaAtingida: faixaMeta,
+    config: { ...configBase },
+    fechadoEm: status === "Fechado" ? new Date().toISOString() : null
+  };
+}
+
+function executarManutencaoMensal(forcar = false) {
+  const mesAtual = mesKeyDeData(new Date());
+  const mesAnterior = deslocarMesKey(mesAtual, -1);
+  let alterou = false;
+
+  const mesesNosLancamentos = [...new Set(dados.map(d => obterMesKey(d.data)).filter(Boolean))];
+
+  mesesNosLancamentos.forEach(mesKey => {
+    // Todo mês anterior ao mês atual recebe/atualiza um consolidado.
+    // Ele pode continuar aparecendo em Lançamentos por mais um mês.
+    if (compararMesKey(mesKey, mesAtual) < 0) {
+      const resumo = calcularResumoDoMes(mesKey, dados, config, "Fechado");
+      const anterior = JSON.stringify(fechamentos[mesKey] || {});
+      const novo = JSON.stringify(resumo);
+      if (anterior !== novo) {
+        fechamentos[mesKey] = resumo;
+        alterou = true;
+      }
+    }
+  });
+
+  const tamanhoAntes = dados.length;
+  dados = dados.filter(d => {
+    const mes = obterMesKey(d.data);
+    if (!mes) return true;
+    // Mantém na aba Lançamentos apenas mês atual + mês anterior.
+    return compararMesKey(mes, mesAnterior) >= 0;
+  });
+
+  if (dados.length !== tamanhoAntes) alterou = true;
+
+  if (forcar && alterou) salvarBackupLocal();
+  return alterou;
+}
+
+function renderizarHistoricoMensal(ctx = {}) {
+  const container = document.getElementById("historicoMesesLista");
+  if (!container) return;
+
+  const mesAtual = mesKeyDeData(new Date());
+  const meses = new Set(Object.keys(fechamentos || {}));
+  meses.add(mesAtual);
+
+  // Se houver lançamentos recentes ainda visíveis, exibe também o consolidado calculado.
+  dados.forEach(d => {
+    const mes = obterMesKey(d.data);
+    if (mes) meses.add(mes);
+  });
+
+  const lista = [...meses].filter(Boolean).sort((a, b) => b.localeCompare(a));
+
+  if (lista.length === 0) {
+    container.innerHTML = `<div class="history-empty">Sem dados mensais para exibir ainda.</div>`;
+    atualizarResumoHistorico([]);
+    return;
+  }
+
+  const resumos = lista.map(mesKey => {
+    const status = mesKey === mesAtual ? "Em andamento" : "Fechado";
+    const resumo = mesKey === mesAtual
+      ? calcularResumoDoMes(mesKey, dados, config, status)
+      : (fechamentos[mesKey] || calcularResumoDoMes(mesKey, dados, config, status));
+    return { mesKey, status, resumo };
+  });
+
+  atualizarResumoHistorico(resumos.map(item => item.resumo));
+  container.innerHTML = "";
+
+  resumos.forEach(({ mesKey, status, resumo }) => {
+    const statusClasse = status === "Em andamento" ? "andamento" : "fechado";
+    const metaClasse = classeMetaHistorico(resumo.metaAtingida);
+    const metaMinima = (Number(resumo.config?.metaGasolina) || 0) + (Number(resumo.config?.metaSeguro) || 0) + (Number(resumo.config?.metaCustosGerais) || 0);
+    const metaConsistente = Number(resumo.config?.metaConsistente) || 0;
+    const metaIdeal = metaMinima + (Number(resumo.config?.metaParcela) || 0);
+    const metaReferencia = Math.max(metaIdeal, metaConsistente, metaMinima, resumo.entradas || 0, 1);
+    const progresso = Math.min(((resumo.entradas || 0) / metaReferencia) * 100, 100);
+    const diasTexto = (resumo.diasTrabalhados || 0) === 1 ? "1 dia trabalhado" : `${resumo.diasTrabalhados || 0} dias trabalhados`;
+    const saidasAbs = Math.abs(Number(resumo.saidas) || 0);
+    const statusLabel = resumo.metaAtingida || "Sem meta";
+    const statusTexto = statusLabel === "Abaixo da mínima" ? "Abaixo da mínima" : `Faixa ${statusLabel.toLowerCase()}`;
+
+    const card = document.createElement("div");
+    card.className = `month-card-premium ${statusClasse} ${metaClasse}`;
+    card.innerHTML = `
+      <div class="month-card-head">
+        <div class="month-title-wrap">
+          <div class="month-icon">${iconeCalendario()}</div>
+          <div>
+            <div class="month-title">${resumo.mesLabel || nomeMesAnoLongo(mesKey)}</div>
+            <div class="month-sub">${diasTexto} · ${statusTexto}</div>
+          </div>
+        </div>
+        <div class="month-badges">
+          <span class="month-badge ${statusClasse}">${status}</span>
+          <span class="month-badge ${metaClasse}">${statusLabel}</span>
+        </div>
+      </div>
+
+      <div class="month-body">
+        <div class="month-result-panel">
+          <div class="month-result-label">Resultado do mês</div>
+          <div class="month-result-value ${resumo.resultado >= 0 ? "positivo" : "negativo"}">${moeda(resumo.resultado)}</div>
+          <div class="month-result-note">${moeda(resumo.entradas)} em ganhos · ${moeda(saidasAbs)} em saídas</div>
+
+          <div class="month-progress-block">
+            <div class="month-progress-top">
+              <span>Progresso até a maior meta</span>
+              <span>${Math.round(progresso)}%</span>
+            </div>
+            <div class="month-progress-track"><div class="month-progress-fill" style="width:${progresso}%"></div></div>
+          </div>
+        </div>
+
+        <div class="month-kpi-grid">
+          <div class="month-kpi"><span>Entradas</span><strong class="positivo">${moeda(resumo.entradas)}</strong><small>Ganhos Uber</small></div>
+          <div class="month-kpi"><span>Saídas</span><strong class="negativo">${moeda(saidasAbs)}</strong><small>Custos lançados</small></div>
+          <div class="month-kpi"><span>KM rodado</span><strong>${Math.round(resumo.kmRodado || 0).toLocaleString("pt-BR")}</strong><small>${numero(resumo.litrosTotal || 0)} litros</small></div>
+          <div class="month-kpi"><span>Lucro/KM</span><strong>${moeda(resumo.lucroPorKm)}</strong><small>Resultado operacional por km</small></div>
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function classeMetaHistorico(meta) {
+  if (meta === "Ideal") return "meta-ideal";
+  if (meta === "Consistente") return "meta-consistente";
+  if (meta === "Mínima") return "meta-minima";
+  return "meta-baixa";
+}
+
+function atualizarResumoHistorico(resumos) {
+  const melhorEl = document.getElementById("historicoMelhorMes");
+  const acumuladoEl = document.getElementById("historicoAcumulado");
+  const totalEl = document.getElementById("historicoTotalMeses");
+  if (!melhorEl || !acumuladoEl || !totalEl) return;
+
+  if (!resumos || resumos.length === 0) {
+    melhorEl.innerText = "—";
+    acumuladoEl.innerText = moeda(0);
+    totalEl.innerText = "0";
+    return;
+  }
+
+  const acumulado = resumos.reduce((soma, r) => soma + (Number(r.resultado) || 0), 0);
+  const melhor = [...resumos].sort((a, b) => (Number(b.resultado) || 0) - (Number(a.resultado) || 0))[0];
+
+  melhorEl.innerText = melhor ? nomeMesAno(melhor.mesKey || "") : "—";
+  acumuladoEl.innerText = moeda(acumulado);
+  totalEl.innerText = String(resumos.length);
+}
+
+function iconeCalendario() {
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="4"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/></svg>`;
+}
 
 function atualizarDashboard(ctx) {
   if (!document.getElementById("dashboardProjecao")) return;
@@ -1609,6 +2438,27 @@ function renderizarSemanas(semanas, metaSemanal) {
 }
 
 
+
+function classeIconeLancamento(item) {
+  if (item.tipo === "ganho" || item.descricao === "Ganhos Uber") return "ganho-icon";
+  if (item.tipo === "gasolina" || item.descricao === "Gasolina") return "gasolina-icon";
+  if (item.tipo === "km" || item.descricao === "Atualização de KM") return "km-icon";
+  return "despesa-icon";
+}
+
+function svgIconeLancamento(item) {
+  if (item.tipo === "ganho" || item.descricao === "Ganhos Uber") {
+    return '<svg class="icon" viewBox="0 0 24 24"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>';
+  }
+  if (item.tipo === "gasolina" || item.descricao === "Gasolina") {
+    return '<svg class="icon" viewBox="0 0 24 24"><path d="M4 20V6a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v14"/><path d="M4 10h11"/><path d="M15 7h2l3 3v7a2 2 0 0 1-2 2h-1"/></svg>';
+  }
+  if (item.tipo === "km" || item.descricao === "Atualização de KM") {
+    return '<svg class="icon" viewBox="0 0 24 24"><path d="M5 16h14"/><path d="M7 16l1.2-5.2A3 3 0 0 1 11.1 8h1.8a3 3 0 0 1 2.9 2.8L17 16"/><path d="M7 16v2"/><path d="M17 16v2"/></svg>';
+  }
+  return '<svg class="icon" viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M5 7l1.2 13h11.6L19 7"/><path d="M9 7V4h6v3"/></svg>';
+}
+
 function gerarId() {
   return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
@@ -1711,13 +2561,16 @@ function preencherCamposConfig() {
 function salvarBackupLocal() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(dados));
   localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
+  localStorage.setItem(HISTORICO_KEY, JSON.stringify(fechamentos));
 }
 
 function carregarBackupLocal() {
   const salvo = localStorage.getItem(STORAGE_KEY);
   const configSalva = localStorage.getItem(CONFIG_KEY);
+  const fechamentosSalvos = localStorage.getItem(HISTORICO_KEY);
   let dadosLocais = [];
   let configLocal = { ...config };
+  let fechamentosLocais = {};
 
   if (salvo) {
     try { dadosLocais = JSON.parse(salvo) || []; } catch { dadosLocais = []; }
@@ -1727,7 +2580,11 @@ function carregarBackupLocal() {
     try { configLocal = { ...configLocal, ...JSON.parse(configSalva) }; } catch {}
   }
 
-  return { dadosLocais, configLocal };
+  if (fechamentosSalvos) {
+    try { fechamentosLocais = JSON.parse(fechamentosSalvos) || {}; } catch { fechamentosLocais = {}; }
+  }
+
+  return { dadosLocais, configLocal, fechamentosLocais };
 }
 
 async function salvarEstado() {
@@ -1741,6 +2598,7 @@ async function salvarEstado() {
     await estadoRef.set({
       config,
       dados,
+      fechamentos,
       atualizadoEm: new Date().toISOString()
     });
     setStatusSync("Sincronizado", "ok");
@@ -1754,7 +2612,7 @@ async function salvarEstado() {
 }
 
 function iniciarSincronizacaoFirebase() {
-  const { dadosLocais, configLocal } = carregarBackupLocal();
+  const { dadosLocais, configLocal, fechamentosLocais } = carregarBackupLocal();
 
   estadoRef.onSnapshot(async (snapshot) => {
     firebaseCarregado = true;
@@ -1763,6 +2621,8 @@ function iniciarSincronizacaoFirebase() {
       dados = dadosLocais;
       normalizarDados();
       config = { ...config, ...configLocal };
+      fechamentos = { ...fechamentos, ...fechamentosLocais };
+      executarManutencaoMensal(false);
       preencherCamposConfig();
       render();
 
@@ -1775,6 +2635,7 @@ function iniciarSincronizacaoFirebase() {
     const estado = snapshot.data() || {};
     const dadosFirebase = Array.isArray(estado.dados) ? estado.dados : [];
     const configFirebase = estado.config || {};
+    const fechamentosFirebase = estado.fechamentos || {};
     const foiResetado = !!estado.resetadoEm;
 
     // Primeira migração: se a nuvem estiver vazia e existir backup local,
@@ -1783,6 +2644,8 @@ function iniciarSincronizacaoFirebase() {
       dados = dadosLocais;
       normalizarDados();
       config = { ...config, ...configLocal };
+      fechamentos = { ...fechamentos, ...fechamentosLocais };
+      executarManutencaoMensal(false);
       preencherCamposConfig();
       render();
       await salvarEstado();
@@ -1792,17 +2655,24 @@ function iniciarSincronizacaoFirebase() {
     dados = dadosFirebase;
     normalizarDados();
     config = { ...config, ...configFirebase };
+    fechamentos = { ...fechamentos, ...fechamentosFirebase };
 
+    const houveManutencao = executarManutencaoMensal(false);
     salvarBackupLocal();
     preencherCamposConfig();
     render();
     setStatusSync("Sincronizado", "ok");
+
+    if (houveManutencao && !salvandoFirebase) {
+      await salvarEstado();
+    }
   }, (erro) => {
     console.error("Erro ao carregar Firebase:", erro);
     const backup = carregarBackupLocal();
     dados = backup.dadosLocais;
     normalizarDados();
     config = { ...config, ...backup.configLocal };
+    fechamentos = { ...fechamentos, ...backup.fechamentosLocais };
     preencherCamposConfig();
     render();
     setStatusSync("Usando backup local", "erro");
@@ -1813,7 +2683,8 @@ function iniciarSincronizacaoFirebase() {
 function exportarJSON() {
   const pacote = {
     config,
-    dados
+    dados,
+    fechamentos
   };
 
   const conteudo = JSON.stringify(pacote, null, 2);
@@ -1845,6 +2716,7 @@ function importarJSON(event) {
         dados = importado.dados;
         normalizarDados();
         if (importado.config) config = { ...config, ...importado.config };
+        if (importado.fechamentos) fechamentos = { ...fechamentos, ...importado.fechamentos };
         if (importado.saldoInicial !== undefined) config.saldoInicial = parseFloat(importado.saldoInicial) || 0;
       } else {
         return alert("Arquivo inválido");
@@ -1879,9 +2751,11 @@ async function limparDados() {
     diasPlanejados: 0,
     metaConsistente: 0
   };
+  fechamentos = {};
 
   localStorage.removeItem(STORAGE_KEY);
   localStorage.removeItem(CONFIG_KEY);
+  localStorage.removeItem(HISTORICO_KEY);
 
   preencherCamposConfig();
   render();
@@ -1890,6 +2764,7 @@ async function limparDados() {
     await estadoRef.set({
       config,
       dados: [],
+      fechamentos: {},
       atualizadoEm: new Date().toISOString(),
       resetadoEm: new Date().toISOString()
     });
