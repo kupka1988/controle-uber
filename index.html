@@ -415,18 +415,28 @@ input[type="date"] {
   opacity: 0.82;
 }
 
-.dashboard-atual-box {
-  display: inline-flex;
-  align-items: baseline;
+.dashboard-hero-kpis {
+  display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   margin-top: 14px;
+}
+
+.dashboard-atual-box,
+.dashboard-sobra-box {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: baseline;
+  gap: 4px;
   padding: 10px 13px;
   border-radius: 14px;
   background: rgba(255,255,255,0.11);
   border: 1px solid rgba(255,255,255,0.16);
 }
 
-.dashboard-atual-box span {
+.dashboard-atual-box span,
+.dashboard-sobra-box span {
   font-size: 12px;
   font-weight: 610;
   text-transform: uppercase;
@@ -434,11 +444,26 @@ input[type="date"] {
   opacity: 0.72;
 }
 
-.dashboard-atual-box strong {
+.dashboard-atual-box strong,
+.dashboard-sobra-box strong {
   font-size: 18px;
   letter-spacing: 0;
   font-weight: 720;
 }
+
+.dashboard-sobra-box {
+  min-width: min(100%, 270px);
+}
+
+.dashboard-sobra-box small {
+  display: block;
+  font-size: 12px;
+  line-height: 1.25;
+  opacity: 0.72;
+}
+
+.dashboard-sobra-box.negativa strong { color: #fecaca; }
+.dashboard-sobra-box.positiva strong { color: #bbf7d0; }
 
 .dashboard-status {
   display: inline-flex;
@@ -1490,9 +1515,16 @@ input[type="date"] {
   <div class="dashboard-label">Projeção do mês</div>
   <div class="dashboard-valor-principal" id="dashboardProjecao">R$ 0,00</div>
   <div class="dashboard-sub" id="dashboardProjecaoSub">Baseada na média atual de ganhos</div>
-  <div class="dashboard-atual-box">
-    <span>Atual do mês</span>
-    <strong id="dashboardAtualMes">R$ 0,00</strong>
+  <div class="dashboard-hero-kpis">
+    <div class="dashboard-atual-box">
+      <span>Atual do mês</span>
+      <strong id="dashboardAtualMes">R$ 0,00</strong>
+    </div>
+    <div class="dashboard-sobra-box">
+      <span>Sobra projetada</span>
+      <strong id="dashboardSobraProjetada">R$ 0,00</strong>
+      <small id="dashboardSobraBase">Depois dos custos do mês</small>
+    </div>
   </div>
   <div class="dashboard-status" id="dashboardStatus">Aguardando lançamentos</div>
 </div>
@@ -2004,6 +2036,7 @@ function render() {
 
   atualizarDashboard({
     entradas,
+    saidas,
     custosSemParcela,
     custosTotais,
     diasTrabalhadosValor,
@@ -2278,6 +2311,7 @@ function atualizarDashboard(ctx) {
   if (!document.getElementById("dashboardProjecao")) return;
 
   const entradas = ctx.entradas || 0;
+  const saidas = ctx.saidas || 0;
   const custosSemParcela = ctx.custosSemParcela || 0;
   const custosTotais = ctx.custosTotais || 0;
   const diasTrabalhadosValor = ctx.diasTrabalhadosValor || 0;
@@ -2287,9 +2321,23 @@ function atualizarDashboard(ctx) {
 
   const metaConsistenteValor = Number(config.metaConsistente) || 0;
   const projecaoMes = mediaDiaValor * (Number(config.diasPlanejados) || 0);
+  const custosAtuais = Math.abs(saidas);
+  const custosConsiderados = Math.max(custosTotais, custosAtuais);
+  const sobraProjetada = projecaoMes - custosConsiderados;
 
   dashboardProjecao.innerText = moeda(projecaoMes);
   if (document.getElementById("dashboardAtualMes")) dashboardAtualMes.innerText = moeda(entradas);
+  if (document.getElementById("dashboardSobraProjetada")) dashboardSobraProjetada.innerText = moeda(sobraProjetada);
+  if (document.getElementById("dashboardSobraBase")) {
+    dashboardSobraBase.innerText = custosAtuais > custosTotais
+      ? `Custos já lançados: ${moeda(custosAtuais)}`
+      : `Custos projetados: ${moeda(custosConsiderados)}`;
+  }
+  const sobraBox = document.querySelector(".dashboard-sobra-box");
+  if (sobraBox) {
+    sobraBox.classList.toggle("positiva", sobraProjetada >= 0);
+    sobraBox.classList.toggle("negativa", sobraProjetada < 0);
+  }
   dashboardProjecaoSub.innerText = diasTrabalhadosValor > 0
     ? `Baseada em ${diasTrabalhadosValor} dia(s) trabalhado(s), média de ${moeda(mediaDiaValor)}`
     : "Comece registrando seus ganhos para gerar projeção";
