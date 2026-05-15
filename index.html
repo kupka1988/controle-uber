@@ -24,8 +24,9 @@
   --blue-soft: #eef4f8;
   --red: #b43b38;
   --red-soft: #fbefee;
-  --shadow: 0 12px 30px rgba(25, 27, 31, 0.07);
-  --radius: 18px;
+  --shadow: 0 8px 22px rgba(25, 27, 31, 0.055);
+  --shadow-soft: 0 3px 12px rgba(25, 27, 31, 0.045);
+  --radius: 14px;
 }
 
 * { box-sizing: border-box; }
@@ -67,8 +68,9 @@ body {
 }
 
 .app-title h1 {
-  font-size: 26px;
-  letter-spacing: -0.04em;
+  font-size: 25px;
+  letter-spacing: 0;
+  font-weight: 760;
   margin: 0;
   line-height: 1.1;
 }
@@ -111,14 +113,15 @@ body {
 
 h3 {
   font-size: 15px;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
+  font-weight: 680;
   color: #111827;
   margin: 0 0 14px;
 }
 
 .card {
   background: rgba(255,255,255,0.92);
-  border: 1px solid rgba(229, 231, 235, 0.9);
+  border: 1px solid rgba(230, 226, 216, 0.88);
   border-radius: var(--radius);
   padding: 18px;
   margin-bottom: 16px;
@@ -140,7 +143,7 @@ h3 {
 .aba-btn {
   background: transparent;
   color: var(--muted);
-  font-weight: 700;
+  font-weight: 620;
   margin-top: 0;
   border-radius: 12px;
   padding: 11px 10px;
@@ -164,11 +167,11 @@ h3 {
   padding: 16px 14px;
   border-radius: 16px;
   color: white;
-  font-weight: 800;
+  font-weight: 700;
   text-align: left;
   cursor: pointer;
   border: 2px solid transparent;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
 }
 
@@ -186,7 +189,7 @@ label {
   display: block;
   margin-top: 13px;
   font-size: 13px;
-  font-weight: 650;
+  font-weight: 590;
   color: var(--muted);
 }
 
@@ -217,14 +220,22 @@ button {
   background: var(--primary);
   color: white;
   font-size: 15px;
-  font-weight: 750;
+  font-weight: 680;
   cursor: pointer;
   transition: transform 0.12s ease, opacity 0.12s ease;
 }
 
 button:active { transform: scale(0.99); }
-button.secundario { background: #475569; }
-button.perigo { background: var(--red); }
+button.secundario {
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid #dbe3ec;
+}
+button.perigo {
+  background: var(--red-soft);
+  color: var(--red);
+  border: 1px solid #e9bebc;
+}
 
 .painel {
   display: grid;
@@ -239,9 +250,9 @@ button.perigo { background: var(--red); }
 }
 
 .resumo-item {
-  background: var(--surface-soft);
-  border: 1px solid #eef2f7;
-  border-radius: 16px;
+  background: #fbfaf7;
+  border: 1px solid #efebe2;
+  border-radius: 12px;
   padding: 14px;
 }
 
@@ -249,7 +260,7 @@ button.perigo { background: var(--red); }
   display: block;
   font-size: 12px;
   color: var(--muted);
-  font-weight: 700;
+  font-weight: 610;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -258,7 +269,8 @@ button.perigo { background: var(--red); }
   display: block;
   margin-top: 7px;
   font-size: 20px;
-  letter-spacing: -0.03em;
+  letter-spacing: 0;
+  font-weight: 720;
 }
 
 .destaque {
@@ -303,7 +315,7 @@ th, td {
 
 th {
   color: var(--muted);
-  font-weight: 800;
+  font-weight: 640;
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -320,13 +332,13 @@ tr:last-child td { border-bottom: none; }
 }
 
 .tabela-metas td.valor-metrica {
-  font-weight: 800;
+  font-weight: 720;
   font-size: 17px;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
 }
 
-.positivo { color: var(--green); font-weight: 800; }
-.negativo { color: var(--red); font-weight: 800; }
+.positivo { color: var(--green); font-weight: 720; }
+.negativo { color: var(--red); font-weight: 720; }
 .hidden { display: none; }
 
 .btn-excluir {
@@ -368,17 +380,14 @@ input[type="date"] {
 .dashboard-hero::after {
   content: "";
   position: absolute;
-  width: 180px;
-  height: 180px;
-  right: -60px;
-  top: -70px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.10);
+  inset: auto 0 0 0;
+  height: 1px;
+  background: rgba(255,255,255,0.16);
 }
 
 .dashboard-label {
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 650;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   opacity: 0.76;
@@ -387,8 +396,8 @@ input[type="date"] {
 
 .dashboard-valor-principal {
   font-size: clamp(36px, 8vw, 62px);
-  font-weight: 900;
-  letter-spacing: -0.07em;
+  font-weight: 790;
+  letter-spacing: 0;
   line-height: 0.98;
   margin: 0;
 }
@@ -412,7 +421,7 @@ input[type="date"] {
 
 .dashboard-atual-box span {
   font-size: 12px;
-  font-weight: 850;
+  font-weight: 610;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   opacity: 0.72;
@@ -420,7 +429,8 @@ input[type="date"] {
 
 .dashboard-atual-box strong {
   font-size: 18px;
-  letter-spacing: -0.03em;
+  letter-spacing: 0;
+  font-weight: 720;
 }
 
 .dashboard-status {
@@ -431,7 +441,7 @@ input[type="date"] {
   background: rgba(255,255,255,0.13);
   border: 1px solid rgba(255,255,255,0.18);
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 640;
 }
 
 .dashboard-grid-3 {
@@ -447,16 +457,16 @@ input[type="date"] {
 }
 
 .meta-card {
-  background: var(--surface-soft);
-  border: 1px solid #eef2f7;
-  border-radius: 18px;
+  background: #fbfaf7;
+  border: 1px solid #efebe2;
+  border-radius: 12px;
   padding: 14px;
   min-height: 118px;
 }
 
 .meta-card .meta-nome {
   font-size: 12px;
-  font-weight: 850;
+  font-weight: 610;
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -464,8 +474,8 @@ input[type="date"] {
 
 .meta-card .meta-percent {
   font-size: 34px;
-  font-weight: 950;
-  letter-spacing: -0.06em;
+  font-weight: 780;
+  letter-spacing: 0;
   margin-top: 8px;
   line-height: 1;
 }
@@ -490,20 +500,20 @@ input[type="date"] {
   margin-top: 9px;
   color: var(--muted);
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 570;
 }
 
 .meta-card .meta-action {
   margin-top: 6px;
   font-size: 13px;
-  font-weight: 850;
+  font-weight: 640;
   color: var(--muted);
 }
 
 .meta-card .meta-status {
   margin-top: 10px;
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 620;
   color: var(--muted);
 }
 
@@ -548,13 +558,14 @@ input[type="date"] {
 
 .faixa-topo strong {
   font-size: 16px;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
+  font-weight: 700;
 }
 
 .faixa-topo span {
   color: var(--muted);
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 580;
 }
 
 .faixa-barra {
@@ -594,16 +605,16 @@ input[type="date"] {
   margin-top: 12px;
   font-size: 12px;
   color: var(--muted);
-  font-weight: 800;
+  font-weight: 580;
 }
 
 .faixa-legenda span:nth-child(2) { text-align: center; }
 .faixa-legenda span:nth-child(3) { text-align: right; }
 
 .kpi-card {
-  background: var(--surface-soft);
-  border: 1px solid #eef2f7;
-  border-radius: 18px;
+  background: #fbfaf7;
+  border: 1px solid #efebe2;
+  border-radius: 12px;
   padding: 16px;
 }
 
@@ -611,7 +622,7 @@ input[type="date"] {
   display: block;
   color: var(--muted);
   font-size: 12px;
-  font-weight: 850;
+  font-weight: 610;
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
@@ -620,14 +631,15 @@ input[type="date"] {
   display: block;
   margin-top: 8px;
   font-size: 28px;
-  letter-spacing: -0.05em;
+  letter-spacing: 0;
+  font-weight: 760;
 }
 
 .kpi-card p {
   margin: 8px 0 0;
   color: var(--muted);
   font-size: 13px;
-  font-weight: 650;
+  font-weight: 480;
 }
 
 .semana-lista {
@@ -642,7 +654,7 @@ input[type="date"] {
   gap: 10px;
   align-items: center;
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 580;
 }
 
 .semana-barra {
@@ -682,12 +694,9 @@ input[type="date"] {
 .history-hero::after {
   content: "";
   position: absolute;
-  right: -58px;
-  top: -80px;
-  width: 190px;
-  height: 190px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.10);
+  inset: auto 0 0 0;
+  height: 1px;
+  background: rgba(255,255,255,0.16);
 }
 
 .history-hero-content {
@@ -700,7 +709,7 @@ input[type="date"] {
   align-items: center;
   gap: 8px;
   font-size: 12px;
-  font-weight: 850;
+  font-weight: 650;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   opacity: 0.78;
@@ -709,16 +718,16 @@ input[type="date"] {
 
 .history-title {
   font-size: clamp(28px, 6vw, 48px);
-  font-weight: 950;
+  font-weight: 790;
   line-height: 0.98;
-  letter-spacing: -0.065em;
+  letter-spacing: 0;
   margin: 0;
 }
 
 .history-subtitle {
   margin: 10px 0 0;
   font-size: 14px;
-  font-weight: 650;
+  font-weight: 430;
   opacity: 0.78;
   max-width: 620px;
 }
@@ -735,7 +744,7 @@ input[type="date"] {
 .history-quick-card {
   background: rgba(255,255,255,0.11);
   border: 1px solid rgba(255,255,255,0.14);
-  border-radius: 16px;
+  border-radius: 12px;
   padding: 13px;
   backdrop-filter: blur(8px);
 }
@@ -745,7 +754,7 @@ input[type="date"] {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  font-weight: 850;
+  font-weight: 610;
   opacity: 0.68;
 }
 
@@ -753,8 +762,8 @@ input[type="date"] {
   display: block;
   margin-top: 6px;
   font-size: 20px;
-  font-weight: 900;
-  letter-spacing: -0.04em;
+  font-weight: 740;
+  letter-spacing: 0;
 }
 
 .history-timeline {
@@ -766,9 +775,9 @@ input[type="date"] {
   position: relative;
   background: rgba(255,255,255,0.94);
   border: 1px solid rgba(230, 226, 216, 0.95);
-  border-radius: 22px;
+  border-radius: 14px;
   padding: 18px;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-soft);
   overflow: hidden;
 }
 
@@ -804,7 +813,7 @@ input[type="date"] {
 .month-icon {
   width: 42px;
   height: 42px;
-  border-radius: 14px;
+  border-radius: 12px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -822,8 +831,8 @@ input[type="date"] {
 
 .month-title {
   font-size: 18px;
-  font-weight: 900;
-  letter-spacing: -0.035em;
+  font-weight: 720;
+  letter-spacing: 0;
   line-height: 1.08;
 }
 
@@ -831,7 +840,7 @@ input[type="date"] {
   margin-top: 5px;
   color: var(--muted);
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 480;
 }
 
 .month-badges {
@@ -848,7 +857,7 @@ input[type="date"] {
   padding: 7px 10px;
   border-radius: 999px;
   font-size: 12px;
-  font-weight: 850;
+  font-weight: 610;
   white-space: nowrap;
   border: 1px solid transparent;
 }
@@ -900,14 +909,14 @@ input[type="date"] {
 .month-result-panel {
   background: linear-gradient(180deg, #fbfaf7, #f5f2eb);
   border: 1px solid #e9e3d6;
-  border-radius: 18px;
+  border-radius: 12px;
   padding: 16px;
 }
 
 .month-result-label {
   color: var(--muted);
   font-size: 12px;
-  font-weight: 850;
+  font-weight: 610;
   text-transform: uppercase;
   letter-spacing: 0.07em;
 }
@@ -916,15 +925,15 @@ input[type="date"] {
   margin-top: 8px;
   font-size: clamp(29px, 6vw, 42px);
   line-height: 0.96;
-  font-weight: 950;
-  letter-spacing: -0.065em;
+  font-weight: 780;
+  letter-spacing: 0;
 }
 
 .month-result-note {
   margin-top: 10px;
   color: var(--muted);
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 480;
 }
 
 .month-progress-block {
@@ -937,7 +946,7 @@ input[type="date"] {
   gap: 10px;
   font-size: 12px;
   color: var(--muted);
-  font-weight: 850;
+  font-weight: 580;
   margin-bottom: 7px;
 }
 
@@ -962,9 +971,9 @@ input[type="date"] {
 }
 
 .month-kpi {
-  background: var(--surface-soft);
+  background: #fbfaf7;
   border: 1px solid #ece8dd;
-  border-radius: 16px;
+  border-radius: 12px;
   padding: 13px;
   min-height: 82px;
 }
@@ -973,7 +982,7 @@ input[type="date"] {
   display: block;
   color: var(--muted);
   font-size: 11px;
-  font-weight: 850;
+  font-weight: 610;
   letter-spacing: 0.07em;
   text-transform: uppercase;
 }
@@ -983,24 +992,24 @@ input[type="date"] {
   margin-top: 7px;
   font-size: 19px;
   line-height: 1.05;
-  font-weight: 900;
-  letter-spacing: -0.04em;
+  font-weight: 730;
+  letter-spacing: 0;
 }
 
 .month-kpi small {
   display: block;
   margin-top: 5px;
   color: var(--muted);
-  font-weight: 700;
+  font-weight: 480;
 }
 
 .history-empty {
   padding: 18px;
-  border-radius: 18px;
+  border-radius: 12px;
   background: var(--surface-soft);
   border: 1px dashed #d9d3c5;
   color: var(--muted);
-  font-weight: 700;
+  font-weight: 520;
 }
 
 
@@ -1037,16 +1046,17 @@ input[type="date"] {
   }
 
   .historico-table tr {
-    background: var(--surface-soft);
-    border: 1px solid #eef2f7;
-    border-radius: 16px;
+    background: #fffdfa;
+    border: 1px solid #eee8dc;
+    border-radius: 14px;
     padding: 12px;
     margin-bottom: 12px;
+    box-shadow: var(--shadow-soft);
   }
 
   .historico-table td {
     border-bottom: none;
-    padding: 7px 0;
+    padding: 6px 0;
     display: flex;
     justify-content: space-between;
     gap: 12px;
@@ -1058,15 +1068,37 @@ input[type="date"] {
     content: attr(data-label);
     color: var(--muted);
     font-size: 12px;
-    font-weight: 800;
+    font-weight: 580;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     text-align: left;
   }
 
+  .historico-table td[data-label="Descrição"] {
+    align-items: flex-start;
+    justify-content: flex-start;
+    text-align: left;
+    padding-bottom: 9px;
+    border-bottom: 1px solid #efe9de;
+  }
+
+  .historico-table td[data-label="Descrição"]::before {
+    content: "";
+    display: none;
+  }
+
+  .historico-table td[data-label="Descrição"] .launch-row {
+    width: 100%;
+  }
+
+  .historico-table td[data-label="Valor"] {
+    font-size: 18px;
+    font-weight: 760;
+  }
+
   .historico-table td[data-label="Ação"] {
     display: block;
-    padding-top: 10px;
+    padding-top: 8px;
   }
 
   .historico-table td[data-label="Ação"]::before {
@@ -1074,8 +1106,9 @@ input[type="date"] {
   }
 
   .historico-table .btn-excluir {
-    width: 100%;
-    padding: 10px 12px;
+    width: auto;
+    padding: 8px 11px;
+    float: right;
   }
 }
 
@@ -1172,7 +1205,7 @@ input[type="date"] {
 .botao .botao-kicker {
   display: block;
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 610;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   opacity: 0.72;
@@ -1183,6 +1216,7 @@ input[type="date"] {
   display: block;
   margin-top: 3px;
   font-size: 16px;
+  font-weight: 720;
   line-height: 1.1;
 }
 
@@ -1195,8 +1229,9 @@ input[type="date"] {
 .heading-with-icon .heading-icon {
   width: 26px;
   height: 26px;
-  border-radius: 10px;
-  background: #f3f4f6;
+  border-radius: 9px;
+  background: #f6f3ec;
+  border: 1px solid #ece6da;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1218,7 +1253,7 @@ input[type="date"] {
 .launch-icon {
   width: 30px;
   height: 30px;
-  border-radius: 11px;
+  border-radius: 10px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
