@@ -211,6 +211,13 @@ input:focus, select:focus {
   box-shadow: 0 0 0 4px rgba(147, 197, 253, 0.25);
 }
 
+.date-readable {
+  margin-top: 7px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 500;
+}
+
 button {
   width: 100%;
   padding: 13px;
@@ -1097,7 +1104,8 @@ input[type="date"] {
   }
 
   .historico-table td[data-label="Ação"] {
-    display: block;
+    display: flex;
+    justify-content: flex-end;
     padding-top: 8px;
   }
 
@@ -1108,7 +1116,7 @@ input[type="date"] {
   .historico-table .btn-excluir {
     width: auto;
     padding: 8px 11px;
-    float: right;
+    margin-left: auto;
   }
 }
 
@@ -1348,6 +1356,7 @@ input[type="date"] {
 
   <label>Data</label>
   <input type="date" id="data">
+  <div class="date-readable" id="dataPorExtenso"></div>
 
   <div id="campoDescricao" class="hidden">
     <label>Descrição</label>
@@ -1724,6 +1733,7 @@ let salvandoFirebase = false;
 let bloqueiaRestauracaoLocal = false;
 
 document.getElementById("importarArquivo").addEventListener("change", importarJSON);
+document.getElementById("data").addEventListener("change", atualizarDataPorExtenso);
 
 function trocarAba(aba) {
   telaInicio.classList.add("hidden");
@@ -2043,8 +2053,8 @@ function compararMesKey(a, b) {
 function nomeMesAno(mesKey) {
   if (!mesKey) return "Mês";
   const [ano, mes] = mesKey.split("-").map(Number);
-  const meses = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
-  return `${meses[(mes || 1) - 1]} ${ano}`;
+  const meses = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+  return `${meses[(mes || 1) - 1]} de ${ano}`;
 }
 
 function nomeMesAnoLongo(mesKey) {
@@ -2378,7 +2388,7 @@ function atualizarMetaCard(nome, meta, atual, diasRestantes) {
     card.classList.add("ok");
   } else {
     acaoEl.innerText = diasRestantes > 0
-      ? `Faltam ${moeda(falta)} · aprox. ${moeda(porDia)}/dia`
+      ? `Faltam ${moeda(falta)}. Faça ${moeda(porDia)}/dia nos dias restantes`
       : `Faltam ${moeda(falta)}`;
     card.classList.add(percentualReal >= 70 ? "alerta" : "longe");
   }
@@ -2400,7 +2410,7 @@ function fimDaSemanaDomingo(dataObj) {
 }
 
 function formatarPeriodoSemana(inicio, fim) {
-  const meses = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+  const meses = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
   const mesmoMes = inicio.getMonth() === fim.getMonth();
   if (mesmoMes) return `${inicio.getDate()}–${fim.getDate()} ${meses[fim.getMonth()]}`;
   return `${inicio.getDate()} ${meses[inicio.getMonth()]}–${fim.getDate()} ${meses[fim.getMonth()]}`;
@@ -2579,12 +2589,29 @@ function formatarData(dataISO) {
   return `${partes[2]}/${partes[1]}/${partes[0]}`;
 }
 
+function formatarDataLonga(dataISO) {
+  if (!dataISO) return "";
+  const partes = dataISO.split("-").map(Number);
+  if (partes.length !== 3 || partes.some(Number.isNaN)) return "";
+
+  const dataObj = new Date(partes[0], partes[1] - 1, partes[2]);
+  const meses = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+  return `${dataObj.getDate()} de ${meses[dataObj.getMonth()]} de ${dataObj.getFullYear()}`;
+}
+
+function atualizarDataPorExtenso() {
+  const el = document.getElementById("dataPorExtenso");
+  if (!el) return;
+  el.innerText = formatarDataLonga(data.value);
+}
+
 function definirDataHoje() {
   const hoje = new Date();
   const ano = hoje.getFullYear();
   const mes = String(hoje.getMonth() + 1).padStart(2, "0");
   const dia = String(hoje.getDate()).padStart(2, "0");
   data.value = `${ano}-${mes}-${dia}`;
+  atualizarDataPorExtenso();
 }
 
 function preencherCamposConfig() {
