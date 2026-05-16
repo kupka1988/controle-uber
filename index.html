@@ -2322,16 +2322,16 @@ function atualizarDashboard(ctx) {
   const metaConsistenteValor = Number(config.metaConsistente) || 0;
   const projecaoMes = mediaDiaValor * (Number(config.diasPlanejados) || 0);
   const custosAtuais = Math.abs(saidas);
-  const custosConsiderados = Math.max(custosTotais, custosAtuais);
+  const custosConsiderados = Math.max(custosSemParcela, custosAtuais);
   const sobraProjetada = projecaoMes - custosConsiderados;
-
+  
   dashboardProjecao.innerText = moeda(projecaoMes);
   if (document.getElementById("dashboardAtualMes")) dashboardAtualMes.innerText = moeda(entradas);
   if (document.getElementById("dashboardSobraProjetada")) dashboardSobraProjetada.innerText = moeda(sobraProjetada);
   if (document.getElementById("dashboardSobraBase")) {
-    dashboardSobraBase.innerText = custosAtuais > custosTotais
-      ? `Custos já lançados: ${moeda(custosAtuais)}`
-      : `Custos projetados: ${moeda(custosConsiderados)}`;
+    dashboardSobraBase.innerText = custosAtuais > custosSemParcela
+         ? `Custos já lançados: ${moeda(custosAtuais)}`
+         : `Base mínima: ${moeda(custosConsiderados)}`;
   }
   const sobraBox = document.querySelector(".dashboard-sobra-box");
   if (sobraBox) {
