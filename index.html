@@ -603,7 +603,9 @@ input[type="date"] {
 .faixa-barra {
   height: 18px;
   border-radius: 999px;
-  background: linear-gradient(90deg, #fee2e2 0%, #fef3c7 45%, #dcfce7 70%, #dbeafe 100%);
+  background:
+    linear-gradient(90deg, rgba(18, 20, 23, 0.08) 0, rgba(18, 20, 23, 0.08) 100%),
+    linear-gradient(90deg, #fee2e2 0%, #fef3c7 42%, #dcfce7 72%, #dbeafe 100%);
   position: relative;
   overflow: visible;
   border: 1px solid rgba(15, 23, 42, 0.08);
@@ -629,19 +631,53 @@ input[type="date"] {
   box-shadow: 0 8px 18px rgba(15, 23, 42, 0.18);
   transform: translateX(-50%);
   transition: left 0.25s ease;
+  z-index: 3;
 }
 
 .faixa-legenda {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  margin-top: 12px;
+  position: relative;
+  display: block;
+  min-height: 54px;
+  margin-top: 15px;
   font-size: 12px;
   color: var(--muted);
   font-weight: 580;
 }
 
-.faixa-legenda span:nth-child(2) { text-align: center; }
-.faixa-legenda span:nth-child(3) { text-align: right; }
+.faixa-legenda span {
+  position: absolute;
+  top: 0;
+  max-width: 124px;
+  white-space: normal;
+  line-height: 1.18;
+  text-align: center;
+}
+
+.faixa-legenda span::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -21px;
+  width: 1px;
+  height: 17px;
+  background: rgba(18, 20, 23, 0.36);
+  transform: translateX(-50%);
+}
+
+.faixa-legenda span strong {
+  display: block;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 720;
+}
+
+.faixa-legenda span small {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 560;
+}
 
 .kpi-card {
   background: #fbfaf7;
@@ -1551,7 +1587,7 @@ input[type="date"] {
 
 <div class="dashboard-grid-3">
   <div class="meta-card" id="cardMetaMinima">
-    <div class="meta-nome">Meta mínima</div>
+    <div class="meta-nome">Projeção mínima</div>
     <div class="meta-percent" id="dashPctMinima">0%</div>
     <div class="meta-progress-bar"><div class="meta-progress-fill" id="dashBarMinima"></div></div>
     <div class="meta-progress-text" id="dashProgressoMinima">R$ 0,00 / R$ 0,00</div>
@@ -1559,7 +1595,7 @@ input[type="date"] {
   </div>
 
   <div class="meta-card" id="cardMetaConsistente">
-    <div class="meta-nome">Meta consistente</div>
+    <div class="meta-nome">Projeção consistente</div>
     <div class="meta-percent" id="dashPctConsistente">0%</div>
     <div class="meta-progress-bar"><div class="meta-progress-fill" id="dashBarConsistente"></div></div>
     <div class="meta-progress-text" id="dashProgressoConsistente">R$ 0,00 / R$ 0,00</div>
@@ -1567,7 +1603,7 @@ input[type="date"] {
   </div>
 
   <div class="meta-card" id="cardMetaIdeal">
-    <div class="meta-nome">Meta ideal</div>
+    <div class="meta-nome">Projeção ideal</div>
     <div class="meta-percent" id="dashPctIdeal">0%</div>
     <div class="meta-progress-bar"><div class="meta-progress-fill" id="dashBarIdeal"></div></div>
     <div class="meta-progress-text" id="dashProgressoIdeal">R$ 0,00 / R$ 0,00</div>
@@ -2124,8 +2160,7 @@ function calcularResumoDoMes(mesKey, listaDados, configBase = config, status = "
   const lucroPorKm = kmRodado > 0 ? lucroOperacional / kmRodado : 0;
 
   const metaMinima = (Number(configBase.metaGasolina) || 0) + (Number(configBase.metaSeguro) || 0) + (Number(configBase.metaCustosGerais) || 0);
-  const sobraDesejadaConsistente = Number(configBase.metaConsistente) || 0;
-  const metaConsistenteValor = metaMinima + sobraDesejadaConsistente;
+  const metaConsistenteValor = Number(config.metaConsistente) || 0;
   const metaIdeal = metaMinima + (Number(configBase.metaParcela) || 0);
 
   let faixaMeta = "Abaixo da mínima";
@@ -2223,7 +2258,7 @@ function renderizarHistoricoMensal(ctx = {}) {
     const statusClasse = status === "Em andamento" ? "andamento" : "fechado";
     const metaClasse = classeMetaHistorico(resumo.metaAtingida);
     const metaMinima = (Number(resumo.config?.metaGasolina) || 0) + (Number(resumo.config?.metaSeguro) || 0) + (Number(resumo.config?.metaCustosGerais) || 0);
-    const metaConsistente = metaMinima + (Number(resumo.config?.metaConsistente) || 0);
+    const metaConsistente = Number(resumo.config?.metaConsistente) || 0;
     const metaIdeal = metaMinima + (Number(resumo.config?.metaParcela) || 0);
     const metaReferencia = Math.max(metaIdeal, metaConsistente, metaMinima, resumo.entradas || 0, 1);
     const progresso = Math.min(((resumo.entradas || 0) / metaReferencia) * 100, 100);
@@ -2320,8 +2355,10 @@ function atualizarDashboard(ctx) {
   const mediaDiaValor = ctx.mediaDiaValor || 0;
   const metaAjustadaValor = ctx.metaAjustadaValor || 0;
 
+  // config.metaConsistente agora representa a sobra desejada acima da meta mínima.
   const sobraDesejadaConsistente = Number(config.metaConsistente) || 0;
   const metaConsistenteValor = custosSemParcela + sobraDesejadaConsistente;
+
   const projecaoMes = mediaDiaValor * (Number(config.diasPlanejados) || 0);
   const custosAtuais = Math.abs(saidas);
   const custosConsiderados = Math.max(custosSemParcela, custosAtuais);
@@ -2346,28 +2383,38 @@ function atualizarDashboard(ctx) {
 
   let statusTexto = "Aguardando lançamentos";
   if (diasTrabalhadosValor > 0) {
-    if (metaConsistenteValor > 0 && projecaoMes >= metaConsistenteValor) statusTexto = "No ritmo da meta consistente";
-    else if (custosSemParcela > 0 && projecaoMes >= custosSemParcela) statusTexto = "Acima da mínima, abaixo da consistente";
-    else statusTexto = "Abaixo da meta mínima";
+    if (custosTotais > 0 && projecaoMes >= custosTotais) statusTexto = "Projeção na faixa ideal";
+    else if (metaConsistenteValor > 0 && projecaoMes >= metaConsistenteValor) statusTexto = "Projeção na faixa consistente";
+    else if (custosSemParcela > 0 && projecaoMes >= custosSemParcela) statusTexto = "Projeção acima da mínima";
+    else statusTexto = "Projeção abaixo da meta mínima";
   }
   dashboardStatus.innerText = statusTexto;
 
-  const maxMeta = Math.max(custosTotais, metaConsistenteValor, custosSemParcela, entradas, 1);
-  const progresso = Math.min((entradas / maxMeta) * 100, 100);
-  faixaPreenchida.style.width = `${progresso}%`;
-  faixaMarcador.style.left = `${progresso}%`;
-  faixaAtual.innerText = `Atual: ${moeda(entradas)}`;
+  // Régua proporcional: começa em 0 e termina na meta ideal.
+  // A mínima e a consistente são posicionadas exatamente conforme seu valor dentro dessa escala.
+  const maxFaixa = custosTotais > 0
+    ? custosTotais
+    : Math.max(custosSemParcela, metaConsistenteValor, projecaoMes, 1);
 
-  const faixa = definirFaixa(entradas, custosSemParcela, metaConsistenteValor, custosTotais);
+  const progressoFaixa = Math.min((projecaoMes / maxFaixa) * 100, 100);
+  faixaPreenchida.style.width = `${progressoFaixa}%`;
+  faixaMarcador.style.left = `${progressoFaixa}%`;
+  faixaAtual.innerText = `Projeção: ${moeda(projecaoMes)}`;
+
+  const faixa = definirFaixa(projecaoMes, custosSemParcela, metaConsistenteValor, custosTotais);
   faixaTexto.innerText = faixa.texto;
 
-  faixaMinima.innerText = `Mínima ${moeda(custosSemParcela)}`;
-  faixaConsistente.innerText = `Consistente ${moeda(metaConsistenteValor)}`;
-  faixaIdeal.innerText = `Ideal ${moeda(custosTotais)}`;
+  faixaMinima.innerHTML = `<strong>Mínima</strong><small>${moeda(custosSemParcela)}</small>`;
+  faixaConsistente.innerHTML = `<strong>Consistente</strong><small>${moeda(metaConsistenteValor)}</small>`;
+  faixaIdeal.innerHTML = `<strong>Ideal</strong><small>${moeda(custosTotais)}</small>`;
 
-  atualizarMetaCard("Minima", custosSemParcela, entradas, diasRestantes);
-  atualizarMetaCard("Consistente", metaConsistenteValor, entradas, diasRestantes);
-  atualizarMetaCard("Ideal", custosTotais, entradas, diasRestantes);
+  posicionarLegendaFaixa(faixaMinima, custosSemParcela, maxFaixa, "inicio");
+  posicionarLegendaFaixa(faixaConsistente, metaConsistenteValor, maxFaixa, "meio");
+  posicionarLegendaFaixa(faixaIdeal, custosTotais, maxFaixa, "fim");
+
+  atualizarMetaCard("Minima", custosSemParcela, entradas, projecaoMes, diasRestantes);
+  atualizarMetaCard("Consistente", metaConsistenteValor, entradas, projecaoMes, diasRestantes);
+  atualizarMetaCard("Ideal", custosTotais, entradas, projecaoMes, diasRestantes);
 
   dashMediaDia.innerText = moeda(mediaDiaValor);
   dashMediaSub.innerText = diasTrabalhadosValor > 0 ? `${diasTrabalhadosValor} dia(s) trabalhado(s)` : "sem ganhos registrados";
@@ -2390,21 +2437,33 @@ function atualizarDashboard(ctx) {
     const faltaSemana = Math.max(metaSemanal - ganhoSemanaAtual, 0);
     dashSemanaFalta.innerText = faltaSemana > 0 ? `Faltam ${moeda(faltaSemana)} nesta semana` : "Meta semanal atingida";
   } else {
-    dashSemanaFalta.innerText = "Configure a meta consistente";
+    dashSemanaFalta.innerText = "Configure a sobra desejada";
   }
 
   renderizarSemanas(semanas, metaSemanal);
 }
 
-function definirFaixa(atual, minima, consistente, ideal) {
-  if (atual <= 0) return { texto: "Você ainda está construindo ritmo" };
-  if (ideal > 0 && atual >= ideal) return { texto: "Você está na faixa ideal" };
-  if (consistente > 0 && atual >= consistente) return { texto: "Você está na faixa consistente" };
-  if (minima > 0 && atual >= minima) return { texto: "Você passou da mínima e está buscando consistência" };
-  return { texto: "Você ainda está abaixo da mínima" };
+function definirFaixa(projecao, minima, consistente, ideal) {
+  if (projecao <= 0) return { texto: "Você ainda está construindo ritmo" };
+  if (ideal > 0 && projecao >= ideal) return { texto: "A projeção está na faixa ideal" };
+  if (consistente > 0 && projecao >= consistente) return { texto: "A projeção está na faixa consistente" };
+  if (minima > 0 && projecao >= minima) return { texto: "A projeção passou da mínima e busca consistência" };
+  return { texto: "A projeção ainda está abaixo da mínima" };
 }
 
-function atualizarMetaCard(nome, meta, atual, diasRestantes) {
+function posicionarLegendaFaixa(elemento, valor, maximo, alinhamento) {
+  if (!elemento) return;
+
+  const percentual = maximo > 0 ? Math.min(Math.max((valor / maximo) * 100, 0), 100) : 0;
+  elemento.style.left = `${percentual}%`;
+
+  // Mantém a posição real do marco na escala, mas evita que o texto vaze nas bordas.
+  if (percentual <= 8 || alinhamento === "inicio") elemento.style.transform = "translateX(0)";
+  else if (percentual >= 92 || alinhamento === "fim") elemento.style.transform = "translateX(-100%)";
+  else elemento.style.transform = "translateX(-50%)";
+}
+
+function atualizarMetaCard(nome, meta, atual, projetado, diasRestantes) {
   const card = document.getElementById(`cardMeta${nome}`);
   const pctEl = document.getElementById(`dashPct${nome}`);
   const barEl = document.getElementById(`dashBar${nome}`);
@@ -2418,29 +2477,31 @@ function atualizarMetaCard(nome, meta, atual, diasRestantes) {
   if (!meta || meta <= 0) {
     pctEl.innerText = "—";
     barEl.style.width = "0%";
-    progressoEl.innerText = `${moeda(atual)} / ${moeda(0)}`;
+    progressoEl.innerText = `Executado: ${moeda(atual)} / ${moeda(0)}`;
     acaoEl.innerText = "Configure esta meta";
     card.classList.add("alerta");
     return;
   }
 
-  const percentualReal = (atual / meta) * 100;
-  const percentualVisual = Math.min(percentualReal, 100);
-  const falta = Math.max(meta - atual, 0);
-  const porDia = diasRestantes > 0 ? falta / diasRestantes : 0;
+  const percentualExecutado = (atual / meta) * 100;
+  const percentualProjetado = (projetado / meta) * 100;
+  const percentualVisual = Math.min(Math.max(percentualProjetado, 0), 100);
+  const faltaProjetada = Math.max(meta - projetado, 0);
+  const faltaAtual = Math.max(meta - atual, 0);
+  const porDia = diasRestantes > 0 ? faltaAtual / diasRestantes : 0;
 
-  pctEl.innerText = `${Math.round(percentualReal)}%`;
+  pctEl.innerText = `${Math.round(percentualProjetado)}%`;
   barEl.style.width = `${percentualVisual}%`;
-  progressoEl.innerText = `${moeda(atual)} / ${moeda(meta)}`;
+  progressoEl.innerText = `Executado: ${Math.round(percentualExecutado)}% • ${moeda(atual)} / ${moeda(meta)}`;
 
-  if (falta <= 0) {
-    acaoEl.innerText = "Meta atingida";
+  if (faltaProjetada <= 0) {
+    acaoEl.innerText = `Projeção: ${moeda(projetado)}. No ritmo da meta`;
     card.classList.add("ok");
   } else {
     acaoEl.innerText = diasRestantes > 0
-      ? `Faltam ${moeda(falta)}. Faça ${moeda(porDia)}/dia nos dias restantes`
-      : `Faltam ${moeda(falta)}`;
-    card.classList.add(percentualReal >= 70 ? "alerta" : "longe");
+      ? `Proj.: ${moeda(projetado)}. Faltam ${moeda(faltaProjetada)} na projeção`
+      : `Proj.: ${moeda(projetado)}. Faltam ${moeda(faltaProjetada)}`;
+    card.classList.add(percentualProjetado >= 70 ? "alerta" : "longe");
   }
 }
 
