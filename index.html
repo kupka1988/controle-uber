@@ -2124,7 +2124,7 @@ function calcularResumoDoMes(mesKey, listaDados, configBase = config, status = "
   const lucroPorKm = kmRodado > 0 ? lucroOperacional / kmRodado : 0;
 
   const metaMinima = (Number(configBase.metaGasolina) || 0) + (Number(configBase.metaSeguro) || 0) + (Number(configBase.metaCustosGerais) || 0);
-  const metaConsistenteValor = custosSemParcela + (Number(config.metaConsistente) || 0);
+  const metaConsistenteValor = Number(config.metaConsistente) || 0;
   const metaIdeal = metaMinima + (Number(configBase.metaParcela) || 0);
 
   let faixaMeta = "Abaixo da mínima";
