@@ -2124,7 +2124,8 @@ function calcularResumoDoMes(mesKey, listaDados, configBase = config, status = "
   const lucroPorKm = kmRodado > 0 ? lucroOperacional / kmRodado : 0;
 
   const metaMinima = (Number(configBase.metaGasolina) || 0) + (Number(configBase.metaSeguro) || 0) + (Number(configBase.metaCustosGerais) || 0);
-  const metaConsistenteValor = Number(config.metaConsistente) || 0;
+  const sobraDesejadaConsistente = Number(configBase.metaConsistente) || 0;
+  const metaConsistenteValor = metaMinima + sobraDesejadaConsistente;
   const metaIdeal = metaMinima + (Number(configBase.metaParcela) || 0);
 
   let faixaMeta = "Abaixo da mínima";
@@ -2222,7 +2223,7 @@ function renderizarHistoricoMensal(ctx = {}) {
     const statusClasse = status === "Em andamento" ? "andamento" : "fechado";
     const metaClasse = classeMetaHistorico(resumo.metaAtingida);
     const metaMinima = (Number(resumo.config?.metaGasolina) || 0) + (Number(resumo.config?.metaSeguro) || 0) + (Number(resumo.config?.metaCustosGerais) || 0);
-    const metaConsistente = Number(resumo.config?.metaConsistente) || 0;
+    const metaConsistente = metaMinima + (Number(resumo.config?.metaConsistente) || 0);
     const metaIdeal = metaMinima + (Number(resumo.config?.metaParcela) || 0);
     const metaReferencia = Math.max(metaIdeal, metaConsistente, metaMinima, resumo.entradas || 0, 1);
     const progresso = Math.min(((resumo.entradas || 0) / metaReferencia) * 100, 100);
@@ -2319,7 +2320,8 @@ function atualizarDashboard(ctx) {
   const mediaDiaValor = ctx.mediaDiaValor || 0;
   const metaAjustadaValor = ctx.metaAjustadaValor || 0;
 
-  const metaConsistenteValor = Number(config.metaConsistente) || 0;
+  const sobraDesejadaConsistente = Number(config.metaConsistente) || 0;
+  const metaConsistenteValor = custosSemParcela + sobraDesejadaConsistente;
   const projecaoMes = mediaDiaValor * (Number(config.diasPlanejados) || 0);
   const custosAtuais = Math.abs(saidas);
   const custosConsiderados = Math.max(custosSemParcela, custosAtuais);
