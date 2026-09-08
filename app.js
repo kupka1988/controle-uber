@@ -49,7 +49,6 @@ document.getElementById("importarArquivo").addEventListener("change", importarJS
 document.getElementById("data").addEventListener("change", atualizarDataPorExtenso);
 document.getElementById("abaInicio").addEventListener("click", () => trocarAba("inicio"));
 document.getElementById("abaDashboard").addEventListener("click", () => trocarAba("dashboard"));
-document.getElementById("abaCombustivel").addEventListener("click", () => trocarAba("combustivel"));
 document.getElementById("abaSimulacao").addEventListener("click", () => trocarAba("simulacao"));
 document.getElementById("abaHistorico").addEventListener("click", () => trocarAba("historico"));
 document.getElementById("abaFechamentos").addEventListener("click", () => trocarAba("fechamentos"));
@@ -126,7 +125,6 @@ document.getElementById("btnLimpar").addEventListener("click", limparDados);
 function trocarAba(aba) {
   telaInicio.classList.add("hidden");
   telaDashboard.classList.add("hidden");
-  telaCombustivel.classList.add("hidden");
   telaSimulacao.classList.add("hidden");
   telaHistorico.classList.add("hidden");
   telaFechamentos.classList.add("hidden");
@@ -134,7 +132,6 @@ function trocarAba(aba) {
 
   abaInicio.classList.remove("ativo");
   abaDashboard.classList.remove("ativo");
-  abaCombustivel.classList.remove("ativo");
   abaSimulacao.classList.remove("ativo");
   abaHistorico.classList.remove("ativo");
   abaFechamentos.classList.remove("ativo");
@@ -151,10 +148,6 @@ function trocarAba(aba) {
     abaDashboard.classList.add("ativo");
   }
 
-  if (aba === "combustivel") {
-    telaCombustivel.classList.remove("hidden");
-    abaCombustivel.classList.add("ativo");
-  }
 
   if (aba === "simulacao") {
     telaSimulacao.classList.remove("hidden");
@@ -783,6 +776,9 @@ function render() {
   kmRodadoEl().innerText = kmRodado.toLocaleString("pt-BR");
   litrosTotalEl().innerText = numero(litrosTotal);
   gastoGasolinaEl().innerText = moedaSaida(gastoGasolina);
+  const precoMedioCombustivel = litrosTotal > 0 ? gastoGasolina / litrosTotal : 0;
+  if (document.getElementById("precoMedioCombustivel")) precoMedioCombustivel.innerText = litrosTotal > 0 ? moeda(precoMedioCombustivel) : "—";
+  if (document.getElementById("totalGastoCombustivel")) totalGastoCombustivel.innerText = moedaSaida(gastoGasolina);
   receitaPorKmEl().innerText = moeda(receitaPorKm);
   custoPorKmEl().innerText = moedaSaida(custoPorKm);
   lucroPorKmEl().innerText = moeda(lucroPorKm);
