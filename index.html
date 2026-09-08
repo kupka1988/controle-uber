@@ -7,7 +7,7 @@
 <title>Controle Uber</title>
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="stylesheet" href="styles.css?v=20260908-combustivel">
+<link rel="stylesheet" href="styles.css?v=20260908-resumo">
 </head>
 
 <body>
@@ -83,11 +83,11 @@
     <h3 class="heading-with-icon"><span class="heading-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6"/></svg></span>Resultado do m&ecirc;s</h3>
 
     <div class="resumo-grid">
-      <div class="resumo-item">
+      <div class="resumo-item resumo-entradas-mobile">
         <span>Entradas</span>
         <strong id="entradas">R$ 0,00</strong>
       </div>
-      <div class="resumo-item">
+      <div class="resumo-item resumo-saidas-mobile">
         <span>Saídas</span>
         <strong id="saidas">R$ 0,00</strong>
       </div>
@@ -95,10 +95,6 @@
         <span>Resultado do mês</span>
         <strong id="resultado">R$ 0,00</strong>
       </div>
-    </div>
-    <div class="resumo-combustivel">
-      <div><span>Preço médio combustível</span><strong id="precoMedioCombustivel">R$ 0,00</strong></div>
-      <div><span>Total gasto combustível</span><strong id="totalGastoCombustivel">R$ 0,00</strong></div>
     </div>
   </div>
 
@@ -144,6 +140,10 @@
             <strong id="gastoGasolina">R$ 0,00</strong>
           </div>
         </div>
+      </div>
+      <div class="resumo-combustivel">
+        <div><span>Preço médio combustível</span><strong id="precoMedioCombustivel">—</strong></div>
+        <div><span>Total gasto combustível</span><strong id="totalGastoCombustivel">R$ 0,00</strong></div>
       </div>
     </div>
   </div>
@@ -501,7 +501,7 @@
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="app.js?v=20260908-combustivel"></script>
+<script src="app.js?v=20260908-resumo"></script>
 
 </div>
 </body>

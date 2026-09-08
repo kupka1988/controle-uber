@@ -246,6 +246,7 @@ button.perigo {
   grid-template-columns: 1fr;
   gap: 10px;
 }
+.resumo-entradas-mobile, .resumo-saidas-mobile { grid-column: span 1; }
 
 .resumo-item {
   background: #fbfaf7;
@@ -2000,6 +2001,10 @@ input[type="date"] {
   .painel, .grid-metas-config, .grid-config-retirada, .dashboard-grid-3, .dashboard-grid-2, .history-quick-grid, .month-body, .fuel-grid { grid-template-columns: 1fr; }
   .fuel-hero { flex-direction:column; }
   .resumo-combustivel { grid-template-columns:1fr; }
+  .resumo-grid { grid-template-columns:1fr 1fr; }
+  .resumo-grid .resumo-item:has(#resultado) { grid-column:1 / -1; }
+  .operacao-grid { grid-template-columns:1fr; }
+  .operacao-grid .resumo-combustivel { grid-template-columns:1fr 1fr; }
   .simulation-grid, .sim-valores-grid, .sim-metas-grid { grid-template-columns: 1fr; }
   .botoes { grid-template-columns: 1fr 1fr; }
   .operacao-mini-grid { grid-template-columns: 1fr 1fr; }
