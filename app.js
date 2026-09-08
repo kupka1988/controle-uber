@@ -25,6 +25,12 @@ let config = {
   tipoVeiculo: "combustao",
   retiradaDesejada: 0,
   retiradaObjetivo: "estabilidade",
+  confortoDesejado: 0,
+  diasSemana: [],
+  trabalhoEmFeriados: false,
+  diasFolgaExtra: [],
+  diasTrabalhoExtra: [],
+  modeloMetasVersao: 1,
   metas: []
 };
 
@@ -36,11 +42,14 @@ let firebaseCarregado = false;
 let salvandoFirebase = false;
 let bloqueiaRestauracaoLocal = false;
 let metaEmEdicaoId = null;
+let mesCalendarioRotina = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+let simulacao = null;
 
 document.getElementById("importarArquivo").addEventListener("change", importarJSON);
 document.getElementById("data").addEventListener("change", atualizarDataPorExtenso);
 document.getElementById("abaInicio").addEventListener("click", () => trocarAba("inicio"));
 document.getElementById("abaDashboard").addEventListener("click", () => trocarAba("dashboard"));
+document.getElementById("abaSimulacao").addEventListener("click", () => trocarAba("simulacao"));
 document.getElementById("abaHistorico").addEventListener("click", () => trocarAba("historico"));
 document.getElementById("abaFechamentos").addEventListener("click", () => trocarAba("fechamentos"));
 document.getElementById("abaConfig").addEventListener("click", () => trocarAba("config"));
@@ -61,6 +70,12 @@ if (document.getElementById("btnCancelarMeta")) {
 if (document.getElementById("btnFecharMes")) {
   btnFecharMes.addEventListener("click", fecharMesAtualManual);
 }
+if (document.getElementById("btnRevisarMes")) {
+  btnRevisarMes.addEventListener("click", () => {
+    trocarAba("config");
+    document.getElementById("telaConfig")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+}
 if (document.getElementById("tipoVeiculo")) {
   tipoVeiculo.addEventListener("change", () => {
     config.tipoVeiculo = tipoVeiculoSeguro(tipoVeiculo.value);
@@ -68,26 +83,54 @@ if (document.getElementById("tipoVeiculo")) {
     selecionar(tipo);
   });
 }
+if (document.getElementById("litros")) {
+  document.getElementById("litros").addEventListener("input", event => formatarCampoDecimalDireto(event.target));
+}
+document.querySelectorAll("[data-weekday]").forEach(botao => {
+  botao.addEventListener("click", () => alternarDiaSemana(Number(botao.dataset.weekday)));
+});
+if (document.getElementById("trabalhoEmFeriados")) {
+  document.getElementById("trabalhoEmFeriados").addEventListener("change", event => {
+    config.trabalhoEmFeriados = event.target.checked;
+    renderizarRotinaMensal();
+  });
+}
+if (document.getElementById("btnCalendarioAnterior")) {
+  document.getElementById("btnCalendarioAnterior").addEventListener("click", () => navegarCalendarioRotina(-1));
+  document.getElementById("btnCalendarioProximo").addEventListener("click", () => navegarCalendarioRotina(1));
+  document.getElementById("calendarioRotina").addEventListener("click", event => {
+    const botao = event.target.closest("[data-calendar-date]");
+    if (botao) alternarExcecaoRotina(botao.dataset.calendarDate);
+  });
+}
 document.getElementById("btnExportar").addEventListener("click", exportarJSON);
 document.getElementById("btnImportar").addEventListener("click", () => document.getElementById("importarArquivo").click());
 document.getElementById("btnLimpar").addEventListener("click", limparDados);
-["valor", "metaValor", "retiradaDesejada"].forEach(id => {
+["valor", "metaValor", "retiradaDesejada", "confortoDesejado"].forEach(id => {
   const campo = document.getElementById(id);
   if (campo) {
-    campo.addEventListener("input", event => formatarCampoMoedaDigitando(event.target));
-    campo.addEventListener("blur", event => formatarCampoMoeda(event.target));
+    campo.addEventListener("input", event => {
+      formatarCampoMoedaDigitando(event.target);
+      if (id === "retiradaDesejada" || id === "confortoDesejado") atualizarResumoMetasConfig();
+    });
+    campo.addEventListener("blur", event => {
+      formatarCampoMoeda(event.target);
+      if (id === "retiradaDesejada" || id === "confortoDesejado") atualizarResumoMetasConfig();
+    });
   }
 });
 
 function trocarAba(aba) {
   telaInicio.classList.add("hidden");
   telaDashboard.classList.add("hidden");
+  telaSimulacao.classList.add("hidden");
   telaHistorico.classList.add("hidden");
   telaFechamentos.classList.add("hidden");
   telaConfig.classList.add("hidden");
 
   abaInicio.classList.remove("ativo");
   abaDashboard.classList.remove("ativo");
+  abaSimulacao.classList.remove("ativo");
   abaHistorico.classList.remove("ativo");
   abaFechamentos.classList.remove("ativo");
   abaConfig.classList.remove("ativo");
@@ -101,6 +144,12 @@ function trocarAba(aba) {
   if (aba === "dashboard") {
     telaDashboard.classList.remove("hidden");
     abaDashboard.classList.add("ativo");
+  }
+
+  if (aba === "simulacao") {
+    telaSimulacao.classList.remove("hidden");
+    abaSimulacao.classList.add("ativo");
+    renderizarSimulacao();
   }
 
   if (aba === "historico") {
@@ -217,10 +266,15 @@ async function adicionar() {
 
 async function salvarConfiguracoes() {
   config.saldoInicial = 0;
-  config.diasPlanejados = parseInt(diasPlanejados.value) || 0;
+  config.diasPlanejados = rotinaConfigurada()
+    ? calcularDiasPlanejadosDoMes(new Date().getFullYear(), new Date().getMonth() + 1, config)
+    : (parseInt(diasPlanejados.value) || 0);
   config.tipoVeiculo = tipoVeiculoSeguro(document.getElementById("tipoVeiculo")?.value);
   config.retiradaDesejada = parseMoeda(document.getElementById("retiradaDesejada")?.value);
-  config.retiradaObjetivo = objetivoMetaSeguro(document.getElementById("retiradaObjetivo")?.value || "estabilidade");
+  config.retiradaObjetivo = "estabilidade";
+  config.confortoDesejado = parseMoeda(document.getElementById("confortoDesejado")?.value);
+  config.modeloMetasVersao = 2;
+  config.revisaoMesPendente = "";
   migrarMetasConfiguradas();
 
   preencherCamposConfig();
@@ -231,7 +285,7 @@ async function salvarConfiguracoes() {
 async function cadastrarMeta() {
   const nome = limitarTexto(document.getElementById("metaNome").value, 60);
   const valor = parseMoeda(document.getElementById("metaValor").value);
-  const objetivo = objetivoMetaSeguro(document.getElementById("metaObjetivo").value);
+  const objetivo = "sobrevivencia";
   const tipoMeta = "custo";
 
   if (!nome) return alert("Informe o nome do custo.");
@@ -264,7 +318,6 @@ function resetarFormularioMeta() {
   metaEmEdicaoId = null;
   document.getElementById("metaNome").value = "";
   document.getElementById("metaValor").value = "";
-  document.getElementById("metaObjetivo").value = "sobrevivencia";
   if (document.getElementById("btnSalvarMeta")) btnSalvarMeta.innerText = "Cadastrar custo";
   if (document.getElementById("btnCancelarMeta")) btnCancelarMeta.classList.add("hidden");
 }
@@ -277,7 +330,6 @@ function iniciarEdicaoMeta(id) {
   metaEmEdicaoId = String(meta.id);
   document.getElementById("metaNome").value = meta.nome;
   document.getElementById("metaValor").value = moeda(meta.valor);
-  document.getElementById("metaObjetivo").value = objetivoMetaSeguro(meta.objetivo);
   if (document.getElementById("btnSalvarMeta")) btnSalvarMeta.innerText = "Salvar alterações";
   if (document.getElementById("btnCancelarMeta")) btnCancelarMeta.classList.remove("hidden");
 }
@@ -468,12 +520,13 @@ function atualizarOpcoesDescricaoDespesa() {
 }
 
 function normalizarMetasConfig() {
+  const modeloSimplificado = Number(config.modeloMetasVersao) >= 2;
   config.metas = (Array.isArray(config.metas) ? config.metas : [])
     .map(meta => ({
       id: meta.id ? String(meta.id) : gerarId(),
       nome: limitarTexto(meta.nome || meta.name, 60),
       valor: Number(meta.valor ?? meta.value) || 0,
-      objetivo: objetivoMetaSeguro(meta.objetivo || meta.categoria || meta.tipo),
+      objetivo: modeloSimplificado ? "sobrevivencia" : objetivoMetaSeguro(meta.objetivo || meta.categoria || meta.tipo),
       tipoMeta: tipoMetaSeguro(meta.tipoMeta || meta.comportamento || tipoMetaPorNome(meta.nome || meta.name))
     }))
     .filter(meta => meta.nome && meta.valor >= 0);
@@ -481,8 +534,13 @@ function normalizarMetasConfig() {
   const metaSobra = config.metas.find(ehMetaSobra);
   if (metaSobra) {
     if (!config.retiradaDesejada) config.retiradaDesejada = Number(metaSobra.valor) || 0;
-    config.retiradaObjetivo = objetivoMetaSeguro(config.retiradaObjetivo || metaSobra.objetivo || "estabilidade");
+    config.retiradaObjetivo = modeloSimplificado ? "estabilidade" : objetivoMetaSeguro(config.retiradaObjetivo || metaSobra.objetivo || "estabilidade");
     config.metas = config.metas.filter(meta => !ehMetaSobra(meta));
+  }
+
+  if (modeloSimplificado) {
+    config.retiradaObjetivo = "estabilidade";
+    config.metas = config.metas.map(meta => ({ ...meta, objetivo: "sobrevivencia", tipoMeta: "custo" }));
   }
 }
 
@@ -532,6 +590,13 @@ function totaisMetasConfig(configBase = config) {
     return { sobrevivencia: sobrevivenciaLegada, estabilidade: estabilidadeLegada, conforto: confortoLegado };
   }
 
+  if (Number(configBase.modeloMetasVersao) >= 2) {
+    const sobrevivencia = metas.reduce((soma, meta) => soma + (Number(meta.valor) || 0), 0);
+    const estabilidade = sobrevivencia + (Number(configBase.retiradaDesejada) || 0);
+    const conforto = estabilidade + (Number(configBase.confortoDesejado) || 0);
+    return { sobrevivencia, estabilidade, conforto };
+  }
+
   const totalSobrevivencia = metas
     .filter(meta => objetivoMetaSeguro(meta.objetivo) === "sobrevivencia")
     .reduce((soma, meta) => soma + (Number(meta.valor) || 0), 0);
@@ -565,6 +630,13 @@ function totaisCustosConfig(configBase = config) {
       estabilidade: 0,
       conforto: Number(configBase.metaParcela) || 0
     };
+  }
+
+  if (Number(configBase.modeloMetasVersao) >= 2) {
+    return metas.reduce((totais, meta) => {
+      totais.sobrevivencia += Number(meta.valor) || 0;
+      return totais;
+    }, { sobrevivencia: 0, estabilidade: 0, conforto: 0 });
   }
 
   return metas.reduce((totais, meta) => {
@@ -682,15 +754,16 @@ function render() {
   const metaConsistenteValor = totaisMetas.estabilidade;
   const custosTotais = totaisMetas.conforto;
 
+  const diasPlanejadosAtual = calcularDiasPlanejadosDoMes(new Date().getFullYear(), new Date().getMonth() + 1, config);
   const diasTrabalhadosValor = snapMesFechado ? 0 : diasComGanhos.size;
-  const diasRestantes = snapMesFechado ? 0 : Math.max(config.diasPlanejados - diasTrabalhadosValor, 0);
+  const diasRestantes = snapMesFechado ? 0 : Math.max(diasPlanejadosAtual - diasTrabalhadosValor, 0);
 
   const mediaDiaValor = diasTrabalhadosValor > 0 ? entradas / diasTrabalhadosValor : 0;
-  const metaMinima = config.diasPlanejados > 0 ? custosSemParcela / config.diasPlanejados : 0;
-  const metaIdeal = config.diasPlanejados > 0 ? custosTotais / config.diasPlanejados : 0;
+  const metaMinima = diasPlanejadosAtual > 0 ? custosSemParcela / diasPlanejadosAtual : 0;
+  const metaIdeal = diasPlanejadosAtual > 0 ? custosTotais / diasPlanejadosAtual : 0;
   const metaAjustadaValor = diasRestantes > 0 ? Math.max((custosSemParcela - entradas) / diasRestantes, 0) : 0;
 
-  if (document.getElementById("diasPlanejadosResumo")) diasPlanejadosResumo.innerText = config.diasPlanejados || 0;
+  if (document.getElementById("diasPlanejadosResumo")) diasPlanejadosResumo.innerText = diasPlanejadosAtual || 0;
   entradasEl().innerText = moeda(entradas);
   saidasEl().innerText = moeda(saidas);
   resultado.innerText = moeda(resultadoMes);
@@ -724,6 +797,7 @@ function render() {
     custosTotais,
     diasTrabalhadosValor,
     diasRestantes,
+    diasPlanejadosAtual,
     mediaDiaValor,
     metaAjustadaValor,
     snapMesFechado
@@ -732,6 +806,14 @@ function render() {
   renderizarMetasConfig();
   renderizarHistoricoMensal({ entradas, saidas, kmRodado, litrosTotal, gastoGasolina, lucroOperacional, custosSemParcela, metaConsistenteValor, custosTotais });
   renderizarBannerMesFechado(snapMesFechado);
+  renderizarBannerRevisaoMensal();
+}
+
+function renderizarBannerRevisaoMensal() {
+  const banner = document.getElementById("dashboardRevisaoMes");
+  if (!banner) return;
+  const mesAtual = mesKeyDeData(new Date());
+  banner.classList.toggle("hidden", config.revisaoMesPendente !== mesAtual);
 }
 
 function entradasEl() { return document.getElementById("entradas"); }
@@ -753,14 +835,14 @@ function renderizarComposicaoMetas(ctx) {
     return;
   }
 
-  const grupos = ["sobrevivencia", "estabilidade", "conforto"];
+  const grupos = Number(config.modeloMetasVersao) >= 2 ? ["sobrevivencia"] : ["sobrevivencia", "estabilidade", "conforto"];
   container.innerHTML = grupos.map(objetivo => {
     const metasDoGrupo = config.metas.filter(meta => objetivoMetaSeguro(meta.objetivo) === objetivo);
     if (!metasDoGrupo.length) return "";
 
     return `
       <section class="composicao-grupo composicao-${objetivo}">
-        <div class="composicao-grupo-titulo">${rotuloObjetivoMeta(objetivo)}</div>
+        <div class="composicao-grupo-titulo">${Number(config.modeloMetasVersao) >= 2 ? "Custos que compõem a Sobrevivência" : rotuloObjetivoMeta(objetivo)}</div>
         <div class="composicao-itens">
           ${metasDoGrupo.map(meta => {
             const valorMeta = Number(meta.valor) || 0;
@@ -789,6 +871,7 @@ function renderizarMetasConfig() {
   const container = document.getElementById("metasLista");
   if (!container) return;
   migrarMetasConfiguradas();
+  atualizarResumoMetasConfig();
 
   if (!config.metas.length) {
     container.innerHTML = '<div class="meta-empty">Nenhuma meta cadastrada ainda.</div>';
@@ -799,7 +882,7 @@ function renderizarMetasConfig() {
     <div class="meta-config-row">
       <div>
         <strong>${textoSeguro(meta.nome)}</strong>
-        <small>${rotuloObjetivoMeta(meta.objetivo)}</small>
+        <small>${Number(config.modeloMetasVersao) >= 2 ? "Custo essencial" : rotuloObjetivoMeta(meta.objetivo)}</small>
       </div>
       <span class="custo-planejado">${moeda(meta.valor)}</span>
       <div class="meta-config-actions">
@@ -816,6 +899,52 @@ function renderizarMetasConfig() {
   container.querySelectorAll("[data-meta-id]").forEach(botao => {
     botao.addEventListener("click", () => excluirMeta(botao.getAttribute("data-meta-id")));
   });
+}
+if (document.getElementById("simMes")) {
+  ["simMediaDia", "simCustos", "simRetirada", "simConforto"].forEach(id => {
+    const campo = document.getElementById(id);
+    campo.addEventListener("input", event => {
+      formatarCampoMoedaDigitando(event.target);
+      renderizarSimulacao();
+    });
+    campo.addEventListener("blur", event => {
+      formatarCampoMoeda(event.target);
+      renderizarSimulacao();
+    });
+  });
+  document.getElementById("simMes").addEventListener("change", atualizarPeriodoSimulacao);
+  document.getElementById("simAno").addEventListener("change", atualizarPeriodoSimulacao);
+  document.getElementById("simTrabalhoEmFeriados").addEventListener("change", event => {
+    garantirSimulacao();
+    simulacao.trabalhoEmFeriados = event.target.checked;
+    renderizarSimulacao();
+  });
+  document.querySelectorAll("[data-sim-weekday]").forEach(botao => {
+    botao.addEventListener("click", () => alternarDiaSemanaSimulacao(Number(botao.dataset.simWeekday)));
+  });
+  document.getElementById("simCalendario").addEventListener("click", event => {
+    const botao = event.target.closest("[data-sim-date]");
+    if (botao) alternarExcecaoSimulacao(botao.dataset.simDate);
+  });
+}
+
+function atualizarResumoMetasConfig() {
+  const retiradaCampo = document.getElementById("retiradaDesejada");
+  const confortoCampo = document.getElementById("confortoDesejado");
+  const configPrevia = {
+    ...config,
+    modeloMetasVersao: 2,
+    retiradaDesejada: retiradaCampo ? parseMoeda(retiradaCampo.value) : (Number(config.retiradaDesejada) || 0),
+    confortoDesejado: confortoCampo ? parseMoeda(confortoCampo.value) : (Number(config.confortoDesejado) || 0)
+  };
+  const totais = totaisMetasConfig(configPrevia);
+  const atualizar = (id, valor) => {
+    const elemento = document.getElementById(id);
+    if (elemento) elemento.innerText = moeda(valor);
+  };
+  atualizar("configResumoSobrevivencia", totais.sobrevivencia);
+  atualizar("configResumoEstabilidade", totais.estabilidade);
+  atualizar("configResumoConforto", totais.conforto);
 }
 
 async function excluirMeta(id) {
@@ -1011,12 +1140,14 @@ function executarManutencaoMensal(forcar = false) {
     // Todo mês anterior ao mês atual recebe/atualiza um consolidado.
     // Ele pode continuar aparecendo em Lançamentos por mais um mês.
     if (compararMesKey(mesKey, mesAtual) < 0) {
+      const tinhaFechamento = !!fechamentos[mesKey];
       const resumo = calcularResumoDoMes(mesKey, dados, config, "Fechado");
       const anterior = JSON.stringify(fechamentos[mesKey] || {});
       const novo = JSON.stringify(resumo);
       if (anterior !== novo) {
         fechamentos[mesKey] = resumo;
         alterou = true;
+        if (!tinhaFechamento) config.revisaoMesPendente = mesAtual;
       }
     }
   });
@@ -1252,7 +1383,7 @@ function metaProjetadaStatus(projecao, sobrevivencia, estabilidade, conforto) {
 }
 
 function proximaMetaAtiva(valor, sobrevivencia, estabilidade, conforto) {
-  if (sobrevivencia > 0 && valor < sobrevivencia) return { nome: "Sobrevivência", acao: "Para sobreviver", valor: sobrevivencia };
+  if (sobrevivencia > 0 && valor < sobrevivencia) return { nome: "Sobrevivência", acao: "Para cobrir os custos", valor: sobrevivencia };
   if (estabilidade > 0 && valor < estabilidade) return { nome: "Estabilidade", acao: "Para alcançar estabilidade", valor: estabilidade };
   if (conforto > 0 && valor < conforto) return { nome: "Conforto", acao: "Para alcançar conforto", valor: conforto };
   return null;
@@ -1286,6 +1417,25 @@ function metaIcone(nome) {
   return icons[nome] || icons.Minima;
 }
 
+function obterMelhorDiaSemanaAtual() {
+  const hoje = new Date();
+  const inicio = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() - ((hoje.getDay() + 6) % 7));
+  const fim = new Date(inicio.getFullYear(), inicio.getMonth(), inicio.getDate() + 6);
+  const ganhosPorDia = {};
+
+  dados.forEach(item => {
+    if (item.descricao !== "Ganhos Uber" || Number(item.valor) <= 0 || !item.data) return;
+    const partes = item.data.split("-").map(Number);
+    if (partes.length !== 3 || partes.some(Number.isNaN)) return;
+    const data = new Date(partes[0], partes[1] - 1, partes[2]);
+    if (data < inicio || data > fim) return;
+    ganhosPorDia[item.data] = (ganhosPorDia[item.data] || 0) + Number(item.valor);
+  });
+
+  const melhor = Object.entries(ganhosPorDia).sort((a, b) => b[1] - a[1])[0];
+  return melhor ? { data: melhor[0], valor: melhor[1] } : null;
+}
+
 function atualizarDashboard(ctx) {
   if (!document.getElementById("dashboardProjecao")) return;
 
@@ -1295,12 +1445,13 @@ function atualizarDashboard(ctx) {
   const custosTotais = ctx.custosTotais || 0;
   const diasTrabalhadosValor = ctx.diasTrabalhadosValor || 0;
   const diasRestantes = ctx.diasRestantes || 0;
+  const diasPlanejadosAtual = ctx.diasPlanejadosAtual || 0;
   const mediaDiaValor = ctx.mediaDiaValor || 0;
 
   const metaConsistenteValor = totaisMetasConfig().estabilidade;
   const custosBaseSobra = totaisCustosConfig().sobrevivencia;
 
-  const projecaoMes = mediaDiaValor * (Number(config.diasPlanejados) || 0);
+  const projecaoMes = mediaDiaValor * diasPlanejadosAtual;
   const custosAtuais = Math.abs(saidas);
   const baseRetiradaPrevista = Math.max(custosBaseSobra, custosAtuais);
   const sobraProjetada = projecaoMes - baseRetiradaPrevista;
@@ -1343,9 +1494,9 @@ function atualizarDashboard(ctx) {
   faixaConsistente.innerText = `Estabilidade ${moeda(metaConsistenteValor)}`;
   faixaIdeal.innerText = `Conforto ${moeda(custosTotais)}`;
 
-  atualizarMetaCard("Minima", "Sobrevivência", custosSemParcela, entradas, projecaoMes);
-  atualizarMetaCard("Consistente", "Estabilidade", metaConsistenteValor, entradas, projecaoMes);
-  atualizarMetaCard("Ideal", "Conforto", custosTotais, entradas, projecaoMes);
+  atualizarMetaCard("Minima", "Sobrevivência", custosSemParcela, entradas, diasRestantes);
+  atualizarMetaCard("Consistente", "Estabilidade", metaConsistenteValor, entradas, diasRestantes);
+  atualizarMetaCard("Ideal", "Conforto", custosTotais, entradas, diasRestantes);
 
   dashMediaDia.innerText = moeda(mediaDiaValor);
   dashMediaSub.innerText = diasTrabalhadosValor > 0 ? `${diasTrabalhadosValor} dia(s) trabalhado(s)` : "sem ganhos registrados";
@@ -1370,21 +1521,25 @@ function atualizarDashboard(ctx) {
 
   if (document.getElementById("dashSemanaExecutadoValor")) dashSemanaExecutadoValor.innerText = moeda(ganhoSemanaAtual);
   if (document.getElementById("dashMetaSemana")) dashMetaSemana.innerText = `Meta semanal: ${moeda(metaSemanal)}`;
-  dashSemanaStatus.innerText = `${Math.round(percSemana)}%`;
-  if (document.getElementById("dashSemanaLabel")) dashSemanaLabel.innerText = "Progresso";
-
-  if (metaSemanal > 0) {
+  if (document.getElementById("dashSemanaStatus")) dashSemanaStatus.innerText = `${Math.round(percSemana)}%`;
+  if (document.getElementById("dashSemanaLabel")) dashSemanaLabel.innerText = "Ritmo da semana";
+  if (document.getElementById("dashSemanaFalta")) {
     const faltaSemana = Math.max(metaSemanal - ganhoSemanaAtual, 0);
-    dashSemanaFalta.innerText = faltaSemana > 0 ? `Faltam ${moeda(faltaSemana)} nesta semana` : "Meta semanal atingida";
-  } else {
-    dashSemanaFalta.innerText = "Configure as metas";
+    dashSemanaFalta.innerText = metaSemanal > 0
+      ? (faltaSemana > 0 ? `Faltam ${moeda(faltaSemana)} nesta semana` : "Meta semanal atingida")
+      : "Configure as metas";
+  }
+  const melhorDia = obterMelhorDiaSemanaAtual();
+  if (document.getElementById("dashMelhorDiaValor")) dashMelhorDiaValor.innerText = melhorDia ? moeda(melhorDia.valor) : "—";
+  if (document.getElementById("dashMelhorDiaLabel")) {
+    dashMelhorDiaLabel.innerText = melhorDia ? `${formatarData(melhorDia.data)} · seu melhor resultado` : "Registre ganhos nesta semana";
   }
 
   const metaSemanalSemanasDoMes = metaConsistenteValor > 0 ? metaConsistenteValor / Math.max(semanas.length, 1) : 0;
   renderizarSemanas(semanas, metaSemanalSemanasDoMes);
 }
 
-function atualizarMetaCard(nome, rotulo, meta, atual, projetado) {
+function atualizarMetaCard(nome, rotulo, meta, atual, diasRestantes) {
   const card = document.getElementById(`cardMeta${nome}`);
   const pctEl = document.getElementById(`dashPct${nome}`);
   const barEl = document.getElementById(`dashBar${nome}`);
@@ -1398,31 +1553,33 @@ function atualizarMetaCard(nome, rotulo, meta, atual, projetado) {
   if (!meta || meta <= 0) {
     pctEl.innerText = "—";
     barEl.style.width = "0%";
-    progressoEl.innerHTML = `<div class="meta-line"><span>Executado</span><strong>${moeda(atual)}</strong></div><div class="meta-line"><span>Projeção</span><strong>${moeda(projetado || 0)}</strong></div>`;
+    progressoEl.innerHTML = `<div class="meta-line"><span>Executado</span><strong>${moeda(atual)}</strong></div>`;
     acaoEl.innerHTML = `<div class="meta-action-panel"><span class="meta-action-icon">${metaIcone(nome)}</span><span><strong>Meta não configurada</strong><small>Configure esta meta para acompanhar o ritmo.</small></span></div>`;
     card.classList.add("alerta");
     return;
   }
 
   const percentualExecutado = (atual / meta) * 100;
-  const percentualProjetado = (projetado / meta) * 100;
   const percentualVisual = Math.min(Math.max(percentualExecutado, 0), 100);
   const faltaAtual = Math.max(meta - atual, 0);
   const acima = Math.max(atual - meta, 0);
+  const valorDiaNecessario = diasRestantes > 0 ? faltaAtual / diasRestantes : 0;
 
   pctEl.innerText = `${Math.round(percentualExecutado)}%`;
   barEl.style.width = `${percentualVisual}%`;
   progressoEl.innerHTML = `
     <div class="meta-line"><span>Meta</span><strong>${moeda(meta)}</strong></div>
     <div class="meta-line"><span>Executado</span><strong>${moeda(atual)} · ${Math.round(percentualExecutado)}%</strong></div>
-    <div class="meta-line"><span>Projeção</span><strong>${moeda(projetado || 0)} · ${Math.round(percentualProjetado)}%</strong></div>
+    <div class="meta-line"><span>Faltam</span><strong>${moeda(faltaAtual)}</strong></div>
   `;
 
   if (faltaAtual <= 0) {
     acaoEl.innerHTML = `<div class="meta-action-panel"><span class="meta-action-icon">${metaIcone(nome)}</span><span><strong>${rotulo} alcançada</strong><small>+${moeda(acima)} acima da meta</small></span></div>`;
     card.classList.add("ok");
   } else {
-    acaoEl.innerHTML = `<div class="meta-action-panel"><span class="meta-action-icon">${metaIcone(nome)}</span><span><strong>${moeda(faltaAtual)} restantes</strong><small>${rotulo} em andamento</small></span></div>`;
+    const textoDia = diasRestantes > 0 ? `${moeda(valorDiaNecessario)}/dia` : "Sem dias planejados";
+    const detalhe = diasRestantes > 0 ? `nos ${diasRestantes} dia(s) planejado(s) restantes` : `para alcançar ${rotulo}`;
+    acaoEl.innerHTML = `<div class="meta-action-panel"><span class="meta-action-icon">${metaIcone(nome)}</span><span><strong>${textoDia}</strong><small>${detalhe}</small></span></div>`;
     card.classList.add(percentualExecutado >= 70 ? "alerta" : "longe");
   }
 }
@@ -1585,7 +1742,15 @@ function normalizarConfigAtual() {
   config.metaConsistente = Number(config.metaConsistente) || 0;
   config.tipoVeiculo = tipoVeiculoSeguro(config.tipoVeiculo);
   config.retiradaDesejada = Number(config.retiradaDesejada) || 0;
-  config.retiradaObjetivo = objetivoMetaSeguro(config.retiradaObjetivo || "estabilidade");
+  config.retiradaObjetivo = "estabilidade";
+  config.confortoDesejado = Number(config.confortoDesejado) || 0;
+  config.diasSemana = [...new Set((Array.isArray(config.diasSemana) ? config.diasSemana : [])
+    .map(Number)
+    .filter(dia => dia >= 1 && dia <= 7))].sort((a, b) => a - b);
+  config.trabalhoEmFeriados = !!config.trabalhoEmFeriados;
+  config.diasFolgaExtra = (Array.isArray(config.diasFolgaExtra) ? config.diasFolgaExtra : []).map(normalizarDataISO).filter(Boolean);
+  config.diasTrabalhoExtra = (Array.isArray(config.diasTrabalhoExtra) ? config.diasTrabalhoExtra : []).map(normalizarDataISO).filter(Boolean);
+  config.modeloMetasVersao = Number(config.modeloMetasVersao) || 1;
   migrarMetasConfiguradas();
 }
 
@@ -1647,6 +1812,18 @@ function parseDecimalBR(valor) {
   return parseFloat(texto) || 0;
 }
 
+function formatarCampoDecimalDireto(campo) {
+  const digitos = String(campo.value || "").replace(/\D/g, "").replace(/^0+(?=\d)/, "");
+  if (!digitos) {
+    campo.value = "";
+    return;
+  }
+  campo.value = (Number(digitos) / 100).toLocaleString("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
+
 function formatarCampoMoeda(campo) {
   const valor = parseMoeda(campo.value);
   campo.value = valor ? moeda(valor) : "";
@@ -1658,8 +1835,337 @@ function formatarCampoMoedaDigitando(campo) {
     campo.value = "";
     return;
   }
+
   const centavos = Number.parseInt(digitos, 10);
   campo.value = moeda(centavos / 100);
+}
+
+function rotinaConfigurada(configBase = config) {
+  return Array.isArray(configBase.diasSemana) && configBase.diasSemana.length > 0;
+}
+
+function dataISOCalendario(ano, mes, dia) {
+  return `${ano}-${String(mes).padStart(2, "0")}-${String(dia).padStart(2, "0")}`;
+}
+
+function adicionarDias(data, dias) {
+  const copia = new Date(data.getFullYear(), data.getMonth(), data.getDate());
+  copia.setDate(copia.getDate() + dias);
+  return copia;
+}
+
+function calcularPascoa(ano) {
+  const a = ano % 19;
+  const b = Math.floor(ano / 100);
+  const c = ano % 100;
+  const d = Math.floor(b / 4);
+  const e = b % 4;
+  const f = Math.floor((b + 8) / 25);
+  const g = Math.floor((b - f + 1) / 3);
+  const h = (19 * a + b - d - g + 15) % 30;
+  const i = Math.floor(c / 4);
+  const k = c % 4;
+  const l = (32 + 2 * e + 2 * i - h - k) % 7;
+  const m = Math.floor((a + 11 * h + 22 * l) / 451);
+  const mes = Math.floor((h + l - 7 * m + 114) / 31);
+  const dia = ((h + l - 7 * m + 114) % 31) + 1;
+  return new Date(ano, mes - 1, dia);
+}
+
+function feriadosNacionais(ano) {
+  const fixos = ["01-01", "04-21", "05-01", "09-07", "10-12", "11-02", "11-15", "11-20", "12-25"];
+  const sextaSanta = adicionarDias(calcularPascoa(ano), -2);
+  return new Set([
+    ...fixos.map(data => `${ano}-${data}`),
+    dataISOCalendario(sextaSanta.getFullYear(), sextaSanta.getMonth() + 1, sextaSanta.getDate())
+  ]);
+}
+
+function diaEhTrabalho(data, configBase = config) {
+  if (!rotinaConfigurada(configBase)) return false;
+  const dataISO = dataISOCalendario(data.getFullYear(), data.getMonth() + 1, data.getDate());
+  const feriado = feriadosNacionais(data.getFullYear()).has(dataISO);
+  let trabalha = configBase.diasSemana.includes(data.getDay() || 7);
+  if (feriado && !configBase.trabalhoEmFeriados) trabalha = false;
+  if (configBase.diasFolgaExtra.includes(dataISO)) trabalha = false;
+  if (configBase.diasTrabalhoExtra.includes(dataISO)) trabalha = true;
+  return trabalha;
+}
+
+function diaEhTrabalhoBase(data, configBase = config) {
+  if (!rotinaConfigurada(configBase)) return false;
+  const dataISO = dataISOCalendario(data.getFullYear(), data.getMonth() + 1, data.getDate());
+  return configBase.diasSemana.includes(data.getDay() || 7)
+    && (!feriadosNacionais(data.getFullYear()).has(dataISO) || configBase.trabalhoEmFeriados);
+}
+
+function calcularDiasPlanejadosDoMes(ano, mes, configBase = config) {
+  if (!rotinaConfigurada(configBase)) return Number(configBase.diasPlanejados) || 0;
+  const ultimoDia = new Date(ano, mes, 0).getDate();
+  let total = 0;
+  for (let dia = 1; dia <= ultimoDia; dia++) {
+    if (diaEhTrabalho(new Date(ano, mes - 1, dia), configBase)) total++;
+  }
+  return total;
+}
+
+function atualizarDiasPlanejadosDaRotina() {
+  if (!rotinaConfigurada()) return;
+  config.diasPlanejados = calcularDiasPlanejadosDoMes(new Date().getFullYear(), new Date().getMonth() + 1, config);
+}
+
+function alternarDiaSemana(dia) {
+  const dias = new Set(Array.isArray(config.diasSemana) ? config.diasSemana : []);
+  if (dias.has(dia)) dias.delete(dia);
+  else dias.add(dia);
+  config.diasSemana = [...dias].sort((a, b) => a - b);
+  atualizarDiasPlanejadosDaRotina();
+  renderizarRotinaMensal();
+  render();
+}
+
+function navegarCalendarioRotina(delta) {
+  mesCalendarioRotina = new Date(mesCalendarioRotina.getFullYear(), mesCalendarioRotina.getMonth() + delta, 1);
+  renderizarRotinaMensal();
+}
+
+function alternarExcecaoRotina(dataISO) {
+  if (!rotinaConfigurada() || !/^\d{4}-\d{2}-\d{2}$/.test(dataISO)) return;
+  const [ano, mes, dia] = dataISO.split("-").map(Number);
+  const data = new Date(ano, mes - 1, dia);
+  const trabalhaAgora = diaEhTrabalho(data);
+  const trabalhaBase = diaEhTrabalhoBase(data);
+  const deveTrabalhar = !trabalhaAgora;
+  config.diasFolgaExtra = config.diasFolgaExtra.filter(item => item !== dataISO);
+  config.diasTrabalhoExtra = config.diasTrabalhoExtra.filter(item => item !== dataISO);
+  if (deveTrabalhar !== trabalhaBase) {
+    if (deveTrabalhar) config.diasTrabalhoExtra.push(dataISO);
+    else config.diasFolgaExtra.push(dataISO);
+  }
+  atualizarDiasPlanejadosDaRotina();
+  renderizarRotinaMensal();
+  render();
+}
+
+function renderizarRotinaMensal() {
+  const titulo = document.getElementById("calendarioRotinaTitulo");
+  const grade = document.getElementById("calendarioRotina");
+  const resumo = document.getElementById("rotinaDiasResumo");
+  const blocoManual = document.getElementById("blocoDiasManual");
+  if (!titulo || !grade || !resumo || !blocoManual) return;
+
+  const ano = mesCalendarioRotina.getFullYear();
+  const mes = mesCalendarioRotina.getMonth() + 1;
+  const meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+  const total = calcularDiasPlanejadosDoMes(ano, mes, config);
+  const rotinaAtiva = rotinaConfigurada();
+  titulo.innerText = `${meses[mes - 1]} de ${ano}`;
+  resumo.innerText = rotinaAtiva ? `${total} dias planejados` : `${Number(config.diasPlanejados) || 0} dias planejados`;
+  blocoManual.classList.toggle("hidden", rotinaAtiva);
+
+  document.querySelectorAll("[data-weekday]").forEach(botao => {
+    botao.classList.toggle("ativo", config.diasSemana.includes(Number(botao.dataset.weekday)));
+  });
+
+  const primeiroDia = new Date(ano, mes - 1, 1);
+  const deslocamento = primeiroDia.getDay();
+  const ultimoDia = new Date(ano, mes, 0).getDate();
+  const feriados = feriadosNacionais(ano);
+  const vazios = Array.from({ length: deslocamento }, () => '<span class="calendario-dia vazio"></span>');
+  const dias = Array.from({ length: ultimoDia }, (_, indice) => {
+    const dia = indice + 1;
+    const data = new Date(ano, mes - 1, dia);
+    const dataISO = dataISOCalendario(ano, mes, dia);
+    const feriado = feriados.has(dataISO);
+    const excecao = config.diasFolgaExtra.includes(dataISO) || config.diasTrabalhoExtra.includes(dataISO);
+    const trabalha = diaEhTrabalho(data);
+    const classes = ["calendario-dia", trabalha ? "trabalho" : "folga"];
+    if (feriado) classes.push("feriado");
+    if (excecao) classes.push("excecao");
+    if (!rotinaAtiva) classes.push("desabilitado");
+    const estado = trabalha ? "Trabalho" : (feriado ? "Feriado" : "Folga");
+    return `<button type="button" class="${classes.join(" ")}" data-calendar-date="${dataISO}" ${rotinaAtiva ? "" : "disabled"} aria-label="${dia} de ${meses[mes - 1]}: ${estado}"><strong>${dia}</strong><small>${excecao ? "Exceção" : estado}</small></button>`;
+  });
+  grade.innerHTML = [...vazios, ...dias].join("");
+}
+
+function mediaGanhoDoMesAtual() {
+  const mesAtual = mesKeyDeData(new Date());
+  const ganhosPorDia = {};
+  dados.forEach(item => {
+    if (obterMesKey(item.data) !== mesAtual || item.descricao !== "Ganhos Uber" || Number(item.valor) <= 0) return;
+    ganhosPorDia[item.data] = (ganhosPorDia[item.data] || 0) + Number(item.valor);
+  });
+  const valores = Object.values(ganhosPorDia);
+  return valores.length ? valores.reduce((soma, valor) => soma + valor, 0) / valores.length : 0;
+}
+
+function garantirSimulacao() {
+  if (simulacao) return;
+  const hoje = new Date();
+  const totais = totaisMetasConfig(config);
+  simulacao = {
+    ano: hoje.getFullYear(),
+    mes: hoje.getMonth() + 1,
+    diasSemana: [...(config.diasSemana || [])],
+    trabalhoEmFeriados: !!config.trabalhoEmFeriados,
+    diasFolgaExtra: [...(config.diasFolgaExtra || [])],
+    diasTrabalhoExtra: [...(config.diasTrabalhoExtra || [])],
+    mediaDia: mediaGanhoDoMesAtual(),
+    custos: totais.sobrevivencia,
+    retirada: Math.max(totais.estabilidade - totais.sobrevivencia, 0),
+    conforto: Math.max(totais.conforto - totais.estabilidade, 0)
+  };
+
+  const meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+  simMes.innerHTML = meses.map((nome, indice) => `<option value="${indice + 1}">${nome}</option>`).join("");
+  simAno.innerHTML = Array.from({ length: 7 }, (_, indice) => hoje.getFullYear() - 1 + indice)
+    .map(ano => `<option value="${ano}">${ano}</option>`).join("");
+  simMes.value = String(simulacao.mes);
+  simAno.value = String(simulacao.ano);
+  simMediaDia.value = simulacao.mediaDia ? moeda(simulacao.mediaDia) : "";
+  simCustos.value = simulacao.custos ? moeda(simulacao.custos) : "";
+  simRetirada.value = simulacao.retirada ? moeda(simulacao.retirada) : "";
+  simConforto.value = simulacao.conforto ? moeda(simulacao.conforto) : "";
+  simTrabalhoEmFeriados.checked = simulacao.trabalhoEmFeriados;
+}
+
+function configDaSimulacao() {
+  garantirSimulacao();
+  return {
+    ...config,
+    diasPlanejados: 0,
+    diasSemana: simulacao.diasSemana,
+    trabalhoEmFeriados: simulacao.trabalhoEmFeriados,
+    diasFolgaExtra: simulacao.diasFolgaExtra,
+    diasTrabalhoExtra: simulacao.diasTrabalhoExtra
+  };
+}
+
+function atualizarPeriodoSimulacao() {
+  garantirSimulacao();
+  simulacao.mes = Number(simMes.value) || simulacao.mes;
+  simulacao.ano = Number(simAno.value) || simulacao.ano;
+  renderizarSimulacao();
+}
+
+function atualizarValoresSimulacao() {
+  garantirSimulacao();
+  simulacao.mediaDia = parseMoeda(simMediaDia.value);
+  simulacao.custos = parseMoeda(simCustos.value);
+  simulacao.retirada = parseMoeda(simRetirada.value);
+  simulacao.conforto = parseMoeda(simConforto.value);
+}
+
+function alternarDiaSemanaSimulacao(dia) {
+  garantirSimulacao();
+  const dias = new Set(simulacao.diasSemana);
+  if (dias.has(dia)) dias.delete(dia);
+  else dias.add(dia);
+  simulacao.diasSemana = [...dias].sort((a, b) => a - b);
+  renderizarSimulacao();
+}
+
+function alternarExcecaoSimulacao(dataISO) {
+  garantirSimulacao();
+  const [ano, mes, dia] = dataISO.split("-").map(Number);
+  const data = new Date(ano, mes - 1, dia);
+  const configSim = configDaSimulacao();
+  const trabalhaAgora = diaEhTrabalho(data, configSim);
+  const trabalhaBase = diaEhTrabalhoBase(data, configSim);
+  const deveTrabalhar = !trabalhaAgora;
+  simulacao.diasFolgaExtra = simulacao.diasFolgaExtra.filter(item => item !== dataISO);
+  simulacao.diasTrabalhoExtra = simulacao.diasTrabalhoExtra.filter(item => item !== dataISO);
+  if (deveTrabalhar !== trabalhaBase) {
+    if (deveTrabalhar) simulacao.diasTrabalhoExtra.push(dataISO);
+    else simulacao.diasFolgaExtra.push(dataISO);
+  }
+  renderizarSimulacao();
+}
+
+function ganhosReaisDoMes(ano, mes) {
+  const mesKey = `${ano}-${String(mes).padStart(2, "0")}`;
+  return dados.reduce((soma, item) => (
+    obterMesKey(item.data) === mesKey && item.descricao === "Ganhos Uber" && Number(item.valor) > 0
+      ? soma + Number(item.valor)
+      : soma
+  ), 0);
+}
+
+function diasPlanejadosRestantes(ano, mes, configBase) {
+  const hoje = new Date();
+  const primeiroDia = ano === hoje.getFullYear() && mes === hoje.getMonth() + 1 ? hoje.getDate() : 1;
+  const ultimoDia = new Date(ano, mes, 0).getDate();
+  let total = 0;
+  for (let dia = primeiroDia; dia <= ultimoDia; dia++) {
+    if (diaEhTrabalho(new Date(ano, mes - 1, dia), configBase)) total++;
+  }
+  return total;
+}
+
+function atualizarMetaSimulada(idMeta, idNecessario, meta, faturamentoProjetado, faturamentoBase, diasBase, texto) {
+  const elementoMeta = document.getElementById(idMeta);
+  const elementoNecessario = document.getElementById(idNecessario);
+  if (elementoMeta) elementoMeta.innerText = moeda(meta);
+  const faltaProjetada = Math.max(meta - faturamentoProjetado, 0);
+  const faltaReal = Math.max(meta - faturamentoBase, 0);
+  const porDia = diasBase > 0 ? faltaReal / diasBase : 0;
+  if (elementoNecessario) {
+    elementoNecessario.innerText = faltaProjetada <= 0
+      ? "Meta atingida nesta projeção"
+      : `${moeda(porDia)}/dia para ${texto}`;
+  }
+}
+
+function renderizarSimulacao() {
+  garantirSimulacao();
+  atualizarValoresSimulacao();
+  const configSim = configDaSimulacao();
+  const diasPlanejados = calcularDiasPlanejadosDoMes(simulacao.ano, simulacao.mes, configSim);
+  const hoje = new Date();
+  const mesAtual = simulacao.ano === hoje.getFullYear() && simulacao.mes === hoje.getMonth() + 1;
+  const faturamentoAtual = mesAtual ? ganhosReaisDoMes(simulacao.ano, simulacao.mes) : 0;
+  const diasParaPrevisao = mesAtual ? diasPlanejadosRestantes(simulacao.ano, simulacao.mes, configSim) : diasPlanejados;
+  const faturamentoProjetado = faturamentoAtual + (simulacao.mediaDia * diasParaPrevisao);
+  const sobrevivencia = simulacao.custos;
+  const estabilidade = sobrevivencia + simulacao.retirada;
+  const conforto = estabilidade + simulacao.conforto;
+  const metaAtingida = conforto > 0 && faturamentoProjetado >= conforto ? "Conforto"
+    : estabilidade > 0 && faturamentoProjetado >= estabilidade ? "Estabilidade"
+      : sobrevivencia > 0 && faturamentoProjetado >= sobrevivencia ? "Sobrevivência" : "Nenhuma";
+
+  simDiasPlanejados.innerText = String(diasPlanejados);
+  simRotinaResumo.innerText = `${diasPlanejados} dias planejados`;
+  simFaturamentoProjetado.innerText = moeda(faturamentoProjetado);
+  simMetaAtingida.innerText = metaAtingida;
+  simFaturamentoSub.innerText = mesAtual
+    ? `${moeda(faturamentoAtual)} já registrado + ${moeda(simulacao.mediaDia)} por ${diasParaPrevisao} dia(s) restante(s)`
+    : `${moeda(simulacao.mediaDia)} por ${diasPlanejados} dia(s) planejado(s)`;
+  atualizarMetaSimulada("simMetaSobrevivencia", "simNecessarioSobrevivencia", sobrevivencia, faturamentoProjetado, faturamentoAtual, diasParaPrevisao, "cobrir os custos");
+  atualizarMetaSimulada("simMetaEstabilidade", "simNecessarioEstabilidade", estabilidade, faturamentoProjetado, faturamentoAtual, diasParaPrevisao, "chegar à estabilidade");
+  atualizarMetaSimulada("simMetaConforto", "simNecessarioConforto", conforto, faturamentoProjetado, faturamentoAtual, diasParaPrevisao, "chegar ao conforto");
+
+  document.querySelectorAll("[data-sim-weekday]").forEach(botao => {
+    botao.classList.toggle("ativo", simulacao.diasSemana.includes(Number(botao.dataset.simWeekday)));
+  });
+  simTrabalhoEmFeriados.checked = simulacao.trabalhoEmFeriados;
+  const primeiroDia = new Date(simulacao.ano, simulacao.mes - 1, 1);
+  const deslocamento = primeiroDia.getDay();
+  const ultimoDia = new Date(simulacao.ano, simulacao.mes, 0).getDate();
+  const feriados = feriadosNacionais(simulacao.ano);
+  const vazios = Array.from({ length: deslocamento }, () => '<span class="calendario-dia vazio"></span>');
+  const dias = Array.from({ length: ultimoDia }, (_, indice) => {
+    const dia = indice + 1;
+    const data = new Date(simulacao.ano, simulacao.mes - 1, dia);
+    const dataISO = dataISOCalendario(simulacao.ano, simulacao.mes, dia);
+    const trabalha = diaEhTrabalho(data, configSim);
+    const excecao = simulacao.diasFolgaExtra.includes(dataISO) || simulacao.diasTrabalhoExtra.includes(dataISO);
+    const classes = ["calendario-dia", trabalha ? "trabalho" : "folga"];
+    if (feriados.has(dataISO)) classes.push("feriado");
+    if (excecao) classes.push("excecao");
+    return `<button type="button" class="${classes.join(" ")}" data-sim-date="${dataISO}"><strong>${dia}</strong><small>${excecao ? "Exceção" : (trabalha ? "Trabalho" : (feriados.has(dataISO) ? "Feriado" : "Folga"))}</small></button>`;
+  });
+  simCalendario.innerHTML = [...vazios, ...dias].join("");
 }
 
 function formatarData(dataISO) {
@@ -1698,7 +2204,9 @@ function preencherCamposConfig() {
   diasPlanejados.value = config.diasPlanejados || "";
   if (document.getElementById("tipoVeiculo")) tipoVeiculo.value = tipoVeiculoSeguro(config.tipoVeiculo);
   if (document.getElementById("retiradaDesejada")) retiradaDesejada.value = config.retiradaDesejada ? moeda(config.retiradaDesejada) : "";
-  if (document.getElementById("retiradaObjetivo")) retiradaObjetivo.value = objetivoMetaSeguro(config.retiradaObjetivo || "estabilidade");
+  if (document.getElementById("confortoDesejado")) confortoDesejado.value = config.confortoDesejado ? moeda(config.confortoDesejado) : "";
+  if (document.getElementById("trabalhoEmFeriados")) trabalhoEmFeriados.checked = !!config.trabalhoEmFeriados;
+  renderizarRotinaMensal();
   atualizarRotulosVeiculo();
   renderizarMetasConfig();
 }
@@ -1907,6 +2415,13 @@ async function limparDados() {
     tipoVeiculo: "combustao",
     retiradaDesejada: 0,
     retiradaObjetivo: "estabilidade",
+    confortoDesejado: 0,
+    diasSemana: [],
+    trabalhoEmFeriados: false,
+    diasFolgaExtra: [],
+    diasTrabalhoExtra: [],
+    modeloMetasVersao: 2,
+    revisaoMesPendente: "",
     metas: []
   };
   fechamentos = {};

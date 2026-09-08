@@ -7,7 +7,7 @@
 <title>Controle Uber</title>
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="stylesheet" href="styles.css?v=20260714-original-com-mascara">
+<link rel="stylesheet" href="styles.css?v=20260727-simulacao">
 </head>
 
 <body>
@@ -31,6 +31,7 @@
 <div class="abas">
   <button id="abaInicio" class="aba-btn ativo"><span class="tab-label"><svg class="icon" viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10.5V20h14v-9.5"/><path d="M9 20v-6h6v6"/></svg><span>Início</span></span></button>
   <button id="abaDashboard" class="aba-btn"><span class="tab-label"><svg class="icon" viewBox="0 0 24 24"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 16V9"/><path d="M12 16V7"/><path d="M16 16v-4"/></svg><span>Dashboard</span></span></button>
+  <button id="abaSimulacao" class="aba-btn"><span class="tab-label"><svg class="icon" viewBox="0 0 24 24"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M7 15l4-4 3 3 4-6"/><path d="M18 5h2v2"/></svg><span>Simulação</span></span></button>
   <button id="abaHistorico" class="aba-btn"><span class="tab-label"><svg class="icon" viewBox="0 0 24 24"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></svg><span>Lançamentos</span></span></button>
   <button id="abaFechamentos" class="aba-btn"><span class="tab-label"><svg class="icon" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/></svg><span>Histórico</span></span></button>
   <button id="abaConfig" class="aba-btn"><span class="tab-label"><svg class="icon" viewBox="0 0 24 24"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 15a1.8 1.8 0 0 0 .36 2l.05.05a2.1 2.1 0 1 1-2.97 2.97l-.05-.05a1.8 1.8 0 0 0-2-.36 1.8 1.8 0 0 0-1.1 1.65V21a2.1 2.1 0 1 1-4.2 0v-.07a1.8 1.8 0 0 0-1.1-1.65 1.8 1.8 0 0 0-2 .36l-.05.05a2.1 2.1 0 1 1-2.97-2.97l.05-.05a1.8 1.8 0 0 0 .36-2 1.8 1.8 0 0 0-1.65-1.1H2a2.1 2.1 0 1 1 0-4.2h.07a1.8 1.8 0 0 0 1.65-1.1 1.8 1.8 0 0 0-.36-2l-.05-.05a2.1 2.1 0 1 1 2.97-2.97l.05.05a1.8 1.8 0 0 0 2 .36h.01A1.8 1.8 0 0 0 9.43 2V2a2.1 2.1 0 1 1 4.2 0v.07a1.8 1.8 0 0 0 1.1 1.65 1.8 1.8 0 0 0 2-.36l.05-.05a2.1 2.1 0 1 1 2.97 2.97l-.05.05a1.8 1.8 0 0 0-.36 2v.01A1.8 1.8 0 0 0 22 9.43H22a2.1 2.1 0 1 1 0 4.2h-.07A1.8 1.8 0 0 0 20.28 15Z"/></svg><span>Configuração</span></span></button>
@@ -149,6 +150,14 @@
 
 <div id="telaDashboard" class="tela hidden">
 
+<div class="month-review-banner hidden" id="dashboardRevisaoMes">
+  <div>
+    <strong>Novo mês, novo plano</strong>
+    <span>Revise sua rotina, seus custos e a retirada que quer garantir.</span>
+  </div>
+  <button type="button" id="btnRevisarMes">Revisar agora</button>
+</div>
+
 <div class="card dashboard-hero">
   <div class="dashboard-label">Projeção do mês</div>
   <div class="dashboard-valor-principal" id="dashboardProjecao">R$ 0,00</div>
@@ -159,7 +168,7 @@
       <strong id="dashboardAtualMes">R$ 0,00</strong>
     </div>
     <div class="dashboard-sobra-box">
-      <span>Retirada prevista</span>
+      <span>Sobra prevista</span>
       <strong id="dashboardSobraProjetada">R$ 0,00</strong>
       <small id="dashboardSobraBase">Depois dos custos do mês</small>
     </div>
@@ -247,6 +256,11 @@
         <span id="dashSemanaLabel">Ritmo da semana</span>
         <strong id="dashSemanaStatus">0%</strong>
         <p id="dashSemanaFalta">Aguardando meta consistente</p>
+        <div class="semana-melhor-dia">
+          <span>Melhor dia</span>
+          <strong id="dashMelhorDiaValor">—</strong>
+          <small id="dashMelhorDiaLabel">Registre ganhos nesta semana</small>
+        </div>
       </div>
     </div>
   </div>
@@ -264,6 +278,44 @@
 
 </div>
 
+
+<div id="telaSimulacao" class="tela hidden">
+  <div class="simulation-hero">
+    <div><span>SIMULAÇÃO</span><h2>Planeje antes de rodar</h2><p>Este cenário não altera sua rotina nem seu planejamento real.</p></div>
+    <div class="simulation-period"><label>Mês</label><select id="simMes"></select><label>Ano</label><select id="simAno"></select></div>
+  </div>
+
+  <div class="simulation-grid">
+    <div class="card simulation-input-card">
+      <h3>Cenário do mês</h3>
+      <label>Média esperada por dia trabalhado</label>
+      <input type="text" id="simMediaDia" inputmode="decimal" placeholder="R$ 0,00">
+      <p class="config-helper">Informe quanto espera faturar em um dia. A projeção é calculada automaticamente.</p>
+      <div class="sim-valores-grid">
+        <div><label>Custos essenciais</label><input type="text" id="simCustos" inputmode="decimal" placeholder="R$ 0,00"></div>
+        <div><label>Retirada desejada</label><input type="text" id="simRetirada" inputmode="decimal" placeholder="R$ 0,00"></div>
+        <div><label>Adicional de conforto</label><input type="text" id="simConforto" inputmode="decimal" placeholder="R$ 0,00"></div>
+      </div>
+    </div>
+    <div class="card simulation-result-card">
+      <span class="sim-result-label">Faturamento projetado</span><strong id="simFaturamentoProjetado">R$ 0,00</strong><p id="simFaturamentoSub">Informe uma média para simular o resultado.</p>
+      <div class="sim-result-mini-grid"><div><span>Dias planejados</span><strong id="simDiasPlanejados">0</strong></div><div><span>Meta mais alta atingida</span><strong id="simMetaAtingida">—</strong></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="config-section-head"><div><h3>Rotina simulada</h3><p>Escolha como pretende trabalhar neste mês. Toque em um dia para marcar folga ou trabalho extra.</p></div><strong id="simRotinaResumo">0 dias planejados</strong></div>
+    <div class="rotina-semana" id="simRotinaSemana" aria-label="Dias habituais de trabalho na simulação"><button type="button" data-sim-weekday="7">Dom</button><button type="button" data-sim-weekday="1">Seg</button><button type="button" data-sim-weekday="2">Ter</button><button type="button" data-sim-weekday="3">Qua</button><button type="button" data-sim-weekday="4">Qui</button><button type="button" data-sim-weekday="5">Sex</button><button type="button" data-sim-weekday="6">Sáb</button></div>
+    <label class="toggle-linha"><input type="checkbox" id="simTrabalhoEmFeriados"> <span>Também trabalhar nos feriados nacionais</span></label>
+    <div class="calendario-rotina sim-calendario"><div class="calendario-semana-labels"><span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span></div><div class="calendario-rotina-grid" id="simCalendario"></div></div>
+  </div>
+
+  <div class="sim-metas-grid">
+    <section class="sim-meta sim-meta-sobrevivencia"><span>Sobrevivência</span><strong id="simMetaSobrevivencia">R$ 0,00</strong><p id="simNecessarioSobrevivencia">R$ 0,00/dia para cobrir os custos</p></section>
+    <section class="sim-meta sim-meta-estabilidade"><span>Estabilidade</span><strong id="simMetaEstabilidade">R$ 0,00</strong><p id="simNecessarioEstabilidade">R$ 0,00/dia para chegar lá</p></section>
+    <section class="sim-meta sim-meta-conforto"><span>Conforto</span><strong id="simMetaConforto">R$ 0,00</strong><p id="simNecessarioConforto">R$ 0,00/dia para chegar lá</p></section>
+  </div>
+</div>
 
 <div id="telaHistorico" class="tela hidden">
 <div class="card">
@@ -323,8 +375,40 @@
 
   <input type="hidden" id="saldoInicial" value="0">
 
-  <label>Dias planejados</label>
-  <input type="text" id="diasPlanejados" inputmode="numeric" placeholder="Ex: 21">
+  <div class="config-section">
+    <div class="config-section-head">
+      <div>
+        <h4>Rotina de trabalho</h4>
+        <p>Escolha os dias em que costuma trabalhar. O calendário considera feriados nacionais e permite exceções.</p>
+      </div>
+      <strong id="rotinaDiasResumo">0 dias planejados</strong>
+    </div>
+    <div class="rotina-semana" id="rotinaSemana" aria-label="Dias habituais de trabalho">
+      <button type="button" data-weekday="7">Dom</button>
+      <button type="button" data-weekday="1">Seg</button>
+      <button type="button" data-weekday="2">Ter</button>
+      <button type="button" data-weekday="3">Qua</button>
+      <button type="button" data-weekday="4">Qui</button>
+      <button type="button" data-weekday="5">Sex</button>
+      <button type="button" data-weekday="6">Sáb</button>
+    </div>
+    <label class="toggle-linha"><input type="checkbox" id="trabalhoEmFeriados"> <span>Também trabalho nos feriados nacionais</span></label>
+    <div id="blocoDiasManual">
+      <label>Dias planejados (manual)</label>
+      <input type="text" id="diasPlanejados" inputmode="numeric" placeholder="Ex: 21">
+      <small>Escolha os dias da semana acima para deixar o calendário calcular este total.</small>
+    </div>
+    <div class="calendario-rotina">
+      <div class="calendario-rotina-head">
+        <button type="button" class="btn-cal-nav" id="btnCalendarioAnterior" aria-label="Mês anterior">‹</button>
+        <strong id="calendarioRotinaTitulo"></strong>
+        <button type="button" class="btn-cal-nav" id="btnCalendarioProximo" aria-label="Próximo mês">›</button>
+      </div>
+      <div class="calendario-semana-labels"><span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span></div>
+      <div class="calendario-rotina-grid" id="calendarioRotina"></div>
+      <p class="calendario-ajuda">Toque em um dia para alternar entre trabalho e folga. Feriados ficam como folga, salvo quando você marcar uma exceção.</p>
+    </div>
+  </div>
 
   <label>Tipo de ve&iacute;culo</label>
   <select id="tipoVeiculo">
@@ -332,27 +416,12 @@
     <option value="eletrico">El&eacute;trico</option>
   </select>
 
-  <div class="grid-config-retirada">
-    <div>
-      <label>Retirada desejada do m&ecirc;s</label>
-      <input type="text" id="retiradaDesejada" inputmode="decimal" placeholder="R$ 0,00">
-    </div>
-    <div>
-      <label>Conta para</label>
-      <select id="retiradaObjetivo">
-        <option value="sobrevivencia">Sobreviv&ecirc;ncia</option>
-        <option value="estabilidade" selected>Estabilidade</option>
-        <option value="conforto">Conforto</option>
-      </select>
-    </div>
-  </div>
-
-  <button data-action="salvar-config">Salvar configurações</button>
 </div>
 
 <div class="card">
   <h3 class="heading-with-icon"><span class="heading-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6"/></svg></span>Custos do mês</h3>
 
+  <p class="config-helper">Cadastre aqui os custos necessários para a operação. Eles formam a sua base de Sobrevivência.</p>
   <div class="grid-metas-config">
     <div>
       <label>Nome do custo</label>
@@ -364,15 +433,6 @@
       <input type="text" id="metaValor" inputmode="decimal" placeholder="R$ 0,00">
     </div>
 
-    <div>
-      <label>Faixa</label>
-      <select id="metaObjetivo">
-        <option value="sobrevivencia">Sobrevivência</option>
-        <option value="estabilidade">Estabilidade</option>
-        <option value="conforto">Conforto</option>
-      </select>
-    </div>
-
     <div class="meta-form-action">
       <button type="button" id="btnSalvarMeta" data-action="cadastrar-meta">Cadastrar custo</button>
       <button type="button" class="secundario hidden" id="btnCancelarMeta">Cancelar</button>
@@ -380,6 +440,32 @@
   </div>
 
   <div class="metas-lista" id="metasLista"></div>
+</div>
+
+<div class="card metas-financeiras-card">
+  <h3 class="heading-with-icon"><span class="heading-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M3 12h18"/><path d="M12 3v18"/><circle cx="12" cy="12" r="8"/></svg></span>Metas e retirada</h3>
+  <p class="config-helper">Defina em sequência o que o trabalho precisa pagar, o que você quer receber e o extra que representa conforto.</p>
+
+  <section class="faixa-config faixa-sobrevivencia">
+    <div class="faixa-config-head"><span>1</span><div><h4>Sobrevivência</h4><p>Todos os custos essenciais do mês.</p></div></div>
+    <div class="faixa-config-total"><span>Custos cadastrados</span><strong id="configResumoSobrevivencia">R$ 0,00</strong></div>
+  </section>
+
+  <section class="faixa-config faixa-estabilidade">
+    <div class="faixa-config-head"><span>2</span><div><h4>Estabilidade</h4><p>Custos cobertos mais a retirada que você quer garantir.</p></div></div>
+    <label>Quanto quero receber no mês</label>
+    <input type="text" id="retiradaDesejada" inputmode="decimal" placeholder="R$ 0,00">
+    <div class="faixa-config-total"><span>Total para chegar à estabilidade</span><strong id="configResumoEstabilidade">R$ 0,00</strong></div>
+  </section>
+
+  <section class="faixa-config faixa-conforto">
+    <div class="faixa-config-head"><span>3</span><div><h4>Conforto</h4><p>Um valor adicional, além da estabilidade, para o padrão de vida desejado.</p></div></div>
+    <label>Quanto quero ter além da estabilidade</label>
+    <input type="text" id="confortoDesejado" inputmode="decimal" placeholder="R$ 0,00">
+    <div class="faixa-config-total"><span>Total para chegar ao conforto</span><strong id="configResumoConforto">R$ 0,00</strong></div>
+  </section>
+
+  <button data-action="salvar-config">Salvar planejamento do mês</button>
 </div>
 
 <div class="card">
@@ -400,7 +486,7 @@
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="app.js?v=20260714-original-com-mascara"></script>
+<script src="app.js?v=20260727-simulacao"></script>
 
 </div>
 </body>

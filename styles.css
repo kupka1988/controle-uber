@@ -121,7 +121,7 @@ h3 {
 
 .abas {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 8px;
   background: #eef0f4;
   border: 1px solid #e5e7eb;
@@ -421,6 +421,194 @@ button.perigo {
   gap: 10px;
   align-items: end;
 }
+
+.config-helper,
+.grid-config-retirada small,
+#blocoDiasManual small {
+  display: block;
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.config-helper { margin: -2px 0 14px; }
+
+.metas-financeiras-card { overflow: hidden; }
+
+.faixa-config {
+  margin-top: 12px;
+  padding: 14px;
+  border: 1px solid var(--meta-border, #dce5dc);
+  border-radius: 14px;
+  background: var(--meta-soft, #f8fbf8);
+}
+
+.faixa-sobrevivencia { --meta-border: #c9ead2; --meta-soft: #f0f9f2; --meta-color: #159447; }
+.faixa-estabilidade { --meta-border: #f4d7aa; --meta-soft: #fff7eb; --meta-color: #b66600; }
+.faixa-conforto { --meta-border: #c9ddf2; --meta-soft: #f0f7ff; --meta-color: #2f74b5; }
+
+.faixa-config-head { display: flex; gap: 10px; align-items: flex-start; }
+.faixa-config-head > span {
+  display: grid;
+  width: 26px;
+  height: 26px;
+  flex: 0 0 26px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--meta-color);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+}
+.faixa-config h4 { margin: 1px 0 0; color: var(--meta-color); font-size: 15px; }
+.faixa-config p { margin: 3px 0 0; color: var(--muted); font-size: 12px; line-height: 1.4; }
+.faixa-config label { margin-top: 13px; color: var(--text); font-size: 12px; font-weight: 700; }
+.faixa-config input { margin-top: 6px; background: rgba(255, 255, 255, .9); }
+
+.faixa-config-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 13px;
+  padding-top: 11px;
+  border-top: 1px solid var(--meta-border);
+}
+.faixa-config-total span { color: var(--muted); font-size: 11px; font-weight: 650; }
+.faixa-config-total strong { color: var(--meta-color); font-size: 19px; }
+
+.config-section {
+  margin: 4px 0 18px;
+  padding: 14px;
+  border: 1px solid #dce6dc;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #fbfdfb, #f5faf6);
+}
+
+.config-section-head {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.config-section h4 { margin: 0; color: var(--text); font-size: 15px; }
+.config-section-head p { margin: 4px 0 0; color: var(--muted); font-size: 12px; line-height: 1.4; }
+.config-section-head strong { color: var(--green); font-size: 12px; white-space: nowrap; }
+
+.rotina-semana {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+  margin: 14px 0 10px;
+}
+
+.rotina-semana button {
+  margin: 0;
+  padding: 9px 3px;
+  border: 1px solid #d8e2d8;
+  border-radius: 9px;
+  background: #fff;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.rotina-semana button.ativo { background: var(--green); border-color: var(--green); color: #fff; }
+
+.toggle-linha {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.toggle-linha input { width: auto; margin: 0; accent-color: var(--green); }
+#blocoDiasManual { margin-top: 10px; }
+
+.calendario-rotina { margin-top: 14px; padding-top: 12px; border-top: 1px solid #e1e9e1; }
+.calendario-rotina-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 9px; }
+.calendario-rotina-head strong { color: var(--text); font-size: 13px; }
+.btn-cal-nav { width: 30px; height: 30px; margin: 0; padding: 0; border-radius: 8px; background: #fff; color: var(--text); font-size: 21px; line-height: 1; }
+.calendario-semana-labels,
+.calendario-rotina-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+.calendario-semana-labels { margin-bottom: 4px; }
+.calendario-semana-labels span { text-align: center; color: var(--muted); font-size: 9px; font-weight: 700; }
+.calendario-dia { min-height: 43px; margin: 0; padding: 4px 2px; border: 1px solid #e2e8e2; border-radius: 8px; background: #fff; color: var(--text); }
+.calendario-dia strong, .calendario-dia small { display: block; }
+.calendario-dia strong { font-size: 12px; }
+.calendario-dia small { margin-top: 2px; color: var(--muted); font-size: 8px; font-weight: 650; }
+.calendario-dia.trabalho { background: #eef9f1; border-color: #bfe1c7; color: #146c37; }
+.calendario-dia.trabalho small { color: #2d7d49; }
+.calendario-dia.feriado { background: #fff7e9; border-color: #f0d3a3; }
+.calendario-dia.excecao { box-shadow: inset 0 0 0 1px var(--blue); }
+.calendario-dia.vazio { visibility: hidden; }
+.calendario-dia.desabilitado { opacity: .58; cursor: default; }
+.calendario-ajuda { margin: 9px 0 0; color: var(--muted); font-size: 11px; line-height: 1.4; }
+
+.month-review-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+  padding: 14px 16px;
+  border: 1px solid #b8dbbf;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #eff9f1, #e1f2e5);
+}
+.month-review-banner strong, .month-review-banner span { display: block; }
+.month-review-banner strong { color: #146c37; font-size: 14px; }
+.month-review-banner span { margin-top: 3px; color: #3d6548; font-size: 12px; }
+.month-review-banner button { width: auto; margin: 0; padding: 10px 13px; white-space: nowrap; }
+
+.simulation-hero { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 16px; padding: 22px; border-radius: 18px; background: linear-gradient(135deg, #193c66, #246499); color: #fff; box-shadow: 0 14px 28px rgba(27, 75, 118, .22); }
+.simulation-hero > div > span { font-size: 11px; font-weight: 800; letter-spacing: 1.2px; color: #c7e3ff; }
+.simulation-hero h2 { margin: 5px 0 3px; font-size: 26px; color: #fff; }
+.simulation-hero p { margin: 0; color: #d8ebfa; font-size: 13px; }
+.simulation-period { display: grid; grid-template-columns: auto minmax(106px, 1fr); gap: 7px 9px; align-items: center; min-width: 230px; }
+.simulation-period label { margin: 0; color: #d8ebfa; font-size: 11px; }
+.simulation-period select { margin: 0; padding: 9px; border: 0; background: rgba(255,255,255,.96); }
+.simulation-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(230px, .75fr); gap: 14px; }
+.simulation-input-card h3 { margin-top: 0; }
+.sim-valores-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
+.sim-valores-grid label { font-size: 12px; }
+.sim-valores-grid input { margin-top: 6px; }
+.simulation-result-card { display: flex; flex-direction: column; justify-content: center; background: linear-gradient(145deg, #f0f8ff, #e6f3fd); border-color: #c7dff1; }
+.sim-result-label { color: var(--blue); font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .6px; }
+.simulation-result-card > strong { margin-top: 7px; color: #194f79; font-size: 34px; line-height: 1; }
+.simulation-result-card > p { margin: 8px 0 0; color: var(--muted); font-size: 12px; line-height: 1.4; }
+.sim-result-mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px; }
+.sim-result-mini-grid > div { padding: 9px; border-radius: 10px; background: rgba(255,255,255,.68); }
+.sim-result-mini-grid span, .sim-result-mini-grid strong { display: block; }
+.sim-result-mini-grid span { color: var(--muted); font-size: 10px; }
+.sim-result-mini-grid strong { margin-top: 3px; color: var(--text); font-size: 13px; }
+.sim-calendario { margin-top: 13px; }
+.sim-metas-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+.sim-meta { padding: 15px; border: 1px solid var(--sim-border); border-radius: 14px; background: var(--sim-bg); }
+.sim-meta span, .sim-meta strong { display: block; }
+.sim-meta span { color: var(--sim-color); font-size: 12px; font-weight: 800; }
+.sim-meta strong { margin-top: 6px; color: var(--text); font-size: 21px; }
+.sim-meta p { margin: 8px 0 0; color: var(--muted); font-size: 11px; line-height: 1.4; }
+.sim-meta-sobrevivencia { --sim-color: #159447; --sim-bg: #eef9f1; --sim-border: #c9ead2; }
+.sim-meta-estabilidade { --sim-color: #b66600; --sim-bg: #fff6e8; --sim-border: #f4d7aa; }
+.sim-meta-conforto { --sim-color: #2f74b5; --sim-bg: #eef6ff; --sim-border: #c9ddf2; }
+
+.semana-melhor-dia {
+  margin-top: 11px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(31, 79, 118, 0.14);
+}
+.semana-melhor-dia span,
+.semana-melhor-dia strong,
+.semana-melhor-dia small { display: block; }
+.semana-melhor-dia span { color: var(--muted); font-size: 10px; font-weight: 700; text-transform: uppercase; }
+.semana-melhor-dia strong { margin-top: 2px; color: var(--green); font-size: 17px; }
+.semana-melhor-dia small { margin-top: 1px; color: var(--muted); font-size: 10px; }
 
 .meta-form-action {
   display: flex;
@@ -1795,6 +1983,7 @@ input[type="date"] {
   .app-header { flex-direction: column; align-items: stretch; }
   .app-status { align-items: flex-start; }
   .painel, .grid-metas-config, .grid-config-retirada, .dashboard-grid-3, .dashboard-grid-2, .history-quick-grid, .month-body { grid-template-columns: 1fr; }
+  .simulation-grid, .sim-valores-grid, .sim-metas-grid { grid-template-columns: 1fr; }
   .botoes { grid-template-columns: 1fr 1fr; }
   .operacao-mini-grid { grid-template-columns: 1fr 1fr; }
   table { font-size: 12px; }
@@ -1807,6 +1996,16 @@ input[type="date"] {
 
 
 @media (max-width: 640px) {
+  .config-section-head,
+  .month-review-banner,
+  .simulation-hero { flex-direction: column; align-items: stretch; }
+
+  .simulation-period { min-width: 0; }
+
+  .config-section-head strong { white-space: normal; }
+
+  .month-review-banner button { width: 100%; }
+
   .meta-config-row {
     grid-template-columns: 1fr;
     align-items: stretch;
