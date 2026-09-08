@@ -49,6 +49,7 @@ document.getElementById("importarArquivo").addEventListener("change", importarJS
 document.getElementById("data").addEventListener("change", atualizarDataPorExtenso);
 document.getElementById("abaInicio").addEventListener("click", () => trocarAba("inicio"));
 document.getElementById("abaDashboard").addEventListener("click", () => trocarAba("dashboard"));
+document.getElementById("abaCombustivel").addEventListener("click", () => trocarAba("combustivel"));
 document.getElementById("abaSimulacao").addEventListener("click", () => trocarAba("simulacao"));
 document.getElementById("abaHistorico").addEventListener("click", () => trocarAba("historico"));
 document.getElementById("abaFechamentos").addEventListener("click", () => trocarAba("fechamentos"));
@@ -125,6 +126,7 @@ document.getElementById("btnLimpar").addEventListener("click", limparDados);
 function trocarAba(aba) {
   telaInicio.classList.add("hidden");
   telaDashboard.classList.add("hidden");
+  telaCombustivel.classList.add("hidden");
   telaSimulacao.classList.add("hidden");
   telaHistorico.classList.add("hidden");
   telaFechamentos.classList.add("hidden");
@@ -132,6 +134,7 @@ function trocarAba(aba) {
 
   abaInicio.classList.remove("ativo");
   abaDashboard.classList.remove("ativo");
+  abaCombustivel.classList.remove("ativo");
   abaSimulacao.classList.remove("ativo");
   abaHistorico.classList.remove("ativo");
   abaFechamentos.classList.remove("ativo");
@@ -146,6 +149,11 @@ function trocarAba(aba) {
   if (aba === "dashboard") {
     telaDashboard.classList.remove("hidden");
     abaDashboard.classList.add("ativo");
+  }
+
+  if (aba === "combustivel") {
+    telaCombustivel.classList.remove("hidden");
+    abaCombustivel.classList.add("ativo");
   }
 
   if (aba === "simulacao") {
@@ -807,6 +815,7 @@ function render() {
 
   renderizarMetasConfig();
   renderizarHistoricoMensal({ entradas, saidas, kmRodado, litrosTotal, gastoGasolina, lucroOperacional, custosSemParcela, metaConsistenteValor, custosTotais });
+  renderizarCombustivel();
   renderizarBannerMesFechado(snapMesFechado);
   renderizarBannerRevisaoMensal();
 }
@@ -826,6 +835,32 @@ function gastoGasolinaEl() { return document.getElementById("gastoGasolina"); }
 function receitaPorKmEl() { return document.getElementById("receitaPorKm"); }
 function custoPorKmEl() { return document.getElementById("custoPorKm"); }
 function lucroPorKmEl() { return document.getElementById("lucroPorKm"); }
+
+function renderizarCombustivel() {
+  const lista = document.getElementById("combustivelLista");
+  if (!lista) return;
+  const mesAtual = mesKeyDeData(new Date());
+  const itens = dados.filter(d => obterMesKey(d.data) === mesAtual && ehLancamentoEnergia(d) && Number(d.litros) > 0)
+    .sort((a, b) => (b.data || "").localeCompare(a.data || ""));
+  const litros = itens.reduce((s, d) => s + Number(d.litros || 0), 0);
+  const valor = itens.reduce((s, d) => s + Math.abs(Number(d.valor || 0)), 0);
+  const kms = dados.filter(d => obterMesKey(d.data) === mesAtual && Number(d.km) > 0).map(d => Number(d.km));
+  const kmRodado = kms.length > 1 ? Math.max(...kms) - Math.min(...kms) : 0;
+  const ultimo = itens[0];
+  combustivelResumo.innerText = itens.length ? `${itens.length} abastecimento(s) registrado(s) neste mês.` : "Registre um abastecimento para analisar seu consumo.";
+  combustivelPrecoMedio.innerText = litros ? moeda(valor / litros) : "—";
+  combustivelLitros.innerText = `${numero(litros)} L`;
+  combustivelQtd.innerText = itens.length === 1 ? "1 abastecimento" : `${itens.length} abastecimentos`;
+  combustivelValor.innerText = moeda(valor);
+  combustivelMedia.innerText = `Média: ${moeda(itens.length ? valor / itens.length : 0)}`;
+  combustivelCustoKm.innerText = kmRodado ? moeda(valor / kmRodado) : "—";
+  combustivelKmBase.innerText = kmRodado ? `Base: ${kmRodado.toLocaleString("pt-BR")} KM` : "Sem KM suficiente";
+  combustivelUltimo.innerText = ultimo ? formatarData(ultimo.data) : "—";
+  combustivelUltimoValor.innerText = ultimo ? `${numero(ultimo.litros)} L · ${moeda(Math.abs(ultimo.valor))}` : "Nenhum registro";
+  combustivelVazio.classList.toggle("hidden", itens.length > 0);
+  combustivelTabela.classList.toggle("hidden", itens.length === 0);
+  lista.innerHTML = itens.map(d => `<tr><td data-label="Data">${formatarData(d.data)}</td><td data-label="Litros">${numero(d.litros)}</td><td data-label="Valor" class="negativo">${moedaSaida(-Math.abs(d.valor))}</td><td data-label="Preço/L">${moeda(Math.abs(d.valor) / d.litros)}</td><td data-label="KM">${d.km || "—"}</td></tr>`).join("");
+}
 
 function renderizarComposicaoMetas(ctx) {
   const container = document.getElementById("composicaoMetasLista");
