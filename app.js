@@ -776,9 +776,10 @@ function render() {
   kmRodadoEl().innerText = kmRodado.toLocaleString("pt-BR");
   litrosTotalEl().innerText = numero(litrosTotal);
   gastoGasolinaEl().innerText = moedaSaida(gastoGasolina);
-  const precoMedioCombustivel = litrosTotal > 0 ? gastoGasolina / litrosTotal : 0;
-  if (document.getElementById("precoMedioCombustivel")) precoMedioCombustivel.innerText = litrosTotal > 0 ? moeda(precoMedioCombustivel) : "—";
-  if (document.getElementById("totalGastoCombustivel")) totalGastoCombustivel.innerText = moedaSaida(gastoGasolina);
+  const abastecimentosDoMes = dados.filter(item => obterMesKey(item.data) === mesAtualKey && Number(item.litros) > 0 && Number(item.valor) < 0);
+  const litrosAbastecidos = abastecimentosDoMes.reduce((total, item) => total + Number(item.litros), 0);
+  const valorAbastecido = abastecimentosDoMes.reduce((total, item) => total + Math.abs(Number(item.valor)), 0);
+  if (document.getElementById("precoMedioCombustivel")) precoMedioCombustivel.innerText = litrosAbastecidos > 0 ? moeda(valorAbastecido / litrosAbastecidos) : "—";
   receitaPorKmEl().innerText = moeda(receitaPorKm);
   custoPorKmEl().innerText = moedaSaida(custoPorKm);
   lucroPorKmEl().innerText = moeda(lucroPorKm);

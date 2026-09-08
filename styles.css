@@ -762,7 +762,7 @@ tr:last-child td { border-bottom: none; }
 .tela { display: block; }
 .tela.hidden { display: none; }
 
-.resumo-combustivel { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
+.resumo-combustivel { display:grid; grid-template-columns:1fr; gap:10px; margin-top:10px; }
 .resumo-combustivel > div { padding:11px 12px; border-radius:12px; background:#f4f9ff; border:1px solid #d6e4ed; }
 .resumo-combustivel span { display:block; color:var(--muted); font-size:12px; }
 .resumo-combustivel strong { display:block; margin-top:4px; color:var(--text); font-size:16px; }
@@ -2004,7 +2004,6 @@ input[type="date"] {
   .resumo-grid { grid-template-columns:1fr 1fr; }
   .resumo-grid .resumo-item:has(#resultado) { grid-column:1 / -1; }
   .operacao-grid { grid-template-columns:1fr; }
-  .operacao-grid .resumo-combustivel { grid-template-columns:1fr 1fr; }
   .simulation-grid, .sim-valores-grid, .sim-metas-grid { grid-template-columns: 1fr; }
   .botoes { grid-template-columns: 1fr 1fr; }
   .operacao-mini-grid { grid-template-columns: 1fr 1fr; }
