@@ -90,9 +90,11 @@ document.querySelectorAll("[data-weekday]").forEach(botao => {
   botao.addEventListener("click", () => alternarDiaSemana(Number(botao.dataset.weekday)));
 });
 if (document.getElementById("trabalhoEmFeriados")) {
-  document.getElementById("trabalhoEmFeriados").addEventListener("change", event => {
+  document.getElementById("trabalhoEmFeriados").addEventListener("change", async event => {
     config.trabalhoEmFeriados = event.target.checked;
-    renderizarRotinaMensal();
+    atualizarDiasPlanejadosDaRotina();
+    render();
+    await salvarEstado();
   });
 }
 if (document.getElementById("btnCalendarioAnterior")) {
@@ -1914,7 +1916,7 @@ function atualizarDiasPlanejadosDaRotina() {
   config.diasPlanejados = calcularDiasPlanejadosDoMes(new Date().getFullYear(), new Date().getMonth() + 1, config);
 }
 
-function alternarDiaSemana(dia) {
+async function alternarDiaSemana(dia) {
   const dias = new Set(Array.isArray(config.diasSemana) ? config.diasSemana : []);
   if (dias.has(dia)) dias.delete(dia);
   else dias.add(dia);
@@ -1922,6 +1924,7 @@ function alternarDiaSemana(dia) {
   atualizarDiasPlanejadosDaRotina();
   renderizarRotinaMensal();
   render();
+  await salvarEstado();
 }
 
 function navegarCalendarioRotina(delta) {
@@ -1929,7 +1932,7 @@ function navegarCalendarioRotina(delta) {
   renderizarRotinaMensal();
 }
 
-function alternarExcecaoRotina(dataISO) {
+async function alternarExcecaoRotina(dataISO) {
   if (!rotinaConfigurada() || !/^\d{4}-\d{2}-\d{2}$/.test(dataISO)) return;
   const [ano, mes, dia] = dataISO.split("-").map(Number);
   const data = new Date(ano, mes - 1, dia);
@@ -1945,6 +1948,7 @@ function alternarExcecaoRotina(dataISO) {
   atualizarDiasPlanejadosDaRotina();
   renderizarRotinaMensal();
   render();
+  await salvarEstado();
 }
 
 function renderizarRotinaMensal() {
